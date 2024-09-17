@@ -1,0 +1,73 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{4737D76D-1220-428D-96D7-580F271BE278}|eMuhasebeServer.WebAPI\\eMuhasebeServer.WebAPI.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{4737D76D-1220-428D-96D7-580F271BE278}|eMuhasebeServer.WebAPI\\eMuhasebeServer.WebAPI.csproj|solutionrelative:emuhasebeserver.webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\entities\\appuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|solutionrelative:emuhasebeserver.domain\\entities\\appuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 267,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:131:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:132:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.WebAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "eMuhasebeServer.WebAPI\\appsettings.json",
+              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.WebAPI\\appsettings.json",
+              "RelativeToolTip": "eMuhasebeServer.WebAPI\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-09-17T14:22:40.717Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AppUser.cs",
+              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\AppUser.cs",
+              "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\AppUser.cs",
+              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\AppUser.cs",
+              "RelativeToolTip": "eMuhasebeServer.Domain\\Entities\\AppUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-17T14:05:17.763Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
