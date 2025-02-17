@@ -17,3 +17,4 @@ C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServe
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.pdb
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.genruntimeconfig.cache
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\ref\eMuhasebeServer.Infrastructure.dll
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.sourcelink.json

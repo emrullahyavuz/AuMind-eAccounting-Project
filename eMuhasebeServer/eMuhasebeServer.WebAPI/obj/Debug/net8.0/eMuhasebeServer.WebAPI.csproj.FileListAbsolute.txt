@@ -158,3 +158,13 @@ C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServe
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\obj\Debug\net8.0\eMuhasebeServer.WebAPI.pdb
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\obj\Debug\net8.0\eMuhasebeServer.WebAPI.genruntimeconfig.cache
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\obj\Debug\net8.0\ref\eMuhasebeServer.WebAPI.dll
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\eMuhasebeServer.WebAPI.staticwebassets.endpoints.json
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\obj\Debug\net8.0\eMuhasebeServer.WebAPI.sourcelink.json
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\obj\Debug\net8.0\staticwebassets\msbuild.eMuhasebeServer.WebAPI.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\System.ClientModel.dll
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\System.Security.Cryptography.Xml.dll

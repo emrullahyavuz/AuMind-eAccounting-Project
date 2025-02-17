@@ -10,6 +10,8 @@ namespace eMuhasebeServer.Infrastructure.Configurations
         {
             builder.Property(p => p.FirstName).HasColumnType("varchar(50)");
             builder.Property(p => p.LastName).HasColumnType("varchar(50)");
+
+            builder.HasQueryFilter(x => !x.IsDeleted);
         }
     }
 }
