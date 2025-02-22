@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "jYsnle4Fnps=",
+  "dgSpecHash": "weevqs8rckg=",
   "success": true,
   "projectFilePath": "C:\\Users\\Şeref\\Desktop\\Code\\Muhasebe Uygulaması\\eMuhasebeServer\\eMuhasebeServer.WebAPI\\eMuhasebeServer.WebAPI.csproj",
   "expectedPackageFiles": [
@@ -9,6 +9,8 @@
     "C:\\Users\\Şeref\\.nuget\\packages\\azure.core\\1.44.1\\azure.core.1.44.1.nupkg.sha512",
     "C:\\Users\\Şeref\\.nuget\\packages\\azure.identity\\1.13.2\\azure.identity.1.13.2.nupkg.sha512",
     "C:\\Users\\Şeref\\.nuget\\packages\\defaultcorspolicy\\8.0.0\\defaultcorspolicy.8.0.0.nupkg.sha512",
+    "C:\\Users\\Şeref\\.nuget\\packages\\fluentemail.core\\3.0.2\\fluentemail.core.3.0.2.nupkg.sha512",
+    "C:\\Users\\Şeref\\.nuget\\packages\\fluentemail.smtp\\3.0.2\\fluentemail.smtp.3.0.2.nupkg.sha512",
     "C:\\Users\\Şeref\\.nuget\\packages\\fluentvalidation\\11.9.0\\fluentvalidation.11.9.0.nupkg.sha512",
     "C:\\Users\\Şeref\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.0\\fluentvalidation.dependencyinjectionextensions.11.9.0.nupkg.sha512",
     "C:\\Users\\Şeref\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

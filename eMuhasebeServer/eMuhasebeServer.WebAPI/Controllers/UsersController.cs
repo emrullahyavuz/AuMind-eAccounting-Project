@@ -4,16 +4,17 @@ using eMuhasebeServer.Application.Features.Users.GetAllUsers;
 using eMuhasebeServer.Application.Features.Users.UpdateUser;
 using eMuhasebeServer.WebAPI.Abstractions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eMuhasebeServer.WebAPI.Controllers;
-
+[AllowAnonymous]
 public sealed class UsersController : ApiController
 {
     public UsersController(IMediator mediator) : base(mediator)
     {
     }
-
+    
     [HttpPost]
     public async Task<IActionResult> GetAll(GetAllUsersQuery request, CancellationToken cancellationToken)
     {
@@ -36,7 +37,7 @@ public sealed class UsersController : ApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Delete(DeleteUserByIdCommand request, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteById(DeleteUserByIdCommand request, CancellationToken cancellationToken)
     {
         var response = await _mediator.Send(request, cancellationToken);
         return StatusCode(response.StatusCode, response);

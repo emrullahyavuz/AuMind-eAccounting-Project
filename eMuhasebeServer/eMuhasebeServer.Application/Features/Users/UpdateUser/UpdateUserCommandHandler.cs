@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using eMuhasebeServer.Domain.Entities;
+using eMuhasebeServer.Domain.Events;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,10 @@ using TS.Result;
 
 namespace eMuhasebeServer.Application.Features.Users.UpdateUser;
 
-internal sealed class UpdateUserCommandHandler(UserManager<AppUser> userManager, IMapper mapper) : IRequestHandler<UpdateUserCommand, Result<string>>
+internal sealed class UpdateUserCommandHandler(
+    IMediator mediator,
+    UserManager<AppUser> userManager, 
+    IMapper mapper) : IRequestHandler<UpdateUserCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
@@ -51,17 +55,20 @@ internal sealed class UpdateUserCommandHandler(UserManager<AppUser> userManager,
             return Result<string>.Failure(identityResult.Errors.Select(s => s.Description).ToList());
         }
 
-        string token = await userManager.GeneratePasswordResetTokenAsync(appUser);
-        identityResult = await userManager.ResetPasswordAsync(appUser, token, request.Password);
-
-        if (!identityResult.Succeeded)
+        if (request.Password is not null)
         {
-            return Result<string>.Failure(identityResult.Errors.Select(s => s.Description).ToList());
-        }
+            string token = await userManager.GeneratePasswordResetTokenAsync(appUser);
+            identityResult = await userManager.ResetPasswordAsync(appUser, token, request.Password);
 
+            if (!identityResult.Succeeded)
+            {
+                return Result<string>.Failure(identityResult.Errors.Select(s => s.Description).ToList());
+            }
+        }
+       
         if (isMailChanged) 
         { 
-            //Tekrardan onay maili gönder
+            await mediator.Publish(new AppUserEvent(appUser.Id));
         }
 
         return "Kullanıcı bilgileri başarıyla güncellendi.";
