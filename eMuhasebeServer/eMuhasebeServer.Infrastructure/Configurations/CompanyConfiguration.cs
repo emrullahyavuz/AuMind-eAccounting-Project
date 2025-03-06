@@ -8,6 +8,7 @@ internal sealed class CompanyConfiguration : IEntityTypeConfiguration<Company>
 {
     public void Configure(EntityTypeBuilder<Company> builder)
     {
+        builder.Property(p=>p.TaxNumber).HasColumnType("varchar(11)");
         builder.HasQueryFilter(x => !x.IsDeleted);
 
         builder.OwnsOne(p => p.Database, builder =>
