@@ -8,7 +8,7 @@ internal sealed class CompanyUserConfiguration : IEntityTypeConfiguration<Compan
 {
     public void Configure(EntityTypeBuilder<CompanyUser> builder)
     {
-        builder.HasKey(x => new { x.UserId, x.CompanyId });
+        builder.HasKey(x => new { x.AppUserId, x.CompanyId });
         builder.HasQueryFilter(filter => !filter.Company!.IsDeleted);
     }
 }

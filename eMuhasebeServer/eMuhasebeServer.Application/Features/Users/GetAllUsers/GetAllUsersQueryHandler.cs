@@ -11,7 +11,11 @@ internal sealed class GetAllUsersQueryHandler(
 {
     public async Task<Result<List<AppUser>>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
     {
-       List<AppUser> users = await userManager.Users.OrderBy(p=> p.FirstName).ToListAsync(cancellationToken);
+       List<AppUser> users = await userManager.Users
+            .Include(p => p.CompanyUsers!)
+            .ThenInclude(p=>p.Company)
+            .OrderBy(p=> p.FirstName)
+            .ToListAsync(cancellationToken);
 
        return users;
     }
