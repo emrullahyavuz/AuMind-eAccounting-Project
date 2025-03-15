@@ -5,7 +5,7 @@
 This project is an AI-Integrated Full Stack E-Accounting Application developed as an alternative to existing accounting software in the industry. It is designed to help businesses manage their financial processes more efficiently using modern technologies.
 
 🚀 Tech Stack
-Frontend: React.js, Tailwind CSS, Ant Design, Material-UI
+Frontend: React.js, Tailwind CSS, Ant Design, Material-UI </br>
 Backend: .NET, Entity Framework
 Database: MSSQL
 Other: AI Modules
