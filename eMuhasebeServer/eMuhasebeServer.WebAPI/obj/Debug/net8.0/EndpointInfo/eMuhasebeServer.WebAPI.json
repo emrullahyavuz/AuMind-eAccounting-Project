@@ -98,6 +98,37 @@
         }
       }
     },
+    "/api/Auth/ChangeCompany": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeCompanyCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeCompanyCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeCompanyCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Companies/GetAll": {
       "post": {
         "tags": [
@@ -211,6 +242,37 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/DeleteCompanyByIdCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Companies/MigrateAll": {
+      "post": {
+        "tags": [
+          "Companies"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MigrateAllCompaniesCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MigrateAllCompaniesCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MigrateAllCompaniesCommand"
               }
             }
           }
@@ -361,6 +423,16 @@
   },
   "components": {
     "schemas": {
+      "ChangeCompanyCommand": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
       "ConfirmEmailCommand": {
         "type": "object",
         "properties": {
@@ -492,6 +564,10 @@
             "nullable": true
           }
         },
+        "additionalProperties": false
+      },
+      "MigrateAllCompaniesCommand": {
+        "type": "object",
         "additionalProperties": false
       },
       "SendConfirmEmailCommand": {
