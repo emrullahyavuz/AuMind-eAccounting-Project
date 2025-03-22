@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  content: ["./src/**/*.{js,jsx}", "*.{js,jsx}", "*.{js,ts,jsx,tsx,mdx}"],
+  content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html", "*.{js,jsx,ts,tsx,mdx}", "*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     container: {
       center: true,
@@ -45,6 +45,10 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        yellow: {
+          500: "#FFCC00",
+          600: "#E6B800",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -67,6 +71,6 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/forms")],
 }
 
