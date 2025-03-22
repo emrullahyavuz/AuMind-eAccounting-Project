@@ -1,6 +1,7 @@
 import { useState } from "react"
 import Sidebar from "./components/Sidebar"
 import "./App.css"
+import { Button } from "./components/UI/Button"
 
 function App() {
   const [darkMode, setDarkMode] = useState(true)
@@ -19,7 +20,7 @@ function App() {
       <div className="app-container">
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <div className={`content ${sidebarOpen ? "sidebar-open" : ""}`}>
-          
+          <Button />
         </div>
       </div>
     </div>
