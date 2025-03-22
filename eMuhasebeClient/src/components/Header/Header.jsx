@@ -89,7 +89,7 @@ const Header = () => {
     </div>
   </header>
   {/* Back Button */}
-        <div className="p-4 flex justify-end">
+        <div className="p-4 flex justify-end bg-gray-100">
           <Button
             variant="ghost"
             size="icon"

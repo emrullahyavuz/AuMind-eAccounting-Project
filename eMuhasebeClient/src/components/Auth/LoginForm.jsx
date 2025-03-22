@@ -119,7 +119,7 @@ function LoginForm() {
           <div className="text-center pt-4 border-t border-gray-300">
             <p className="text-gray-700 text-sm">
               Hesabınız yok mu?{" "}
-              <Link to="/register" className="text-yellow-600 font-medium hover:underline">
+              <Link to="/auth/register" className="text-yellow-600 font-medium hover:underline">
                 Kayıt Ol
               </Link>
             </p>

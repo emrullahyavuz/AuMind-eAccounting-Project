@@ -9,8 +9,13 @@ import {
   FaFileInvoice,
   FaChartLine,
 } from "react-icons/fa"
+import { Link, useNavigate } from "react-router-dom"
 
 function Sidebar({ isOpen, toggleSidebar }) {
+
+  // navigate fonksiyonunu kullanabilmek için useNavigate hook
+  const navigate = useNavigate()
+
   return (
     <div className={`sidebar ${isOpen ? "open" : "closed"}`}>
       <div className="sidebar-header">
@@ -29,7 +34,10 @@ function Sidebar({ isOpen, toggleSidebar }) {
             </li>
             <li className="menu-item">
               <FaUsers className="menu-icon" />
-              <span>Kullanıcılar</span>
+              <a onClick={(e) => {
+                e.preventDefault()
+                navigate("/admin/users")
+              }}>Kullanıcılar</a>
             </li>
           </ul>
         </div>
@@ -55,7 +63,10 @@ function Sidebar({ isOpen, toggleSidebar }) {
             </li>
             <li className="menu-item">
               <FaFileInvoice className="menu-icon" />
-              <span>Faturalar</span>
+              <a onClick={(e) => {
+                e.preventDefault()
+                navigate("/admin/invoices")
+              }}>Faturalar</a>
             </li>
           </ul>
         </div>

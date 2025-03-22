@@ -29,10 +29,10 @@ function App() {
   return (
     <div className={`app ${darkMode ? "dark" : ""}`}>
       <div className="app-container">
-        <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
         <div className={`content ${sidebarOpen ? "sidebar-open" : ""}`}>
           <Header />
           <Router>
+            <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
             <Routes>
               <Route path="/cari-hareketleri" element={<CariHareketleri />} />
               <Route path="/auth/login" element={<LoginForm />} />
