@@ -1,16 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react"
+import Sidebar from "./components/Sidebar"
+import "./App.css"
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [darkMode, setDarkMode] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode)
+  }
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen)
+  }
 
   return (
-    <h1 className="text-3xl font-bold underline">
-    Hello world!
-  </h1>
+    <div className={`app ${darkMode ? "dark" : ""}`}>
+      <div className="app-container">
+        <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+        <div className={`content ${sidebarOpen ? "sidebar-open" : ""}`}>
+          
+        </div>
+      </div>
+    </div>
   )
 }
 
 export default App
+
