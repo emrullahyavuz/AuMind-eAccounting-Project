@@ -14,9 +14,9 @@ internal sealed class UpdateCompanyCommandHandler(
 {
     public async Task<Result<string>> Handle(UpdateCompanyCommand request, CancellationToken cancellationToken)
     {
-        Company company = await companyRepository.GetByExpressionAsync(p => p.Id == request.Id, cancellationToken);
+        Company company = await companyRepository.GetByExpressionWithTrackingAsync(p => p.Id == request.Id, cancellationToken);
 
-        if (company == null)
+        if (company is null)
         {
             return Result<string>.Failure("Şirket bulunamadı.");
         }

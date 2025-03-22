@@ -1,6 +1,22 @@
 [
   {
     "ContainingType": "eMuhasebeServer.WebAPI.Controllers.AuthController",
+    "Method": "ChangeCompany",
+    "RelativePath": "api/Auth/ChangeCompany",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Auth.ChangeCompany.ChangeCompanyCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.AuthController",
     "Method": "ConfirmEmail",
     "RelativePath": "api/Auth/ConfirmEmail",
     "HttpMethod": "POST",
@@ -42,6 +58,86 @@
       {
         "Name": "request",
         "Type": "eMuhasebeServer.Application.Features.Auth.SendConfirmEmail.SendConfirmEmailCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CompaniesController",
+    "Method": "Create",
+    "RelativePath": "api/Companies/Create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Companies.CreateCompany.CreateCompanyCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CompaniesController",
+    "Method": "DeleteById",
+    "RelativePath": "api/Companies/DeleteById",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Companies.DeleteCompanyById.DeleteCompanyByIdCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CompaniesController",
+    "Method": "GetAll",
+    "RelativePath": "api/Companies/GetAll",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Companies.GetAllCompanies.GetAllCompaniesQuery",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CompaniesController",
+    "Method": "MigrateAll",
+    "RelativePath": "api/Companies/MigrateAll",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Companies.MigrateAllCompanies.MigrateAllCompaniesCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CompaniesController",
+    "Method": "Update",
+    "RelativePath": "api/Companies/Update",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Companies.UpdateCompany.UpdateCompanyCommand",
         "IsRequired": true
       }
     ],

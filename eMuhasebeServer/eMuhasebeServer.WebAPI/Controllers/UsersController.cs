@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eMuhasebeServer.WebAPI.Controllers;
-[AllowAnonymous]
+
 public sealed class UsersController : ApiController
 {
     public UsersController(IMediator mediator) : base(mediator)
