@@ -60,8 +60,8 @@ function InvoicesPage() {
     } else {
       const filtered = invoices.filter(
         (invoice) =>
-          invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          invoice.customer.toLowerCase().includes(searchTerm.toLowerCase()),
+          invoice.invoiceNumber.toLowerCase().trim().includes(searchTerm.toLowerCase().trim()) ||
+          invoice.customer.toLowerCase().trim().includes(searchTerm.toLowerCase().trim()),
       )
       setFilteredInvoices(filtered)
       setCurrentPage(1) // Arama yapıldığında ilk sayfaya dön

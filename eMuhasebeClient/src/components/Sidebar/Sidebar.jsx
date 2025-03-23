@@ -12,7 +12,7 @@ import {
   FaChartLine,
   FaUser,
 } from "react-icons/fa";
-import SidebarItem from "./SıdebarItem";
+import SidebarItem from "./SidebarItem";
 import { X } from "lucide-react";
 
 function Sidebar({ toggleSidebar  }) {

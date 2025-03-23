@@ -51,9 +51,9 @@ function UsersPage() {
     } else {
       const filtered = users.filter(
         (user) =>
-          user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.surname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchTerm.toLowerCase()),
+          user.username.toLowerCase().trim().includes(searchTerm.toLowerCase().trim()) ||
+          user.surname.toLowerCase().trim().includes(searchTerm.toLowerCase().trim()) ||
+          user.email.toLowerCase().trim().includes(searchTerm.toLowerCase().trim()),
       )
       setFilteredUsers(filtered)
       setCurrentPage(1) // Arama yapıldığında ilk sayfaya dön
