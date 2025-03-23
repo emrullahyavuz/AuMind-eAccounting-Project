@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
-  FaTimes,
   FaBuilding,
-  FaUsers,
   FaChartBar,
   FaUniversity,
   FaAddressBook,
@@ -14,8 +12,9 @@ import {
 } from "react-icons/fa";
 import SidebarItem from "./SidebarItem";
 import { X } from "lucide-react";
+import PropTypes from "prop-types";
 
-function Sidebar({ toggleSidebar  }) {
+function Sidebar({ toggleSidebar }) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
@@ -37,7 +36,7 @@ function Sidebar({ toggleSidebar  }) {
 
   // Sidebar'ı genişlet/daralt
   const handleToggleSidebar = () => {
-    toggleSidebar()
+    toggleSidebar();
     setCollapsed(!collapsed);
   };
 
@@ -51,7 +50,6 @@ function Sidebar({ toggleSidebar  }) {
       <div className="flex justify-end items-center p-4 border-b border-gray-700">
         <button
           onClick={handleToggleSidebar}
-          
           className="text-yellow-400 hover:text-yellow-300"
         >
           {collapsed ? (
@@ -148,9 +146,7 @@ function Sidebar({ toggleSidebar  }) {
         {/* Reports Section */}
         <div className="py-4">
           {!collapsed && (
-            <h2 className="text-yellow-400 font-medium px-4 mb-2">
-              Raporlar
-            </h2>
+            <h2 className="text-yellow-400 font-medium px-4 mb-2">Raporlar</h2>
           )}
           {collapsed && (
             <h2 className="text-yellow-400 font-medium text-center text-sm mb-2">
@@ -173,3 +169,7 @@ function Sidebar({ toggleSidebar  }) {
 }
 
 export default Sidebar;
+
+Sidebar.propTypes = {
+  toggleSidebar: PropTypes.func.isRequired,
+};

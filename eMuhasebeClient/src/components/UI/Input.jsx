@@ -1,5 +1,6 @@
 import React from "react"
 import { cn } from "../../lib/utils"
+import PropTypes from "prop-types"
 
 const Input = React.forwardRef(function Input(props, ref) {
   const { className, type, ...restProps } = props
@@ -21,3 +22,8 @@ Input.displayName = "Input"
 
 export { Input }
 
+
+Input.propTypes = { 
+  type: PropTypes.string.isRequired,
+  className: PropTypes.string,
+}

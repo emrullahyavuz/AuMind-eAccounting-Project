@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import PropTypes from "prop-types"
 
 // SidebarItem
 function SidebarItem({ to, icon, text, active, collapsed }) {
@@ -18,3 +19,11 @@ function SidebarItem({ to, icon, text, active, collapsed }) {
   }
 
 export default SidebarItem
+
+SidebarItem.propTypes = {
+    to: PropTypes.string.isRequired,
+    icon: PropTypes.element.isRequired,
+    text: PropTypes.string.isRequired,
+    active: PropTypes.bool.isRequired,
+    collapsed: PropTypes.bool.isRequired,
+  }

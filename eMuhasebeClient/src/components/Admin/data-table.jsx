@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react"
-
+import PropTypes from "prop-types"
 // Genel tablo bileşeni - hem kullanıcılar hem de faturalar için 
 function DataTable({
   title,
@@ -180,3 +180,26 @@ function DataTable({
 
 export default DataTable
 
+
+DataTable.propTypes = {
+  title: PropTypes.string.isRequired,
+  addButtonText: PropTypes.string.isRequired,
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      header: PropTypes.string.isRequired,
+      accessor: PropTypes.string.isRequired,
+      className: PropTypes.string,
+    })
+  ).isRequired,
+  data: PropTypes.array.isRequired,
+  searchPlaceholder: PropTypes.string,
+  onAdd: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func,
+  onSearch: PropTypes.func,
+  itemsPerPage: PropTypes.number,
+  currentPage: PropTypes.number,
+  totalItems: PropTypes.number,
+  onPageChange: PropTypes.func,
+
+} 

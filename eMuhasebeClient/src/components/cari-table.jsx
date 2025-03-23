@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./UI/Table"
 
 // Boş satır oluşturmak için yardımcı fonksiyon
 const EmptyRow = () => (

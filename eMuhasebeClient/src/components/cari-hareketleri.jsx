@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { Input } from "./ui/input";
+import { Input } from "./UI/Input";
 import { Button } from "./UI/Button";
 import CariTable from "./cari-table";
 
