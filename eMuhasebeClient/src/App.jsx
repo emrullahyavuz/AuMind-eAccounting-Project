@@ -30,20 +30,25 @@ function App() {
   return (
     <div className={`app ${darkMode ? "dark" : ""}`}>
       <div className="app-container">
-        <div className={`content ${sidebarOpen ? "sidebar-open" : "!ml-[64px]"}`}>
-          <Header />
+        <div
+          className={`content ${sidebarOpen ? "sidebar-open" : "!ml-[64px]"}`}
+        >
           <Router>
+            <Header />
             <Sidebar toggleSidebar={toggleSidebar} />
             <main className="">
-            <Routes>
-              <Route path="/cari-hareketleri" element={<CariHareketleri />} />
-              <Route path="/auth/login" element={<LoginForm />} />
-              <Route path="/auth/register" element={<RegisterForm />} />
-              <Route path="/" element={<Navigate to="/auth/login" replace />} />
-              <Route path="/admin/users" element={<UsersPage />} />
-              <Route path="/invoices" element={<InvoicesPage />} />
-              <Route path="/reports" element={<SalesReport />} />
-            </Routes>
+              <Routes>
+                <Route path="/cari-hareketleri" element={<CariHareketleri />} />
+                <Route path="/auth/login" element={<LoginForm />} />
+                <Route path="/auth/register" element={<RegisterForm />} />
+                <Route
+                  path="/"
+                  element={<Navigate to="/auth/login" replace />}
+                />
+                <Route path="/admin/users" element={<UsersPage />} />
+                <Route path="/invoices" element={<InvoicesPage />} />
+                <Route path="/reports" element={<SalesReport />} />
+              </Routes>
             </main>
           </Router>
         </div>

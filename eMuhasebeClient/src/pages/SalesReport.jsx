@@ -47,7 +47,7 @@ function SalesReport() {
   }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 pt-0 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-6">SATIŞ RAPORU</h1>
 
       <div className="bg-gray-200 rounded-lg p-6">
@@ -163,7 +163,7 @@ function SalesReport() {
             <div className="flex justify-end mt-8">
               <button
                 onClick={handleOpenModal}
-                className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-md flex items-center"
+                className="bg-yellow-400 hover:bg-cyan-600 text-white px-4 py-2 rounded-md flex items-center"
               >
                 <Download size={18} className="mr-2" />
                 RAPORU İNDİR

@@ -42,7 +42,7 @@ function Sidebar({ toggleSidebar }) {
 
   return (
     <div
-      className={`h-screen bg-gray-800 text-white transition-all duration-300 ${
+      className={`h-screen bg-gray-800  text-white transition-all duration-300 ${
         collapsed ? "w-16" : "w-64"
       } fixed left-0 top-0 z-50`}
     >

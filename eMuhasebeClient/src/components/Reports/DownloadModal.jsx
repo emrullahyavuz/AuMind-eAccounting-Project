@@ -36,7 +36,7 @@ function DownloadModal({ isOpen, onClose, onDownload }) {
           </select>
         </div>
 
-        <button onClick={handleDownload} className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-2 rounded">
+        <button onClick={handleDownload} className="w-full bg-yellow-400 hover:bg-cyan-600 text-white py-2 rounded">
           İndir
         </button>
       </div>

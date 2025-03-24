@@ -44,7 +44,7 @@ function DataTable({
   const endItem = Math.min(currentPage * itemsPerPage, totalItems)
 
   return (
-    <div className="bg-gray-100 p-6 rounded-md">
+    <div className="bg-gray-100 p-6 pt-0 rounded-md">
       {/* Başlık */}
       <h1 className="text-2xl font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-4">{title}</h1>
 
