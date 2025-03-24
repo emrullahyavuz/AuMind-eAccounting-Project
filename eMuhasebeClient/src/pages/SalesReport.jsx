@@ -1,8 +1,12 @@
 import { useState } from "react"
 import { Download } from "lucide-react"
+import DownloadModal from "../components/Reports/DownloadModal"
+import DownloadMessage from "../components/Reports/DownloadMessage"
 
 function SalesReport() {
   const [reportType, setReportType] = useState("daily")
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isMessageVisible, setIsMessageVisible] = useState(false)
 
   // Grafik için tarih etiketleri
   const dateLabels = [
@@ -19,6 +23,28 @@ function SalesReport() {
     "16.11.24",
     "02.12.24",
   ]
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleDownload = (format) => {
+    console.log(`Rapor ${format} formatında indiriliyor...`)
+
+    // Gerçek uygulamada burada API çağrısı yapılacak
+    // Simüle edilmiş indirme işlemi örneği
+    setTimeout(() => {
+      setIsMessageVisible(true)
+    }, 1000)
+  }
+
+  const handleCloseMessage = () => {
+    setIsMessageVisible(false)
+  }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -135,7 +161,10 @@ function SalesReport() {
 
             {/* İndir Butonu */}
             <div className="flex justify-end mt-8">
-              <button className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-md flex items-center">
+              <button
+                onClick={handleOpenModal}
+                className="bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-md flex items-center"
+              >
                 <Download size={18} className="mr-2" />
                 RAPORU İNDİR
               </button>
@@ -143,6 +172,12 @@ function SalesReport() {
           </div>
         </div>
       </div>
+
+      {/* İndirme Modalı */}
+      <DownloadModal isOpen={isModalOpen} onClose={handleCloseModal} onDownload={handleDownload} />
+
+      {/* Başarı Mesajı */}
+      <DownloadMessage isVisible={isMessageVisible} onClose={handleCloseMessage} />
     </div>
   )
 }
