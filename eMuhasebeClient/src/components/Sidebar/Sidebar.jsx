@@ -21,12 +21,12 @@ function Sidebar({ toggleSidebar }) {
   // Aktif olan sayfayı belirlemek için path'e göre bir fonksiyon
   const getActiveItem = (path) => {
     if (path.includes("/admin/users")) return "users";
-    if (path.includes("/invoices")) return "invoices";
+    if (path.includes("/admin/companies")) return "companies";
+    if (path.includes("/reports")) return "reports";
     if (path.includes("/banks")) return "banks";
     if (path.includes("/cari-hareketleri")) return "cariler";
     if (path.includes("/products")) return "products";
-    if (path.includes("/reports")) return "reports";
-    if (path.includes("/companies")) return "companies";
+    if (path.includes("/invoices")) return "invoices";
     if (path.includes("/profitability")) return "profitability";
     return "";
   };
@@ -78,7 +78,7 @@ function Sidebar({ toggleSidebar }) {
           )}
           <nav>
             <SidebarItem
-              to="/companies"
+              to="/admin/companies"
               icon={<FaBuilding size={collapsed ? 24 : 20} />}
               text="Şirketler"
               active={activeItem === "companies"}

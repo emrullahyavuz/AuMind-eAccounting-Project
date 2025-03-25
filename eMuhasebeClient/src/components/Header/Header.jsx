@@ -4,11 +4,10 @@ import { Button } from "../UI/Button";
 const Header = () => {
   // Get the current location
   const location = useLocation();
-  console.log(location);
-
+  
   // Check if the current page is an authentication page
   const isAuthPage = location.pathname.startsWith("/auth") ? true : false;
-  console.log(isAuthPage);
+  
   return (
     <>
       {/* Header */}

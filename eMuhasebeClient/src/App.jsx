@@ -14,6 +14,7 @@ import Header from "./components/Header/Header";
 import UsersPage from "./pages/Admin/Users";
 import InvoicesPage from "./pages/Admin/Invoices";
 import SalesReport from "./pages/SalesReport";
+import Companies from "./pages/Admin/Companies";
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -46,6 +47,7 @@ function App() {
                   element={<Navigate to="/auth/login" replace />}
                 />
                 <Route path="/admin/users" element={<UsersPage />} />
+                <Route path="/admin/companies" element={<Companies />} />
                 <Route path="/invoices" element={<InvoicesPage />} />
                 <Route path="/reports" element={<SalesReport />} />
               </Routes>
