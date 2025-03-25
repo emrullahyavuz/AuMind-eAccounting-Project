@@ -498,6 +498,9 @@
               "format": "uuid"
             },
             "nullable": true
+          },
+          "isAdmin": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -643,6 +646,9 @@
               "format": "uuid"
             },
             "nullable": true
+          },
+          "isAdmin": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

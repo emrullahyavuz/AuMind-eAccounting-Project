@@ -170,3 +170,5 @@ C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServe
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\System.Security.Cryptography.Xml.dll
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\FluentEmail.Core.dll
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\FluentEmail.Smtp.dll
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\Pipelines.Sockets.Unofficial.dll
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\StackExchange.Redis.dll
