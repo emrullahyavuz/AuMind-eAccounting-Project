@@ -1,13 +1,18 @@
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup"
-import { loginSchema } from "../../schemas/auth.schema"
-import { User, Lock, Eye, EyeOff } from "lucide-react"
-import { Link } from "react-router-dom"
-import "./Auth.css"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { loginSchema } from "../../schemas/auth.schema";
+import { User, Lock, Eye, EyeOff } from "lucide-react";
+import { Link } from "react-router-dom";
+import "./Auth.css";
+import { useAuth } from "../../hooks/useAuth";
+
 
 function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+
+  // AuthContext'ten login fonksiyonunu al
+  const { login } = useAuth();
 
   const {
     register,
@@ -19,26 +24,31 @@ function LoginForm() {
       username: "",
       password: "",
     },
-  })
+  });
 
   const onSubmit = async (data) => {
     try {
       // Burada API çağrısı yapılacak
-      console.log("Login data:", data)
-      // Başarılı giriş sonrası yönlendirme yapılabilir
+      console.log("Login data:", data);
+      await login(data);
+      // Başarılı giriş sonrası yönlendirme yapılacak
     } catch (error) {
-      console.error("Login error:", error)
+      console.error("Login error:", error);
     }
-  }
+  };
 
+  // Şifre görünürlüğünü değiştirme
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-300 bg-opacity-80 bg-[url('/images/auth-bg.jpg')] bg-cover bg-blend-overlay">
       <div className="w-full max-w-md p-8 flex flex-col items-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">AuMind Muhasebe Sistemi</h1>
+        {/* Başlık */}
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">
+          AuMind Muhasebe Sistemi
+        </h1>
 
         {/* Logo */}
         <div className="w-24 h-24 bg-black mb-8"></div>
@@ -46,7 +56,10 @@ function LoginForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6">
           {/* Kullanıcı Adı */}
           <div className="space-y-2">
-            <label htmlFor="username" className="block text-gray-700 font-medium">
+            <label
+              htmlFor="username"
+              className="block text-gray-700 font-medium"
+            >
               Kullanıcı Adı
             </label>
             <div className="relative">
@@ -63,12 +76,17 @@ function LoginForm() {
                 placeholder="Kullanıcı adınızı giriniz"
               />
             </div>
-            {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
+            {errors.username && (
+              <p className="text-red-500 text-sm">{errors.username.message}</p>
+            )}
           </div>
 
           {/* Şifre */}
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-gray-700 font-medium">
+            <label
+              htmlFor="password"
+              className="block text-gray-700 font-medium"
+            >
               Şifre
             </label>
             <div className="relative">
@@ -96,7 +114,9 @@ function LoginForm() {
                 )}
               </button>
             </div>
-            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password.message}</p>
+            )}
           </div>
 
           {/* Giriş Yap Butonu */}
@@ -110,7 +130,10 @@ function LoginForm() {
 
           {/* Onay Maili Linki */}
           <div className="text-center">
-            <Link to="/resend-verification" className="text-gray-700 text-sm hover:text-yellow-600">
+            <Link
+              to="/resend-verification"
+              className="text-gray-700 text-sm hover:text-yellow-600"
+            >
               Onay Mailini Tekrar Gönder
             </Link>
           </div>
@@ -119,7 +142,10 @@ function LoginForm() {
           <div className="text-center pt-4 border-t border-gray-300">
             <p className="text-gray-700 text-sm">
               Hesabınız yok mu?{" "}
-              <Link to="/auth/register" className="text-yellow-600 font-medium hover:underline">
+              <Link
+                to="/auth/register"
+                className="text-yellow-600 font-medium hover:underline"
+              >
                 Kayıt Ol
               </Link>
             </p>
@@ -127,8 +153,7 @@ function LoginForm() {
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default LoginForm
-
+export default LoginForm;

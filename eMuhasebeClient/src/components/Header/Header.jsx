@@ -1,13 +1,30 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../UI/Button";
+import { useAuth } from "../../hooks/useAuth";
+import { LogIn } from "lucide-react";
 
 const Header = () => {
   // Get the current location
   const location = useLocation();
-  
+
+  // Get the navigate function from the useNavigate hook
+  const navigate = useNavigate();
+
+  // Get the isAuthenticated state and logout function from the useAuth hook
+  const { isAuthenticated, logout } = useAuth();
+
+  // Handle the authentication action
+  const handleAuthAction = () => {
+    if (isAuthenticated) {
+      logout();
+    } else {
+      navigate("/auth/login");
+    }
+  };
+
   // Check if the current page is an authentication page
   const isAuthPage = location.pathname.startsWith("/auth") ? true : false;
-  
+
   return (
     <>
       {/* Header */}
@@ -52,29 +69,17 @@ const Header = () => {
             <span className="sr-only">Ana Sayfa</span>
           </Button>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white ml-2 bg-red-600 rounded"
+          {/* Auth Button */}
+          <button
+            className={`p-2 text-white rounded-md ${
+              isAuthenticated
+                ? "bg-red-600 hover:bg-red-700"
+                : "bg-green-600 hover:bg-green-700"
+            }`}
+            onClick={handleAuthAction}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-6 w-6"
-            >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" x2="9" y1="12" y2="12" />
-            </svg>
-            <span className="sr-only">Çıkış</span>
-          </Button>
+            <LogIn size={24} />
+          </button>
         </div>
       </header>
 

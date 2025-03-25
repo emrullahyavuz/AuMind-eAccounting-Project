@@ -1,17 +1,2 @@
-/* Sidebar */
-.sidebar-item-active {
-    position: relative;
-  }
-  
-  .sidebar-item-active::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 24px;
-    background-color: #ffcc00;
-  }
-  
-  
+/* Sidebar Styles */
+
