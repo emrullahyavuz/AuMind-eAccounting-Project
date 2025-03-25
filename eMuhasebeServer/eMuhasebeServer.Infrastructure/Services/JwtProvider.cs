@@ -25,7 +25,8 @@ namespace eMuhasebeServer.Infrastructure.Services
                 new Claim("Email", user.Email ?? string.Empty),
                 new Claim("UserName", user.UserName ?? string.Empty),
                 new Claim("CompanyId", companyId.ToString() ?? string.Empty),
-                new Claim("Companies", JsonSerializer.Serialize(companies))
+                new Claim("Companies", JsonSerializer.Serialize(companies)),
+                new Claim("IsAdmin", user.IsAdmin.ToString())
             };
 
             DateTime expires = DateTime.UtcNow.AddMonths(1);

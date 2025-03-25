@@ -1,7 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\entities\\appuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|solutionrelative:emuhasebeserver.domain\\entities\\appuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 1,
@@ -9,7 +14,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 267,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -30,6 +35,19 @@
             {
               "$type": "Bookmark",
               "Name": "ST:132:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AppUser.cs",
+              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\AppUser.cs",
+              "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\AppUser.cs",
+              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\AppUser.cs*",
+              "RelativeToolTip": "eMuhasebeServer.Domain\\Entities\\AppUser.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-25T19:16:57.904Z",
+              "EditorCaption": ""
             }
           ]
         }
