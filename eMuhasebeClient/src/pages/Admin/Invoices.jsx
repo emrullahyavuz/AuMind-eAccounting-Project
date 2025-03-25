@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import DataTable from "../../components/Admin/data-table"
+import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay"
 
 function InvoicesPage() {
   const [invoices, setInvoices] = useState([])
@@ -90,7 +91,7 @@ function InvoicesPage() {
   const currentInvoices = filteredInvoices.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   if (isLoading) {
-    return <div className="p-6">Yükleniyor...</div>
+    return <div className="p-6"><LoadingOverlay /></div>
   }
 
   return (

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import DataTable from "../../components/Admin/data-table"
+import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay"
 
 function UsersPage() {
   const [users, setUsers] = useState([])
@@ -82,7 +83,7 @@ function UsersPage() {
   const currentUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   if (isLoading) {
-    return <div className="p-6">Yükleniyor...</div>
+    return <div className="p-6"><LoadingOverlay /></div>
   }
 
   return (

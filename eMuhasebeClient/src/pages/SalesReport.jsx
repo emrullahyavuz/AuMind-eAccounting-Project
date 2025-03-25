@@ -1,12 +1,23 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Download } from "lucide-react"
 import DownloadModal from "../components/Reports/DownloadModal"
 import DownloadMessage from "../components/Reports/DownloadMessage"
+import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay"
 
 function SalesReport() {
   const [reportType, setReportType] = useState("daily")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isMessageVisible, setIsMessageVisible] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+
+  // Örnek veri yükleme - daha sonra gerçek uygulamada API'den gelecek
+  useEffect(() => {
+    // API çağrısı simülasyonu
+    setTimeout(() => {
+      setIsLoading(false)
+    }, 1000)
+  }, [])
 
   // Grafik için tarih etiketleri
   const dateLabels = [
@@ -44,6 +55,10 @@ function SalesReport() {
 
   const handleCloseMessage = () => {
     setIsMessageVisible(false)
+  }
+
+  if(isLoading) {
+    return <div className="p-6"><LoadingOverlay /></div>
   }
 
   return (

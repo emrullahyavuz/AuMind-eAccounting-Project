@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import DataTable from "../../components/Admin/data-table"
 import { RefreshCw } from "lucide-react"
+import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay"
 
 function Companies() {
   const [companies, setCompanies] = useState([])
@@ -68,32 +69,32 @@ function Companies() {
   // Şirket ekleme işlemi
   const handleAddCompany = () => {
     console.log("Şirket ekleme modalı açılacak")
-    // Burada modal açma işlemi yapılabilir
+    // Burada ekleme modalı açılacak
   }
 
   // Database güncelleme işlemi
   const handleUpdateDatabase = () => {
     console.log("Database güncelleniyor...")
-    // Burada güncelleme işlemi yapılabilir
+    // Burada database güncelleme işlemi yapılacak
   }
 
   // Şirket düzenleme işlemi
   const handleEditCompany = (company) => {
     console.log("Düzenlenecek şirket:", company)
-    // Burada düzenleme modalı açma işlemi yapılabilir
+    // Burada düzenleme modalı açılacak
   }
 
   // Şirket silme işlemi
   const handleDeleteCompany = (companyId) => {
     console.log("Silinecek şirket ID:", companyId)
-    // Burada silme onayı ve silme işlemi yapılabilir
+    // Burada silme işlemi modalı açılacak
   }
 
   // Geçerli sayfadaki şirketleri hesapla
   const currentCompanies = filteredCompanies.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   if (isLoading) {
-    return <div className="p-6">Yükleniyor...</div>
+    return <div className="p-6"><LoadingOverlay /></div>
   }
 
   // Özel butonlar
@@ -111,7 +112,7 @@ function Companies() {
     <DataTable
       title="Şirketler"
       addButtonText="Şirket Ekle"
-      addButtonColor="yellow" // Sarı renk için özel prop
+      addButtonColor="yellow" // Özel buton rengi
       columns={columns}
       data={currentCompanies}
       searchPlaceholder="Şirket Adı Giriniz..."
@@ -124,8 +125,8 @@ function Companies() {
       totalItems={filteredCompanies.length}
       onPageChange={handlePageChange}
       customButtons={customButtons}
-      headerColor="gray-800" // Koyu gri başlık için özel prop
-      headerTextColor="white" // Sarı başlık metni için özel prop
+      headerColor="gray-800" // Başlık için özel prop
+      headerTextColor="white" // Başlık metni için özel prop
     />
   )
 }
