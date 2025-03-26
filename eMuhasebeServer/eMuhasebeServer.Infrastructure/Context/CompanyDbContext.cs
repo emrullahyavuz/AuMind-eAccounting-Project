@@ -28,6 +28,7 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
     }
 
     public DbSet<CashRegister> CashRegisters { get; set; }
+    public DbSet<CashRegisterDetail> CashRegisterDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,6 +37,11 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
         modelBuilder.Entity<CashRegister>().Property(p => p.BalanceAmount).HasColumnType("money");
         modelBuilder.Entity<CashRegister>().Property(p => p.CurrencyType).HasConversion(type => type.Value, value => CurrencyTypeEnum.FromValue(value));
         modelBuilder.Entity<CashRegister>().HasQueryFilter(filter => !filter.IsDeleted);
+        modelBuilder.Entity<CashRegister>().HasMany(p => p.CashRegisterDetails).WithOne().HasForeignKey(p => p.CashRegisterDetailId);
+
+        modelBuilder.Entity<CashRegisterDetail>().Property(p => p.DepositAmount).HasColumnType("money");
+        modelBuilder.Entity<CashRegisterDetail>().Property(p => p.WithdrawalAmount).HasColumnType("money");
+        modelBuilder.Entity<CashRegisterDetail>().HasQueryFilter(filter => !filter.IsDeleted);
     }
 
     private void CreateConnectionString(IHttpContextAccessor httpContextAccessor, ApplicationDbContext context)

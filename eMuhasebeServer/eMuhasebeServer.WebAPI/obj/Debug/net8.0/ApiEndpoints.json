@@ -64,6 +64,70 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CashRegistersController",
+    "Method": "Create",
+    "RelativePath": "api/CashRegisters/Create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.CashRegisters.CreateCashRegister.CreateCashRegistersCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CashRegistersController",
+    "Method": "DeleteById",
+    "RelativePath": "api/CashRegisters/DeleteById",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.CashRegisters.DeleteCashRegisterById.DeleteCashRegistersByIdCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CashRegistersController",
+    "Method": "GetAll",
+    "RelativePath": "api/CashRegisters/GetAll",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.CashRegisters.GetAllCashRegisters.GetAllCashRegistersQuery",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CashRegistersController",
+    "Method": "Update",
+    "RelativePath": "api/CashRegisters/Update",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.CashRegisters.UpdateCashRegister.UpdateCashRegistersCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CompaniesController",
     "Method": "Create",
     "RelativePath": "api/Companies/Create",
