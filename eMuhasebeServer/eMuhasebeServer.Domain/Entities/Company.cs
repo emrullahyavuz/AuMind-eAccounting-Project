@@ -1,6 +1,5 @@
 ﻿using eMuhasebeServer.Domain.Abstractions;
 using eMuhasebeServer.Domain.ValueObjects;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace eMuhasebeServer.Domain.Entities;
 

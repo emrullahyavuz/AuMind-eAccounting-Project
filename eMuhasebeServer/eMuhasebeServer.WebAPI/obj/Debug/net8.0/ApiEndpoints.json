@@ -128,6 +128,70 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CashRegistersDetailsController",
+    "Method": "Create",
+    "RelativePath": "api/CashRegistersDetails/Create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.CashRegisterDetails.CreateCashRegisterDetail.CreateCashRegisterDetailCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CashRegistersDetailsController",
+    "Method": "DeleteById",
+    "RelativePath": "api/CashRegistersDetails/DeleteById",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.CashRegisterDetails.DeleteCashRegisterDetailById.DeleteCashRegisterDetailByIdCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CashRegistersDetailsController",
+    "Method": "GetAll",
+    "RelativePath": "api/CashRegistersDetails/GetAll",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.CashRegisters.GetAllCashRegisters.GetAllCashRegistersQuery",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CashRegistersDetailsController",
+    "Method": "Update",
+    "RelativePath": "api/CashRegistersDetails/Update",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.CashRegisterDetails.UpdateCashRegisterDetail.UpdateCashRegisterDetailCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CompaniesController",
     "Method": "Create",
     "RelativePath": "api/Companies/Create",
