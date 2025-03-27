@@ -52,6 +52,7 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
         modelBuilder.Entity<Bank>().Property(p => p.DepositAmount).HasColumnType("money");
         modelBuilder.Entity<Bank>().Property(p => p.WithdrawalAmount).HasColumnType("money");
         modelBuilder.Entity<Bank>().Property(p => p.CurrencyType).HasConversion(type => type.Value, value => CurrencyTypeEnum.FromValue(value));
+        modelBuilder.Entity<Bank>().HasQueryFilter(filter => !filter.IsDeleted);
         #endregion
 
     }
