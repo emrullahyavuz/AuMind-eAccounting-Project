@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../UI/Button";
 import { useAuth } from "../../hooks/useAuth";
 import { LogIn } from "lucide-react";
@@ -28,8 +28,8 @@ const Header = () => {
   return (
     <>
       {/* Header */}
-      <header className="bg-gray-800 text-white p-2 flex justify-between items-center">
-        <div className="flex items-center border-l-[3px] ml-[-2px] border-yellow-400">
+      <header className="bg-gray-800 text-white p-2 px-4 flex justify-between items-center">
+        <div className="flex items-center border-l-[3px] ml-[-10px] border-yellow-400">
           <div className="ml-4 bg-white text-black rounded px-3 py-2 flex items-center">
             <span className="mr-2">Kardeşler Taşımacılık A.Ş</span>
             <svg
@@ -49,25 +49,32 @@ const Header = () => {
           </div>
         </div>
 
-        <div className="flex items-center">
-          <Button variant="ghost" size="icon" className="text-white">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-6 w-6"
+        <div className="flex items-center gap-x-3">
+         {/* Home Button */}
+         <Link to="/">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:text-yellow-400"
             >
-              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
-            <span className="sr-only">Ana Sayfa</span>
-          </Button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-6 w-6"
+              >
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+              <span className="sr-only">Ana Sayfa</span>
+            </Button>
+          </Link>
 
           {/* Auth Button */}
           <button
@@ -91,7 +98,7 @@ const Header = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full border border-gray-300"
+            className="rounded-full border bg-yellow-400 border-yellow-300"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

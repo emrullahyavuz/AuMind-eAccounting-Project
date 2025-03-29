@@ -8,8 +8,9 @@ import RegisterForm from "./components/Auth/RegisterForm";
 import Header from "./components/Header/Header";
 import UsersPage from "./pages/Admin/Users";
 import InvoicesPage from "./pages/Admin/Invoices";
-import SalesReport from "./pages/SalesReport";
-import Companies from "./pages/Admin/Companies";
+import SalesReportPage from "./pages/SalesReport";
+import CompaniesPage from "./pages/Admin/Companies";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -33,14 +34,16 @@ function App() {
           <Sidebar toggleSidebar={toggleSidebar} />
           <main className="">
             <Routes>
-              <Route path="/cari-hareketleri" element={<CariHareketleri />} />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/auth/login" element={<LoginForm />} />
               <Route path="/auth/register" element={<RegisterForm />} />
-              <Route path="/" element={<Navigate to="/auth/login" replace />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/admin/companies" element={<CompaniesPage />} />
               <Route path="/admin/users" element={<UsersPage />} />
-              <Route path="/admin/companies" element={<Companies />} />
+              <Route path="/reports" element={<SalesReportPage />} />
+              <Route path="/cari-hareketleri" element={<CariHareketleri />} />
               <Route path="/invoices" element={<InvoicesPage />} />
-              <Route path="/reports" element={<SalesReport />} />
+              <Route path="*" element={<Navigate to="/auth/login" replace />} />
             </Routes>
           </main>
         </div>

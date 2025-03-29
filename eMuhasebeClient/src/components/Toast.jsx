@@ -10,6 +10,7 @@ function Toast({ message, type = "info", onClose }) {
       setTimeout(onClose, 300) // Animasyon tamamlandıktan sonra kaldır
     }, 3000)
 
+    // cleanup function for useEffect
     return () => clearTimeout(timer)
   }, [onClose])
 

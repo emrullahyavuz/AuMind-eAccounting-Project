@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
       showToast("Başarıyla giriş yapıldı", "success");
 
       // Ana sayfaya yönlendir
-      navigate("/admin/users", { replace: true });
+      navigate("/", { replace: true });
     } catch (error) {
       showToast("Giriş yapılırken bir hata oluştu", "error");
       console.error("Login error:", error);
