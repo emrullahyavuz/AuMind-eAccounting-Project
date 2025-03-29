@@ -3,20 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6BF67750-EA33-4B81-8A20-00D001DEE2FA}|eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.infrastructure\\repositories\\cashregisterrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6BF67750-EA33-4B81-8A20-00D001DEE2FA}|eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj|solutionrelative:emuhasebeserver.infrastructure\\repositories\\cashregisterrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6BF67750-EA33-4B81-8A20-00D001DEE2FA}|eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.infrastructure\\repositories\\bankrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6BF67750-EA33-4B81-8A20-00D001DEE2FA}|eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj|solutionrelative:emuhasebeserver.infrastructure\\repositories\\bankrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6BF67750-EA33-4B81-8A20-00D001DEE2FA}|eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.infrastructure\\context\\companydbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6BF67750-EA33-4B81-8A20-00D001DEE2FA}|eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj|solutionrelative:emuhasebeserver.infrastructure\\context\\companydbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\enum\\currencytypeenum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|solutionrelative:emuhasebeserver.domain\\enum\\currencytypeenum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\repositories\\ibankrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|solutionrelative:emuhasebeserver.domain\\repositories\\ibankrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\repositories\\icashregisterrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|solutionrelative:emuhasebeserver.domain\\repositories\\icashregisterrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\entities\\bank.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|solutionrelative:emuhasebeserver.domain\\entities\\bank.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\entities\\cashregister.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -55,14 +55,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "CashRegisterRepository.cs",
-              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Repositories\\CashRegisterRepository.cs",
-              "RelativeDocumentMoniker": "eMuhasebeServer.Infrastructure\\Repositories\\CashRegisterRepository.cs",
-              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Repositories\\CashRegisterRepository.cs*",
-              "RelativeToolTip": "eMuhasebeServer.Infrastructure\\Repositories\\CashRegisterRepository.cs*",
+              "Title": "BankRepository.cs",
+              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Repositories\\BankRepository.cs",
+              "RelativeDocumentMoniker": "eMuhasebeServer.Infrastructure\\Repositories\\BankRepository.cs",
+              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Repositories\\BankRepository.cs",
+              "RelativeToolTip": "eMuhasebeServer.Infrastructure\\Repositories\\BankRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T20:36:33.7Z",
+              "WhenOpened": "2025-03-27T20:42:29.902Z",
               "EditorCaption": ""
             },
             {
@@ -73,35 +73,22 @@
               "RelativeDocumentMoniker": "eMuhasebeServer.Infrastructure\\Context\\CompanyDbContext.cs",
               "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Context\\CompanyDbContext.cs",
               "RelativeToolTip": "eMuhasebeServer.Infrastructure\\Context\\CompanyDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAACYAAAAAAAAAA==",
+              "ViewState": "AgIAAA0AAAAAAAAAAAA1wDYAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T20:24:46.065Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ICashRegisterRepository.cs",
-              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Repositories\\ICashRegisterRepository.cs",
-              "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Repositories\\ICashRegisterRepository.cs",
-              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Repositories\\ICashRegisterRepository.cs*",
-              "RelativeToolTip": "eMuhasebeServer.Domain\\Repositories\\ICashRegisterRepository.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T20:24:10.216Z",
+              "WhenOpened": "2025-03-27T20:36:39.915Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "CurrencyTypeEnum.cs",
-              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Enum\\CurrencyTypeEnum.cs",
-              "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Enum\\CurrencyTypeEnum.cs",
-              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Enum\\CurrencyTypeEnum.cs",
-              "RelativeToolTip": "eMuhasebeServer.Domain\\Enum\\CurrencyTypeEnum.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAQAAAAUAAAAAAAAAA==",
+              "Title": "IBankRepository.cs",
+              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Repositories\\IBankRepository.cs",
+              "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Repositories\\IBankRepository.cs",
+              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Repositories\\IBankRepository.cs",
+              "RelativeToolTip": "eMuhasebeServer.Domain\\Repositories\\IBankRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T20:17:08.282Z",
+              "WhenOpened": "2025-03-27T20:35:51.598Z",
               "EditorCaption": ""
             },
             {
@@ -112,9 +99,22 @@
               "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\CashRegister.cs",
               "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\CashRegister.cs",
               "RelativeToolTip": "eMuhasebeServer.Domain\\Entities\\CashRegister.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAA2AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T20:15:38.204Z",
+              "WhenOpened": "2025-03-27T20:35:17.259Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Bank.cs",
+              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\Bank.cs",
+              "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\Bank.cs",
+              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\Bank.cs",
+              "RelativeToolTip": "eMuhasebeServer.Domain\\Entities\\Bank.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-27T20:32:19.192Z",
               "EditorCaption": ""
             }
           ]
