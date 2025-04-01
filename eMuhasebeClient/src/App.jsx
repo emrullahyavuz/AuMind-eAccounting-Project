@@ -11,6 +11,7 @@ import InvoicesPage from "./pages/Admin/Invoices";
 import SalesReportPage from "./pages/SalesReport";
 import CompaniesPage from "./pages/Admin/Companies";
 import Dashboard from "./pages/Dashboard";
+import Cariler from "./pages/Cariler";
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -41,6 +42,7 @@ function App() {
               <Route path="/admin/companies" element={<CompaniesPage />} />
               <Route path="/admin/users" element={<UsersPage />} />
               <Route path="/reports" element={<SalesReportPage />} />
+              <Route path="/cariler" element={<Cariler />} />
               <Route path="/cari-hareketleri" element={<CariHareketleri />} />
               <Route path="/invoices" element={<InvoicesPage />} />
               <Route path="*" element={<Navigate to="/auth/login" replace />} />

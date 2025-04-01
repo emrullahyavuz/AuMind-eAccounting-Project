@@ -93,21 +93,22 @@ function Companies() {
   // Geçerli sayfadaki şirketleri hesapla
   const currentCompanies = filteredCompanies.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
-  if (isLoading) {
-    return <div className="p-6"><LoadingOverlay /></div>
-  }
-
+  
   // Özel butonlar
   const customButtons = (
     <button
-      onClick={handleUpdateDatabase}
-      className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-2 px-4 rounded-md flex items-center mr-4"
+    onClick={handleUpdateDatabase}
+    className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-2 px-4 rounded-md flex items-center mr-4"
     >
       <RefreshCw size={18} className="mr-2" />
       Database Güncelle
     </button>
   )
-
+  
+  if (isLoading) {
+    return <div className="p-6"><LoadingOverlay /></div>
+  }
+  
   return (
     <DataTable
       title="Şirketler"

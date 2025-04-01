@@ -24,7 +24,7 @@ function Sidebar({ toggleSidebar }) {
     if (path.includes("/admin/companies")) return "companies";
     if (path.includes("/reports")) return "reports";
     if (path.includes("/banks")) return "banks";
-    if (path.includes("/cari-hareketleri")) return "cariler";
+    if (path.includes("/cariler")) return "cariler";
     if (path.includes("/products")) return "products";
     if (path.includes("/invoices")) return "invoices";
     if (path.includes("/profitability")) return "profitability";
@@ -120,7 +120,7 @@ function Sidebar({ toggleSidebar }) {
               collapsed={collapsed}
             />
             <SidebarItem
-              to="/cari-hareketleri"
+              to="/cariler"
               icon={<FaAddressBook size={collapsed ? 24 : 20} />}
               text="Cariler"
               active={activeItem === "cariler"}

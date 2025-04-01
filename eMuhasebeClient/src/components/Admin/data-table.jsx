@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import PropTypes from "prop-types";
 
-// Genel tablo bileşeni - hem kullanıcılar hem de faturalar için kullanılabilir
+// Genel tablo componenti
 function DataTable({
   title,
   addButtonText,
@@ -26,8 +26,9 @@ function DataTable({
   totalItems = 0,
   onPageChange,
   customButtons = null, // Özel butonlar için prop
-  headerColor = "gray-700", // Tablo başlığı arka plan rengi
-  headerTextColor = "white", // Tablo başlığı metin rengi
+  detailButton = null, // Detay butonu için prop
+  headerColor = "gray-700", 
+  headerTextColor = "white", 
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
@@ -145,8 +146,10 @@ function DataTable({
                         key={colIndex}
                         className={`p-3 ${column.className || ""}`}
                       >
-                        {item[column.accessor]}
+                        {item[column.accessor] || (item[column.accessor] === "" && detailButton)}
+                       
                       </td>
+                      
                     ))}
 
                     <td className="p-3 text-center">
@@ -241,6 +244,7 @@ DataTable.propTypes = {
   totalItems: PropTypes.number,
   onPageChange: PropTypes.func,
   customButtons: PropTypes.node,
+  detailButton: PropTypes.node,
   headerColor: PropTypes.string,
   headerTextColor: PropTypes.string,
 };
