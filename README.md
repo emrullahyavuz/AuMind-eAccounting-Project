@@ -1,5 +1,5 @@
 # eAccounting Project
- Beykent Üniversitesi Bitirme Projesi
+ İstanbul Beykent University Software Engineering Graduation Project
 
 
 This project is an AI-Integrated Full Stack E-Accounting Application developed as an alternative to existing accounting software in the industry. It is designed to help businesses manage their financial processes more efficiently using modern technologies.
