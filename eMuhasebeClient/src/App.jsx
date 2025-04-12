@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Sidebar from "./components/Sidebar/Sidebar";
 import "./App.css";
-import CariHareketleri from "./components/cari-hareketleri";
+import CariHareketleri from "./pages/CariHareketleri";
 import LoginForm from "./components/Auth/LoginForm";
 import { Routes, Route, Navigate } from "react-router-dom";
 import RegisterForm from "./components/Auth/RegisterForm";
