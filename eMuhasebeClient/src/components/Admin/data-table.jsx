@@ -29,6 +29,7 @@ function DataTable({
   detailButton = null, // Detay butonu için prop
   headerColor = "gray-700", 
   headerTextColor = "white", 
+  isCari=false, // Cari hesaplar için özel stil
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
@@ -72,13 +73,17 @@ function DataTable({
       {/* Üst Araç Çubuğu */}
       <div className="flex flex-wrap justify-between items-center mb-6">
         <div className="flex items-center mb-4 sm:mb-0">
-          <button
-            onClick={onAdd}
-            className={`${buttonColorClass} font-medium py-2 px-4 rounded-md flex items-center`}
-          >
-            <Plus size={18} className="mr-1" />
-            {addButtonText}
-          </button>
+          {
+            isCari ? "" : (
+              <button
+                onClick={onAdd}
+                className={`flex items-center font-semibold px-4 py-2 rounded-md ${buttonColorClass}`}
+              >
+                <Plus size={18} className="mr-2" />
+                {addButtonText}
+              </button>
+            )
+          }
 
           {/* Özel butonlar varsa göster */}
           <div className="custom-button ml-5">{customButtons}</div>
@@ -104,9 +109,15 @@ function DataTable({
           {/* Tablo Başlığı */}
           <thead>
             <tr className={`bg-${headerColor} text-${headerTextColor}`}>
-              <th className="w-12 p-3 text-left">
+             {
+              isCari ? (
+                ""
+              ) : (
+                <th className="w-12 p-3 text-left">
                 <Edit size={18} />
               </th>
+              )
+             }
               {columns.map((column, index) => (
                 <th
                   key={index}
@@ -116,10 +127,14 @@ function DataTable({
                 </th>
               ))}
               <th className="w-12 p-3 text-center">
-                <Trash2
+                {
+                  isCari ? "" : (
+                    <Trash2
                   size={22}
                   className="text-red-500 mx-auto cursor-pointer"
                 />
+                  )
+                }
               </th>
             </tr>
           </thead>
@@ -132,7 +147,9 @@ function DataTable({
                     key={item.id || rowIndex}
                     className="border-b border-gray-300 hover:bg-gray-200"
                   >
-                    <td className="p-3">
+                   {
+                    isCari ? "" : (
+                      <td className="p-3">
                       <button
                         onClick={() => onEdit(item)}
                         className="text-blue-500 hover:text-blue-700 bg-blue-100 p-1 rounded"
@@ -140,6 +157,8 @@ function DataTable({
                         <Edit size={18} />
                       </button>
                     </td>
+                    )
+                   }
 
                     {columns.map((column, colIndex) => (
                       <td
@@ -152,7 +171,9 @@ function DataTable({
                       
                     ))}
 
-                    <td className="p-3 text-center">
+                    {
+                      isCari ? "" : (
+                        <td className="p-3 text-center">
                       <div className="flex justify-center">
                         <input
                           type="checkbox"
@@ -162,6 +183,8 @@ function DataTable({
                         />
                       </div>
                     </td>
+                      )
+                    }
                   </tr>
                 ))
               : // Veri yoksa boş satırlar göster
