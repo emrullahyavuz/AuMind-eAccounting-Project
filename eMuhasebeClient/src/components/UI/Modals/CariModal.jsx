@@ -1,16 +1,17 @@
 import { useState } from "react"
-import { X } from "lucide-react"
+import { X, ChevronDown } from "lucide-react"
 
-function CompanyAddModal({ isOpen, onClose, onAddCompany }) {
+function CariModal({ isOpen, onClose, onAddCari }) {
   const [formData, setFormData] = useState({
-    companyName: "",
+    cariName: "",
+    type: "",
+    province: "",
     address: "",
     taxOffice: "",
     taxNumber: "",
-    server: "",
-    databaseName: "",
-    adminName: "",
-    password: "",
+    input: "",
+    output: "",
+    balance: "",
   })
 
   const handleChange = (e) => {
@@ -23,7 +24,7 @@ function CompanyAddModal({ isOpen, onClose, onAddCompany }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    onAddCompany(formData)
+    onAddCari(formData)
     onClose()
   }
 
@@ -36,20 +37,51 @@ function CompanyAddModal({ isOpen, onClose, onAddCompany }) {
           <X size={20} />
         </button>
 
-        <h2 className="text-center text-xl font-medium mb-4">Şirket Ekleme</h2>
+        <h2 className="text-center text-xl font-medium mb-4">Cari Ekleme</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
             <div className="mb-4">
-              <label className="block text-gray-700 mb-1">Şirket Adı</label>
+              <label className="block text-gray-700 mb-1">Cari Adı</label>
               <input
                 type="text"
-                name="companyName"
-                value={formData.companyName}
+                name="cariName"
+                value={formData.cariName}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
                 required
               />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-1">Tipi</label>
+              <input
+                type="text"
+                name="type"
+                value={formData.type}
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-md p-2 bg-white"
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 mb-1">İl/İlçe</label>
+              <div className="relative">
+                <select
+                  name="province"
+                  value={formData.province}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 rounded-md p-2 bg-white appearance-none pr-10"
+                  required
+                >
+                  <option value="">Seçiniz...</option>
+                  <option value="istanbul">İstanbul</option>
+                  <option value="ankara">Ankara</option>
+                  <option value="izmir">İzmir</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
+              </div>
             </div>
 
             <div className="mb-4">
@@ -89,50 +121,35 @@ function CompanyAddModal({ isOpen, onClose, onAddCompany }) {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 mb-1">Server</label>
+              <label className="block text-gray-700 mb-1">Giriş</label>
               <input
-                type="text"
-                name="server"
-                value={formData.server}
+                type="number"
+                name="input"
+                value={formData.input}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
-                required
               />
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 mb-1">Database Adı</label>
+              <label className="block text-gray-700 mb-1">Çıkış</label>
               <input
-                type="text"
-                name="databaseName"
-                value={formData.databaseName}
+                type="number"
+                name="output"
+                value={formData.output}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
-                required
               />
             </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-1">Yönetici Adı</label>
+            <div className="mb-4 col-span-2">
+              <label className="block text-gray-700 mb-1">Bakiye</label>
               <input
-                type="text"
-                name="adminName"
-                value={formData.adminName}
+                type="number"
+                name="balance"
+                value={formData.balance}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-1">Şifre</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md p-2 bg-white"
-                required
               />
             </div>
           </div>
@@ -142,7 +159,7 @@ function CompanyAddModal({ isOpen, onClose, onAddCompany }) {
               type="submit"
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md"
             >
-              Şirket Ekle
+              Cari Ekle
             </button>
           </div>
         </form>
@@ -151,4 +168,4 @@ function CompanyAddModal({ isOpen, onClose, onAddCompany }) {
   )
 }
 
-export default CompanyAddModal
+export default CariModal

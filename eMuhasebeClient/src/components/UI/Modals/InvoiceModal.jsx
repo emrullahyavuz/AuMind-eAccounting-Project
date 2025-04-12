@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { X, Calendar, ChevronDown, Plus } from "lucide-react"
 
-function InvoiceAddModal({ isOpen, onClose, onAddInvoice }) {
+function InvoiceModal({ isOpen, onClose, onAddInvoice }) {
   const [formData, setFormData] = useState({
     invoiceType: "",
     date: "",
@@ -255,4 +255,4 @@ function InvoiceAddModal({ isOpen, onClose, onAddInvoice }) {
   )
 }
 
-export default InvoiceAddModal
+export default InvoiceModal

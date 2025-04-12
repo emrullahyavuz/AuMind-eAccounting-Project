@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { X } from "lucide-react"
 
-function UserAddModal({ isOpen, onClose, onAddUser }) {
+function UserModal({ isOpen, onClose, onAddUser }) {
   const [formData, setFormData] = useState({
     username: "",
     surname: "",
@@ -119,4 +119,4 @@ function UserAddModal({ isOpen, onClose, onAddUser }) {
   )
 }
 
-export default UserAddModal
+export default UserModal
