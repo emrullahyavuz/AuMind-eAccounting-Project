@@ -25,6 +25,9 @@ const Header = () => {
   // Check if the current page is an authentication page
   const isAuthPage = location.pathname.startsWith("/auth") ? true : false;
 
+  // Check if the current page is a bot page
+  const isBotPage = location.pathname.startsWith("/chat") ? true : false;
+
   return (
     <>
       {/* Header */}
@@ -91,7 +94,7 @@ const Header = () => {
       </header>
 
       {/* Back Button */}
-      {isAuthPage ? (
+      {isAuthPage || isBotPage ? (
         ""
       ) : (
         <div className="p-4 flex justify-end bg-gray-100">

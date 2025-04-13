@@ -11,12 +11,14 @@ import {
   FaUser,
 } from "react-icons/fa";
 import SidebarItem from "./SidebarItem";
-import { X } from "lucide-react";
+import { Bot, MessageSquare, X } from "lucide-react";
 import PropTypes from "prop-types";
+import { useAccountingBot } from "../../hooks/useAccountingBot";
 
 function Sidebar({ toggleSidebar }) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { isBotEnabled, toggleBot } = useAccountingBot()
 
   // Aktif olan sayfayı belirlemek için path'e göre bir fonksiyon
   const getActiveItem = (path) => {
@@ -28,6 +30,8 @@ function Sidebar({ toggleSidebar }) {
     if (path.includes("/products")) return "products";
     if (path.includes("/invoices")) return "invoices";
     if (path.includes("/profitability")) return "profitability";
+    if (path.includes("/settings/bot")) return "bot-settings"
+    if (path.includes("/chat")) return "chat"
     return "";
   };
 
@@ -65,7 +69,7 @@ function Sidebar({ toggleSidebar }) {
       </div>
 
       {/* Sidebar Content */}
-      <div className="overflow-y-auto h-[calc(100vh-64px)]">
+      <div className="overflow-y-auto overflow-hidden h-[100vh-64px)]">
         {/* Admin Section */}
         <div className="py-4">
           {!collapsed && (
@@ -95,7 +99,7 @@ function Sidebar({ toggleSidebar }) {
         </div>
 
         {/* Records Section */}
-        <div className="py-4">
+        <div className="py-2">
           {!collapsed && (
             <h2 className="text-yellow-400 font-medium px-4 mb-2">Kayıtlar</h2>
           )}
@@ -144,7 +148,7 @@ function Sidebar({ toggleSidebar }) {
         </div>
 
         {/* Reports Section */}
-        <div className="py-4">
+        <div className="py-2">
           {!collapsed && (
             <h2 className="text-yellow-400 font-medium px-4 mb-2">Raporlar</h2>
           )}
@@ -163,6 +167,49 @@ function Sidebar({ toggleSidebar }) {
             />
           </nav>
         </div>
+
+        {/* Chat Section */}
+        <div className="py-2">
+        {!collapsed && (
+            <h2 className="text-yellow-400 font-medium px-4 mb-2">Asistan</h2>
+          )}
+          {collapsed && (
+            <h2 className="text-yellow-400 font-medium text-center text-sm mb-2">
+              Asistan
+            </h2>
+          )}
+            <nav>
+              <SidebarItem
+                to="/chat"
+                icon={<MessageSquare size={collapsed ? 24 : 20} />}
+                text="Muhasebe Asistanı"
+                active={activeItem === "chat"}
+                collapsed={collapsed}
+              />
+              <SidebarItem
+                to="/settings/bot"
+                icon={<Bot size={collapsed ? 24 : 20} />}
+                text="Asistan Ayarları"
+                active={activeItem === "bot-settings"}
+                collapsed={collapsed}
+              />
+              <SidebarItem
+              to="#"
+              icon={
+                <Bot
+                  size={collapsed ? 24 : 20}
+                  className={isBotEnabled ? "text-cyan-500" : "text-gray-500"}
+                />
+              }
+              text="Asistan Durumu"
+              active={false}
+              collapsed={collapsed}
+              isBotEnabled={isBotEnabled}
+              toggleBot={toggleBot}
+              isToggle
+            />
+            </nav>
+          </div>
       </div>
     </div>
   );
