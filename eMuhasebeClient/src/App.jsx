@@ -12,6 +12,8 @@ import SalesReportPage from "./pages/SalesReport";
 import CompaniesPage from "./pages/Admin/Companies";
 import Dashboard from "./pages/Dashboard";
 import Cariler from "./pages/Cariler";
+import BotSettingsPage from "./pages/settings/bot-settings";
+import ChatPage from "./pages/Chat";
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -45,6 +47,8 @@ function App() {
               <Route path="/cariler" element={<Cariler />} />
               <Route path="/cari-hareketleri" element={<CariHareketleri />} />
               <Route path="/invoices" element={<InvoicesPage />} />
+              <Route path="/settings/bot" element={<BotSettingsPage />} />
+              <Route path="/chat" element={<ChatPage />} />
               <Route path="*" element={<Navigate to="/auth/login" replace />} />
             </Routes>
           </main>
