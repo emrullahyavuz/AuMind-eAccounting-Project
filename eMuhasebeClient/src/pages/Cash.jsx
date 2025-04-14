@@ -3,28 +3,24 @@ import DataTable from "../components/Admin/data-table";
 import { Info } from "lucide-react";
 import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay";
 
-const Cariler = () => {
+const Cash = () => {
   const [currents, setCurrents] = useState([]);
   const [filteredCurrents, setFilteredCurrents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Sayfa başına gösterilecek cari hesap sayısı
+  // Sayfa başına gösterilecek kasa sayısı
   const itemsPerPage = 50;
 
-  // Cariler tablosu sütun tanımları
+  // Kasalar tablosu sütun tanımları
   const columns = [
     {
       header: "# Numara",
       accessor: "id",
       className: "w-24 font-bold text-yellow-500",
     },
-    { header: "Cari Adı", accessor: "name" },
-    { header: "Tipi", accessor: "type" },
-    { header: "İl/İlçe", accessor: "city" },
-    { header: "Adres", accessor: "address" },
-    { header: "Vergi Dairesi", accessor: "taxOffice" },
-    { header: "Vergi Numarası", accessor: "taxNumber" },
+    { header: "Kasa Adı", accessor: "name" },
+    { header: "Döviz Tipi", accessor: "type" },
     { header: "Giriş", accessor: "inflow" },
     { header: "Çıkış", accessor: "checkout" },
     { header: "Bakiye", accessor: "balance" },
@@ -65,10 +61,10 @@ const Cariler = () => {
     }
   };
 
-  // Cari sayfasına özel Detay Gör butonu
+  // Kasalar sayfasına özel Detay Gör butonu
   const detailButton = (
     <button
-      //   onClick={handleUpdateDatabase}
+      onClick={() => console.log("Detay Gör butonuna tıklandı")}
       className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-2 px-4 rounded-md flex items-center mr-4"
     >
       <Info size={18} className="mr-2" />
@@ -76,35 +72,35 @@ const Cariler = () => {
     </button>
   );
 
-  // Cari hesap ekleme işlemi
-  const handleAddCari = (newCompany) => {
-    // Yeni cari ekleme işlemi burada yapılacak
-    console.log("Yeni cari eklendi:");
+  // Kasa ekleme işlemi
+  const handleAddCash = (newCompany) => {
+    // Yeni kasa ekleme işlemi burada yapılacak
+    console.log("Yeni kasa eklendi:");
   };
 
-  // Cari hesap düzenleme işlemi
-  const handleEditCari = (updatedCompany) => {
-    // Cari düzenleme işlemi burada yapılacak
+  // Kasa düzenleme işlemi
+  const handleEditCash = (updatedCompany) => {
+    // Kasa düzenleme işlemi burada yapılacak
     console.log("Düzenlenecek şirket:", updatedCompany);
   };
 
-  // Cari hesap silme işlemi
-  const handleDeleteCari = (id) => {
-    // Cari silme işlemi burada yapılacak
+  // Kasa silme işlemi
+  const handleDeleteCash = (id) => {
+    // Kasa silme işlemi burada yapılacak
   };
 
-  // Cari hesap arama işlemi
+  // Kasa arama işlemi
   const handleSearch = (searchTerm) => {
     setFilteredCurrents(
-      currents.filter((cari) =>
-        cari.name.toLowerCase().trim().includes(searchTerm.toLowerCase().trim())
+      currents.filter((cash) =>
+        cash.name.toLowerCase().trim().includes(searchTerm.toLowerCase().trim())
       )
     );
     setCurrentPage(1);
   };
 
   // Sayfa başına listeleme işlemi
-  const currentCariler = filteredCurrents.slice(
+  const currentCash = filteredCurrents.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -119,15 +115,15 @@ const Cariler = () => {
 
   return (
     <DataTable
-      title="Cariler"
-      addButtonText="Cari Ekle"
+      title="Kasalar"
+      addButtonText="Kasa Ekle"
       addButtonColor="yellow"
       columns={columns}
-      data={currentCariler}
+      data={currentCash}
       searchPlaceholder="Şirket Adı Giriniz..."
-      onAdd={handleAddCari}
-      onEdit={handleEditCari}
-      onDelete={handleDeleteCari}
+      onAdd={handleAddCash}
+      onEdit={handleEditCash}
+      onDelete={handleDeleteCash}
       onSearch={handleSearch}
       itemsPerPage={itemsPerPage}
       currentPage={currentPage}
@@ -140,4 +136,4 @@ const Cariler = () => {
   );
 };
 
-export default Cariler;
+export default Cash;

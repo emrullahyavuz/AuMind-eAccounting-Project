@@ -14,6 +14,8 @@ import Dashboard from "./pages/Dashboard";
 import Cariler from "./pages/Cariler";
 import BotSettingsPage from "./pages/settings/bot-settings";
 import ChatPage from "./pages/Chat";
+import CashPage from "./pages/Cash";
+import CashTransactionPage from "./pages/CashTransaction";
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -49,6 +51,8 @@ function App() {
               <Route path="/invoices" element={<InvoicesPage />} />
               <Route path="/settings/bot" element={<BotSettingsPage />} />
               <Route path="/chat" element={<ChatPage />} />
+              <Route path="/kasa" element={<CashPage />} />
+              <Route path="/kasa-hareketleri" element={<CashTransactionPage />} />
               <Route path="*" element={<Navigate to="/auth/login" replace />} />
             </Routes>
           </main>
