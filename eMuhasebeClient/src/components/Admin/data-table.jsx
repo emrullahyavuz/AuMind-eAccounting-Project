@@ -121,9 +121,10 @@ function DataTable({
               {columns.map((column, index) => (
                 <th
                   key={index}
-                  className={`p-3 text-left ${column.className || ""}`}
+                  className={`p-3 ${column.header === "İşlemler" ? "text-right px-[60px]" : ""} text-left ${column.className || ""}`}
                 >
                   {column.header}
+                  
                 </th>
               ))}
               <th className="w-12 p-3 text-center">
@@ -165,7 +166,7 @@ function DataTable({
                         key={colIndex}
                         className={`p-3 ${column.className || ""}`}
                       >
-                        {item[column.accessor] || (item[column.accessor] === "" && detailButton)}
+                        {item[column.accessor] || (item[column.accessor] === "" && <div className="flex justify-end">{detailButton}</div>)}
                        
                       </td>
                       
