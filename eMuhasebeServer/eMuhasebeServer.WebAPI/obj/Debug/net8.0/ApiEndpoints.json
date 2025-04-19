@@ -64,6 +64,70 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.BanksController",
+    "Method": "Create",
+    "RelativePath": "api/Banks/Create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Banks.CreateBank.CreateBankCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.BanksController",
+    "Method": "DeleteById",
+    "RelativePath": "api/Banks/DeleteById",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Banks.DeleteBankById.DeleteBankByIdCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.BanksController",
+    "Method": "GetAll",
+    "RelativePath": "api/Banks/GetAll",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Banks.GetAllBanks.GetAllBanksQuery",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.BanksController",
+    "Method": "Update",
+    "RelativePath": "api/Banks/Update",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Banks.UpdateBank.UpdateBankCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CashRegistersController",
     "Method": "Create",
     "RelativePath": "api/CashRegisters/Create",
