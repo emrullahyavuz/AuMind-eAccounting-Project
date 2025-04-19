@@ -10,6 +10,6 @@ using TS.Result;
 namespace eMuhasebeServer.Application.Features.BankDetails.GetAllBankDetails;
 
 public sealed record  GetAllBankDetailsQuery(
-     Guid CashRegisterId,
+     Guid BankId,
     DateOnly StartDate,
     DateOnly EndDate) : IRequest<Result<Bank>>;

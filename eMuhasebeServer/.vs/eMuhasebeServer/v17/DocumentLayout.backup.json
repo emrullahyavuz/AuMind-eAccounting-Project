@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{1D883ACE-63DD-4B8D-95EC-F96176FF0B72}|eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.application\\features\\companies\\migrateallcompanies\\migrateallcompaniescommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1D883ACE-63DD-4B8D-95EC-F96176FF0B72}|eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj|solutionrelative:emuhasebeserver.application\\features\\companies\\migrateallcompanies\\migrateallcompaniescommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4737D76D-1220-428D-96D7-580F271BE278}|eMuhasebeServer.WebAPI\\eMuhasebeServer.WebAPI.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.webapi\\controllers\\companiescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4737D76D-1220-428D-96D7-580F271BE278}|eMuhasebeServer.WebAPI\\eMuhasebeServer.WebAPI.csproj|solutionrelative:emuhasebeserver.webapi\\controllers\\companiescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{4737D76D-1220-428D-96D7-580F271BE278}|eMuhasebeServer.WebAPI\\eMuhasebeServer.WebAPI.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4737D76D-1220-428D-96D7-580F271BE278}|eMuhasebeServer.WebAPI\\eMuhasebeServer.WebAPI.csproj|solutionrelative:emuhasebeserver.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -83,19 +91,45 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "MigrateAllCompaniesCommandHandler.cs",
+              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Application\\Features\\Companies\\MigrateAllCompanies\\MigrateAllCompaniesCommandHandler.cs",
+              "RelativeDocumentMoniker": "eMuhasebeServer.Application\\Features\\Companies\\MigrateAllCompanies\\MigrateAllCompaniesCommandHandler.cs",
+              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Application\\Features\\Companies\\MigrateAllCompanies\\MigrateAllCompaniesCommandHandler.cs",
+              "RelativeToolTip": "eMuhasebeServer.Application\\Features\\Companies\\MigrateAllCompanies\\MigrateAllCompaniesCommandHandler.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-19T13:46:04.802Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CompaniesController.cs",
+              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.WebAPI\\Controllers\\CompaniesController.cs",
+              "RelativeDocumentMoniker": "eMuhasebeServer.WebAPI\\Controllers\\CompaniesController.cs",
+              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.WebAPI\\Controllers\\CompaniesController.cs",
+              "RelativeToolTip": "eMuhasebeServer.WebAPI\\Controllers\\CompaniesController.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-19T13:45:49.573Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.WebAPI\\Program.cs",
               "RelativeDocumentMoniker": "eMuhasebeServer.WebAPI\\Program.cs",
               "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.WebAPI\\Program.cs",
               "RelativeToolTip": "eMuhasebeServer.WebAPI\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-19T13:40:19.467Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.WebAPI\\appsettings.json",
               "RelativeDocumentMoniker": "eMuhasebeServer.WebAPI\\appsettings.json",
@@ -108,7 +142,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "DependencyInjection.cs",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\DependencyInjection.cs",
               "RelativeDocumentMoniker": "eMuhasebeServer.Infrastructure\\DependencyInjection.cs",
@@ -121,7 +155,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "WebAPI.http",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.WebAPI\\WebAPI.http",
               "RelativeDocumentMoniker": "eMuhasebeServer.WebAPI\\WebAPI.http",
@@ -134,7 +168,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "20250419132911_mg8.cs",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Migrations\\CompanyDb\\20250419132911_mg8.cs",
               "RelativeDocumentMoniker": "eMuhasebeServer.Infrastructure\\Migrations\\CompanyDb\\20250419132911_mg8.cs",
@@ -147,7 +181,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "20250419132530_mg7.cs",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Migrations\\CompanyDb\\20250419132530_mg7.cs",
               "RelativeDocumentMoniker": "eMuhasebeServer.Infrastructure\\Migrations\\CompanyDb\\20250419132530_mg7.cs",
@@ -160,7 +194,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "BankDetailRepository.cs",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Repositories\\BankDetailRepository.cs",
               "RelativeDocumentMoniker": "eMuhasebeServer.Infrastructure\\Repositories\\BankDetailRepository.cs",
@@ -173,7 +207,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "CompanyDbContext.cs",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Context\\CompanyDbContext.cs",
               "RelativeDocumentMoniker": "eMuhasebeServer.Infrastructure\\Context\\CompanyDbContext.cs",
@@ -186,7 +220,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "IBankDetailRepository.cs",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Repositories\\IBankDetailRepository.cs",
               "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Repositories\\IBankDetailRepository.cs",
@@ -199,7 +233,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "Bank.cs",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\Bank.cs",
               "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\Bank.cs",
@@ -212,7 +246,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "CashRegisterDetail.cs",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\CashRegisterDetail.cs",
               "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\CashRegisterDetail.cs",
@@ -225,7 +259,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
               "Title": "BankDetail.cs",
               "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\BankDetail.cs",
               "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\BankDetail.cs",
