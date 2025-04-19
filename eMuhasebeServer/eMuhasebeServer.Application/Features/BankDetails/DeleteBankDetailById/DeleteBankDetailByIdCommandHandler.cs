@@ -31,9 +31,9 @@ internal sealed class DeleteBankDetailByIdCommandHandler(
         bank.DepositAmount -= bankDetail.DepositAmount;
         bank.WithdrawalAmount -= bankDetail.WithdrawalAmount;
 
-        if (bankDetail.BankDetailId is not null)
+        if (bankDetail.BankDetailOppositeId is not null)
         {
-            BankDetail? oppositeBankDetail = await bankDetailRepository.GetByExpressionWithTrackingAsync(p => p.Id == bankDetail.BankDetailId, cancellationToken);
+            BankDetail? oppositeBankDetail = await bankDetailRepository.GetByExpressionWithTrackingAsync(p => p.Id == bankDetail.BankDetailOppositeId, cancellationToken);
 
             if (bankDetail is null)
             {
