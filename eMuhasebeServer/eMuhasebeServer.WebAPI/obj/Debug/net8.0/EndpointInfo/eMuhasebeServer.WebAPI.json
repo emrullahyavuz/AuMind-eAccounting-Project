@@ -981,6 +981,11 @@
             "format": "uuid",
             "nullable": true
           },
+          "oppositeCashRegisterId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "oppositeAmount": {
             "type": "number",
             "format": "double"
@@ -1012,6 +1017,11 @@
             "format": "double"
           },
           "oppositeCashRegisterId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "oppositeBankId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
