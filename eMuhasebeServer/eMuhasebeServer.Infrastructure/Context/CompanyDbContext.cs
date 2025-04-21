@@ -77,6 +77,7 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
     public DbSet<Bank> Banks { get; set; }
     public DbSet<BankDetail> BankDetails { get; set; }
     public DbSet<Customer> Customers { get; set; }
+    public DbSet<CustomerDetail> CustomerDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -91,7 +92,6 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
         #region CashRegisterDetail
         modelBuilder.Entity<CashRegisterDetail>().Property(p => p.DepositAmount).HasColumnType("money");
         modelBuilder.Entity<CashRegisterDetail>().Property(p => p.WithdrawalAmount).HasColumnType("money");
-        modelBuilder.Entity<CashRegisterDetail>().HasQueryFilter(filter => !filter.IsDeleted);
         #endregion
 
         #region Bank
@@ -105,7 +105,6 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
         #region BankDetail
         modelBuilder.Entity<BankDetail>().Property(p => p.DepositAmount).HasColumnType("money");
         modelBuilder.Entity<BankDetail>().Property(p => p.WithdrawalAmount).HasColumnType("money");
-        modelBuilder.Entity<BankDetail>().HasQueryFilter(filter => !filter.IsDeleted);
         #endregion
 
         #region Customer
@@ -113,6 +112,12 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
         modelBuilder.Entity<Customer>().Property(p=>p.WithdrawalAmount).HasColumnType("money");
         modelBuilder.Entity<Customer>().Property(p => p.Type).HasConversion(type => type.Value, value => CustomerTypeEnum.FromValue(value));
         modelBuilder.Entity<Customer>().HasQueryFilter(filter => !filter.IsDeleted);
+        #endregion
+
+        #region CustomerDetails
+        modelBuilder.Entity<CustomerDetail>().Property(p => p.DepositAmount).HasColumnType("money");
+        modelBuilder.Entity<CustomerDetail>().Property(p => p.WithdrawalAmount).HasColumnType("money");
+        modelBuilder.Entity<CustomerDetail>().Property(p => p.Type).HasConversion(type => type.Value, value => CustomerDetailTypeEnum.FromValue(value));
         #endregion
     }
 }
