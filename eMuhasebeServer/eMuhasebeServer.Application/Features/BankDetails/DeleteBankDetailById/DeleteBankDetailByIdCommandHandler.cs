@@ -7,6 +7,8 @@ using TS.Result;
 namespace eMuhasebeServer.Application.Features.BankDetails.DeleteBankDetailById;
 
 internal sealed class DeleteBankDetailByIdCommandHandler(
+    ICustomerDetailRepository customerDetailRepository,
+    ICustomerRepository customerRepository,
     ICashRegisterRepository cashRegisterRepository,
     ICashRegisterDetailRepository cashRegisterDetailRepository,
     IBankRepository bankRepository,
@@ -75,6 +77,32 @@ internal sealed class DeleteBankDetailByIdCommandHandler(
             oppositeCashRegister.WithdrawalAmount -= oppositeCashRegister.WithdrawalAmount;
 
             cashRegisterDetailRepository.Delete(oppositeCashRegisterDetail);
+
+            cacheService.Remove("cashRegisters");
+        }
+
+        if (bankDetail.CustomerDetailId is not null)
+        {
+            CustomerDetail? customerDetail = await customerDetailRepository.GetByExpressionWithTrackingAsync(p => p.Id == bankDetail.CustomerDetailId, cancellationToken);
+
+            if (customerDetail is null)
+            {
+                return Result<string>.Failure("Cari hareket bulunamadı");
+            }
+
+            Customer? customer = await customerRepository.GetByExpressionWithTrackingAsync(p => p.Id == customerDetail.CustomerId, cancellationToken);
+
+            if (customer is null)
+            {
+                return Result<string>.Failure("Cari bulunamadı");
+            }
+
+            customer.DepositAmount -= customerDetail.DepositAmount;
+            customer.WithdrawalAmount -= customerDetail.WithdrawalAmount;
+
+            customerDetailRepository.Delete(customerDetail);
+
+            cacheService.Remove("Customers");
         }
 
         bankDetailRepository.Delete(bankDetail);
@@ -82,7 +110,7 @@ internal sealed class DeleteBankDetailByIdCommandHandler(
         await unitOfWorkCompany.SaveChangesAsync(cancellationToken);
 
         cacheService.Remove("Banks");
-        cacheService.Remove("cashRegisters");
+        
 
         return "Banka hareketi başarıyla silindi";
     }

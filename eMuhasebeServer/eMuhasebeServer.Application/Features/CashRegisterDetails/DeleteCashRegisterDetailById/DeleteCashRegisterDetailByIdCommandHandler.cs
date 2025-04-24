@@ -7,6 +7,8 @@ using TS.Result;
 namespace eMuhasebeServer.Application.Features.CashRegisterDetails.DeleteCashRegisterDetailById;
 
 internal sealed class DeleteCashRegisterDetailByIdCommandHandler(
+    ICustomerDetailRepository customerDetailRepository,
+    ICustomerRepository customerRepository,
     IBankRepository bankRepository,
     IBankDetailRepository bankDetailRepository,
     ICashRegisterRepository cashRegisterRepository,
@@ -75,6 +77,30 @@ internal sealed class DeleteCashRegisterDetailByIdCommandHandler(
             oppositeBank.WithdrawalAmount -= oppositeBank.WithdrawalAmount;
 
             bankDetailRepository.Delete(oppositeBankDetail);
+        }
+
+        if (cashRegisterDetail.CustomerDetailId is not null)
+        {
+            CustomerDetail? customerDetail = await customerDetailRepository.GetByExpressionWithTrackingAsync(p => p.Id == cashRegisterDetail.CustomerDetailId, cancellationToken);
+
+            if (customerDetail is null)
+            {
+                return Result<string>.Failure("Cari hareket bulunamadı");
+            }
+
+            Customer? customer = await customerRepository.GetByExpressionWithTrackingAsync(p => p.Id == customerDetail.CustomerId, cancellationToken);
+
+            if (customer is null)
+            {
+                return Result<string>.Failure("Cari bulunamadı");
+            }
+
+            customer.DepositAmount -= customerDetail.DepositAmount;
+            customer.WithdrawalAmount -= customerDetail.WithdrawalAmount;
+
+            customerDetailRepository.Delete(customerDetail);
+
+            cacheService.Remove("Customers");
         }
 
         cashRegisterDetailRepository.Delete(cashRegisterDetail);

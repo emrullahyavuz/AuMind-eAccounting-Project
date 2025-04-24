@@ -400,6 +400,86 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CustomerDetailsController",
+    "Method": "GetAll",
+    "RelativePath": "api/CustomerDetails/GetAll",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.CustomerDetails.GetAllCustomerDetails.GetAllCustomerDetailsQuery",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CustomersController",
+    "Method": "Create",
+    "RelativePath": "api/Customers/Create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Customers.CreateCustomer.CreateCustomerCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CustomersController",
+    "Method": "DeleteById",
+    "RelativePath": "api/Customers/DeleteById",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Customers.DeleteCustomerById.DeleteCustomerByIdCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CustomersController",
+    "Method": "GetAll",
+    "RelativePath": "api/Customers/GetAll",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Customers.GetAllCustomers.GetAllCustomersQuery",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.CustomersController",
+    "Method": "Update",
+    "RelativePath": "api/Customers/Update",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Customers.UpdateCutomer.UpdateCustomerCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "eMuhasebeServer.WebAPI.Controllers.TestController",
     "Method": "SendTestEmail",
     "RelativePath": "api/Test/SendTestEmail",
