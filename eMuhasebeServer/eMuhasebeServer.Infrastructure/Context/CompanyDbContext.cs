@@ -80,6 +80,8 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
     public DbSet<CustomerDetail> CustomerDetails { get; set; }
     public DbSet<Product> Product { get; set; }
     public DbSet<ProductDetail> ProductDetails { get; set; }
+    public DbSet<Invoice> Invoices { get; set; }
+    public DbSet<InvoiceDetail> InvoicesDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -131,6 +133,18 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
         #region ProductDetail
         modelBuilder.Entity<ProductDetail>().Property(p => p.Deposit).HasColumnType("decimal(7,2)");
         modelBuilder.Entity<ProductDetail>().Property(p => p.Withdrawal).HasColumnType("decimal(7,2)");
+        #endregion
+
+        #region Invoice
+        modelBuilder.Entity<Invoice>().Property(P => P.Amount).HasColumnType("money");
+        modelBuilder.Entity<Invoice>().Property(P => P.Type).HasConversion(type => type.Value, value => InvoiceTypeEnum.FromValue(value));
+        modelBuilder.Entity<Invoice>().HasQueryFilter(filter => !filter.IsDeleted);
+        modelBuilder.Entity<Invoice>().HasQueryFilter(filter => !filter.Customer!.IsDeleted);
+        #endregion
+
+        #region InvoiceDetail
+        modelBuilder.Entity<InvoiceDetail>().Property(P => P.Quantity).HasColumnType("decimal(7,2)");
+        modelBuilder.Entity<InvoiceDetail>().Property(P => P.Price).HasColumnType("money");
         #endregion
     }
 }
