@@ -79,6 +79,7 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
     public DbSet<Customer> Customers { get; set; }
     public DbSet<CustomerDetail> CustomerDetails { get; set; }
     public DbSet<Product> Product { get; set; }
+    public DbSet<ProductDetail> ProductDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -125,6 +126,11 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
         modelBuilder.Entity<Product>().HasQueryFilter(filter => !filter.IsDeleted);
         modelBuilder.Entity<Product>().Property(p => p.Deposit).HasColumnType("decimal(7,2)");
         modelBuilder.Entity<Product>().Property(p => p.Withdrawal).HasColumnType("decimal(7,2)");
+        #endregion
+
+        #region ProductDetail
+        modelBuilder.Entity<ProductDetail>().Property(p => p.Deposit).HasColumnType("decimal(7,2)");
+        modelBuilder.Entity<ProductDetail>().Property(p => p.Withdrawal).HasColumnType("decimal(7,2)");
         #endregion
     }
 }
