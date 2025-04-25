@@ -78,6 +78,7 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
     public DbSet<BankDetail> BankDetails { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<CustomerDetail> CustomerDetails { get; set; }
+    public DbSet<Product> Product { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -118,6 +119,12 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
         modelBuilder.Entity<CustomerDetail>().Property(p => p.DepositAmount).HasColumnType("money");
         modelBuilder.Entity<CustomerDetail>().Property(p => p.WithdrawalAmount).HasColumnType("money");
         modelBuilder.Entity<CustomerDetail>().Property(p => p.Type).HasConversion(type => type.Value, value => CustomerDetailTypeEnum.FromValue(value));
+        #endregion
+
+        #region Product
+        modelBuilder.Entity<Product>().HasQueryFilter(filter => !filter.IsDeleted);
+        modelBuilder.Entity<Product>().Property(p => p.Deposit).HasColumnType("decimal(7,2)");
+        modelBuilder.Entity<Product>().Property(p => p.Withdrawal).HasColumnType("decimal(7,2)");
         #endregion
     }
 }

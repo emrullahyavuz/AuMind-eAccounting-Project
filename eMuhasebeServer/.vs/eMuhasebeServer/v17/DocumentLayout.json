@@ -3,36 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\entities\\cashregisterdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|solutionrelative:emuhasebeserver.domain\\entities\\cashregisterdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6BF67750-EA33-4B81-8A20-00D001DEE2FA}|eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.infrastructure\\context\\companydbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6BF67750-EA33-4B81-8A20-00D001DEE2FA}|eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj|solutionrelative:emuhasebeserver.infrastructure\\context\\companydbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\entities\\customerdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|solutionrelative:emuhasebeserver.domain\\entities\\customerdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\entities\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|solutionrelative:emuhasebeserver.domain\\entities\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1D883ACE-63DD-4B8D-95EC-F96176FF0B72}|eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.application\\features\\bankdetails\\deletebankdetailbyid\\deletebankdetailbyidcommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1D883ACE-63DD-4B8D-95EC-F96176FF0B72}|eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj|solutionrelative:emuhasebeserver.application\\features\\bankdetails\\deletebankdetailbyid\\deletebankdetailbyidcommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\entities\\company.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|solutionrelative:emuhasebeserver.domain\\entities\\company.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1D883ACE-63DD-4B8D-95EC-F96176FF0B72}|eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.application\\features\\bankdetails\\createbankdetail\\createbankdetailcommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1D883ACE-63DD-4B8D-95EC-F96176FF0B72}|eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj|solutionrelative:emuhasebeserver.application\\features\\bankdetails\\createbankdetail\\createbankdetailcommandhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1D883ACE-63DD-4B8D-95EC-F96176FF0B72}|eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.application\\features\\bankdetails\\createbankdetail\\createbankdetailcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1D883ACE-63DD-4B8D-95EC-F96176FF0B72}|eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj|solutionrelative:emuhasebeserver.application\\features\\bankdetails\\createbankdetail\\createbankdetailcommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Migrations\\CompanyDb\\20250424194823_mg20.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:eMuhasebeServer.Infrastructure\\Migrations\\CompanyDb\\20250424194823_mg20.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.domain\\entities\\bankdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{21A4C1C0-FCD7-4E0B-B657-F7C853CD1945}|eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj|solutionrelative:emuhasebeserver.domain\\entities\\bankdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1D883ACE-63DD-4B8D-95EC-F96176FF0B72}|eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj|c:\\users\\\u015Feref\\desktop\\code\\muhasebe uygulamas\u0131\\emuhasebeserver\\emuhasebeserver.application\\features\\products\\getallproducts\\getallproductsquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1D883ACE-63DD-4B8D-95EC-F96176FF0B72}|eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj|solutionrelative:emuhasebeserver.application\\features\\products\\getallproducts\\getallproductsquery.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -42,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 267,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -70,106 +50,41 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CashRegisterDetail.cs",
-              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\CashRegisterDetail.cs",
-              "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\CashRegisterDetail.cs",
-              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\CashRegisterDetail.cs",
-              "RelativeToolTip": "eMuhasebeServer.Domain\\Entities\\CashRegisterDetail.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "Product.cs",
+              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\Product.cs",
+              "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\Product.cs",
+              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\Product.cs*",
+              "RelativeToolTip": "eMuhasebeServer.Domain\\Entities\\Product.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-24T20:31:32.883Z",
+              "WhenOpened": "2025-04-24T23:08:50.338Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Company.cs",
-              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\Company.cs",
-              "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\Company.cs",
-              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\Company.cs",
-              "RelativeToolTip": "eMuhasebeServer.Domain\\Entities\\Company.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "CompanyDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Context\\CompanyDbContext.cs",
+              "RelativeDocumentMoniker": "eMuhasebeServer.Infrastructure\\Context\\CompanyDbContext.cs",
+              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Context\\CompanyDbContext.cs",
+              "RelativeToolTip": "eMuhasebeServer.Infrastructure\\Context\\CompanyDbContext.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwH4AAABhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-24T19:57:22.667Z",
+              "WhenOpened": "2025-04-24T23:07:24.178Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "DeleteBankDetailByIdCommandHandler.cs",
-              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Application\\Features\\BankDetails\\DeleteBankDetailById\\DeleteBankDetailByIdCommandHandler.cs",
-              "RelativeDocumentMoniker": "eMuhasebeServer.Application\\Features\\BankDetails\\DeleteBankDetailById\\DeleteBankDetailByIdCommandHandler.cs",
-              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Application\\Features\\BankDetails\\DeleteBankDetailById\\DeleteBankDetailByIdCommandHandler.cs",
-              "RelativeToolTip": "eMuhasebeServer.Application\\Features\\BankDetails\\DeleteBankDetailById\\DeleteBankDetailByIdCommandHandler.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAJAAAAAAAAAA==",
+              "Title": "GetAllProductsQuery.cs",
+              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Application\\Features\\Products\\GetAllProducts\\GetAllProductsQuery.cs",
+              "RelativeDocumentMoniker": "eMuhasebeServer.Application\\Features\\Products\\GetAllProducts\\GetAllProductsQuery.cs",
+              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Application\\Features\\Products\\GetAllProducts\\GetAllProductsQuery.cs",
+              "RelativeToolTip": "eMuhasebeServer.Application\\Features\\Products\\GetAllProducts\\GetAllProductsQuery.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-24T19:51:13.062Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "20250424194823_mg20.cs",
-              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Migrations\\CompanyDb\\20250424194823_mg20.cs",
-              "RelativeDocumentMoniker": "eMuhasebeServer.Infrastructure\\Migrations\\CompanyDb\\20250424194823_mg20.cs",
-              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\Migrations\\CompanyDb\\20250424194823_mg20.cs",
-              "RelativeToolTip": "eMuhasebeServer.Infrastructure\\Migrations\\CompanyDb\\20250424194823_mg20.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-24T19:48:23.29Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CreateBankDetailCommand.cs",
-              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Application\\Features\\BankDetails\\CreateBankDetail\\CreateBankDetailCommand.cs",
-              "RelativeDocumentMoniker": "eMuhasebeServer.Application\\Features\\BankDetails\\CreateBankDetail\\CreateBankDetailCommand.cs",
-              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Application\\Features\\BankDetails\\CreateBankDetail\\CreateBankDetailCommand.cs",
-              "RelativeToolTip": "eMuhasebeServer.Application\\Features\\BankDetails\\CreateBankDetail\\CreateBankDetailCommand.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-24T19:26:29.161Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CreateBankDetailCommandHandler.cs",
-              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Application\\Features\\BankDetails\\CreateBankDetail\\CreateBankDetailCommandHandler.cs",
-              "RelativeDocumentMoniker": "eMuhasebeServer.Application\\Features\\BankDetails\\CreateBankDetail\\CreateBankDetailCommandHandler.cs",
-              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Application\\Features\\BankDetails\\CreateBankDetail\\CreateBankDetailCommandHandler.cs",
-              "RelativeToolTip": "eMuhasebeServer.Application\\Features\\BankDetails\\CreateBankDetail\\CreateBankDetailCommandHandler.cs",
-              "ViewState": "AgIAABwAAAAAAAAAAAAqwHUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-24T19:26:27.77Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CustomerDetail.cs",
-              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\CustomerDetail.cs",
-              "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\CustomerDetail.cs",
-              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\CustomerDetail.cs",
-              "RelativeToolTip": "eMuhasebeServer.Domain\\Entities\\CustomerDetail.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-24T19:13:43.537Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "BankDetail.cs",
-              "DocumentMoniker": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\BankDetail.cs",
-              "RelativeDocumentMoniker": "eMuhasebeServer.Domain\\Entities\\BankDetail.cs",
-              "ToolTip": "C:\\Users\\\u015Eeref\\Desktop\\Code\\Muhasebe Uygulamas\u0131\\eMuhasebeServer\\eMuhasebeServer.Domain\\Entities\\BankDetail.cs",
-              "RelativeToolTip": "eMuhasebeServer.Domain\\Entities\\BankDetail.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-24T19:13:03.211Z",
+              "WhenOpened": "2025-04-24T23:01:40.878Z",
               "EditorCaption": ""
             }
           ]

@@ -250,6 +250,30 @@ namespace eMuhasebeServer.Infrastructure.Migrations.CompanyDb
                     b.ToTable("CustomerDetails");
                 });
 
+            modelBuilder.Entity("eMuhasebeServer.Domain.Entities.Product", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Deposit")
+                        .HasColumnType("decimal(7,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Withdrawal")
+                        .HasColumnType("decimal(7,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Product");
+                });
+
             modelBuilder.Entity("eMuhasebeServer.Domain.Entities.BankDetail", b =>
                 {
                     b.HasOne("eMuhasebeServer.Domain.Entities.Bank", null)

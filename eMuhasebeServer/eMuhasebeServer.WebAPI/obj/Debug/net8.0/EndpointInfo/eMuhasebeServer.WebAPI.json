@@ -1141,7 +1141,7 @@
             "format": "uuid",
             "nullable": true
           },
-          "oppositeCostomerId": {
+          "oppositeCustomerId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
@@ -1182,6 +1182,11 @@
             "nullable": true
           },
           "oppositeBankId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "oppositeCustomerId": {
             "type": "string",
             "format": "uuid",
             "nullable": true

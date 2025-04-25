@@ -7,6 +7,8 @@ using eMuhasebeServer.Application.Features.Companies.CreateCompany;
 using eMuhasebeServer.Application.Features.Companies.UpdateCompany;
 using eMuhasebeServer.Application.Features.Customers.CreateCustomer;
 using eMuhasebeServer.Application.Features.Customers.UpdateCutomer;
+using eMuhasebeServer.Application.Features.Products.CreateProduct;
+using eMuhasebeServer.Application.Features.Products.UpdateProduct;
 using eMuhasebeServer.Application.Features.Users.CreateUser;
 using eMuhasebeServer.Application.Features.Users.UpdateUser;
 using eMuhasebeServer.Domain.Entities;
@@ -51,6 +53,9 @@ namespace eMuhasebeServer.Application.Mapping
             {
                 options.MapFrom(map => CustomerTypeEnum.FromValue(map.TypeValue));
             });
+
+            CreateMap<CreateProductCommand, Product>();
+            CreateMap<UpdateProductCommand, Product>();
         }
     }
 }
