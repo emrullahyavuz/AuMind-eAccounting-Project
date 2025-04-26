@@ -480,6 +480,54 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.InvoicesController",
+    "Method": "Create",
+    "RelativePath": "api/Invoices/Create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Invoices.CreateInvoice.CreateInvoiceCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.InvoicesController",
+    "Method": "DeleteById",
+    "RelativePath": "api/Invoices/DeleteById",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Invoices.DeleteInvoiceById.DeleteInvoiceByIdCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "eMuhasebeServer.WebAPI.Controllers.InvoicesController",
+    "Method": "GetAll",
+    "RelativePath": "api/Invoices/GetAll",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "eMuhasebeServer.Application.Features.Invoices.GetAllInvoices.GetAllInvoicesQuery",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "eMuhasebeServer.WebAPI.Controllers.ProductDetailsController",
     "Method": "GetAll",
     "RelativePath": "api/ProductDetails/GetAll",
