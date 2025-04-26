@@ -3,6 +3,8 @@ import { Input } from "../components/UI/Input";
 import { Button } from "../components/UI/Button";
 import DataTable from "../components/Admin/cash-data-table";
 import CashTransactionModal from "../components/UI/Modals/CashTransactionModal";
+import DeleteConfirmationModal from "../components/UI/Modals/DeleteConfirmationModal";
+import { Trash2 } from "lucide-react";
 
 function CashTransaction() {
   const [transactions, setTransactions] = useState([]);
@@ -12,6 +14,11 @@ function CashTransaction() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [transactionToDelete, setTransactionToDelete] = useState(null);
+  const [selectedItems, setSelectedItems] = useState([]);
 
   const itemsPerPage = 50;
 
@@ -120,18 +127,41 @@ function CashTransaction() {
 
     setTransactions([...transactions, newTransaction]);
     setFilteredTransactions([...filteredTransactions, newTransaction]);
+    setIsAddModalOpen(false);
   };
 
   // İşlem düzenleme işlemi
   const handleEditTransaction = (transaction) => {
-    console.log("Düzenlenecek işlem:", transaction);
-    // Burada düzenleme modalı açma işlemi yapılacak
+    setSelectedTransaction(transaction);
+    setIsEditModalOpen(true);
   };
 
   // İşlem silme işlemi
   const handleDeleteTransaction = (transactionId) => {
-    console.log("Silinecek işlem ID:", transactionId);
-    // Burada silme onayı ve silme işlemi yapılacak
+    if (Array.isArray(transactionId)) {
+      // Toplu silme
+      setTransactionToDelete({ ids: transactionId, name: `${transactionId.length} işlem` });
+    } else {
+      // Tekli silme
+      const transaction = transactions.find((t) => t.id === transactionId);
+      setTransactionToDelete({ ids: [transactionId], name: `#${transaction.id} numaralı işlem` });
+    }
+    setIsDeleteModalOpen(true);
+  };
+
+  // Silme onaylama işlemi
+  const confirmDelete = () => {
+    if (transactionToDelete) {
+      // API silme işlemi burada yapılacak
+      const updatedTransactions = transactions.filter(
+        (transaction) => !transactionToDelete.ids.includes(transaction.id)
+      );
+      setTransactions(updatedTransactions);
+      setFilteredTransactions(updatedTransactions);
+      setSelectedItems([]); // Seçili öğeleri temizle
+      setIsDeleteModalOpen(false);
+      setTransactionToDelete(null);
+    }
   };
 
   // Geçerli sayfadaki işlemleri hesapla
@@ -181,6 +211,17 @@ function CashTransaction() {
     </div>
   );
 
+  // Özel butonlar
+  const customButtons = selectedItems.length > 0 && (
+    <button
+      onClick={() => handleDeleteTransaction(selectedItems)}
+      className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md flex items-center"
+    >
+      <Trash2 size={18} className="mr-2" />
+      Seçilenleri Sil ({selectedItems.length})
+    </button>
+  );
+
   return (
     <>
       <div className="p-6 bg-gray-100 min-h-screen">
@@ -204,7 +245,12 @@ function CashTransaction() {
           onPageChange={handlePageChange}
           isLoading={isLoading}
           customFilters={customFilters}
+          customButtons={customButtons}
           hideTitle={true}
+          headerColor="gray-800"
+          headerTextColor="white"
+          selectedItems={selectedItems}
+          onSelectedItemsChange={setSelectedItems}
         />
       </div>
 
@@ -212,6 +258,30 @@ function CashTransaction() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAddTransaction={handleAddTransactionSubmit}
+      />
+      <CashTransactionModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedTransaction(null);
+        }}
+        isEditMode={true}
+        transaction={selectedTransaction}
+        onAddTransaction={(data) => {
+          console.log("Düzenlenen işlem:", data);
+          setIsEditModalOpen(false);
+          setSelectedTransaction(null);
+        }}
+      />
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setTransactionToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="İşlem Silme"
+        message={`${transactionToDelete?.name || ''} ${transactionToDelete?.ids?.length > 1 ? 'işlemlerini' : 'işlemini'} silmek istediğinizden emin misiniz?`}
       />
     </>
   );

@@ -1,12 +1,21 @@
 import { useState, useEffect } from "react"
 import DataTable from "../../components/Admin/data-table"
 import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay"
+import UserModal from "../../components/UI/Modals/UserModal"
+import DeleteConfirmationModal from "../../components/UI/Modals/DeleteConfirmationModal"
+import { Trash2 } from "lucide-react"
 
 function UsersPage() {
   const [users, setUsers] = useState([])
   const [filteredUsers, setFilteredUsers] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [selectedUser, setSelectedUser] = useState(null)
+  const [userToDelete, setUserToDelete] = useState(null)
+  const [selectedItems, setSelectedItems] = useState([])
 
   const itemsPerPage = 50
 
@@ -17,7 +26,6 @@ function UsersPage() {
     { header: "Kullanıcı Soyadı", accessor: "surname" },
     { header: "E-Mail Adresi", accessor: "email" },
     { header: "Bağlı Olduğu Şirketler", accessor: "companies" },
-    { header: "Kullanıcı Adı", accessor: "username" },
   ]
 
   // Örnek veri yükleme - daha sonra gerçek uygulamada API'den gelecek
@@ -63,47 +71,109 @@ function UsersPage() {
 
   // Kullanıcı ekleme işlemi
   const handleAddUser = () => {
-    console.log("Kullanıcı ekleme modalı açılacak")
-    // Burada ekleme modalı açma işlemi yapılacak
+    setIsAddModalOpen(true)
   }
 
   // Kullanıcı düzenleme işlemi
   const handleEditUser = (user) => {
-    console.log("Düzenlenecek kullanıcı:", user)
-    // Burada düzenleme modalı açma işlemi yapılacak
+    setSelectedUser(user)
+    setIsEditModalOpen(true)
   }
 
   // Kullanıcı silme işlemi
   const handleDeleteUser = (userId) => {
-    console.log("Silinecek kullanıcı ID:", userId)
-    // Burada silme onayı ve silme işlemi yapılacak
+    if (Array.isArray(userId)) {
+      // Toplu silme
+      setUserToDelete({ ids: userId, name: `${userId.length} kullanıcı` })
+    } else {
+      // Tekli silme
+      const user = users.find((u) => u.id === userId)
+      setUserToDelete({ ids: [userId], name: user.username })
+    }
+    setIsDeleteModalOpen(true)
+  }
+
+  // Silme onaylama işlemi
+  const confirmDelete = () => {
+    if (userToDelete) {
+      // API silme işlemi burada yapılacak
+      const updatedUsers = users.filter(
+        (user) => !userToDelete.ids.includes(user.id)
+      )
+      setUsers(updatedUsers)
+      setFilteredUsers(updatedUsers)
+      setSelectedItems([]) // Seçili öğeleri temizle
+      setIsDeleteModalOpen(false)
+      setUserToDelete(null)
+    }
   }
 
   // Geçerli sayfadaki kullanıcıları hesapla
   const currentUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
+  // Özel butonlar
+  const customButtons = selectedItems.length > 0 && (
+    <button
+      onClick={() => handleDeleteUser(selectedItems)}
+      className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md flex items-center"
+    >
+      <Trash2 size={18} className="mr-2" />
+      Seçilenleri Sil ({selectedItems.length})
+    </button>
+  )
 
   if (isLoading) {
     return <div className="p-6"><LoadingOverlay /></div>
   }
 
   return (
-    <DataTable
-      title="Kullanıcılar"
-      addButtonText="Kullanıcı Ekle"
-      columns={columns}
-      data={currentUsers}
-      searchPlaceholder="İsim Giriniz..."
-      onAdd={handleAddUser}
-      onEdit={handleEditUser}
-      onDelete={handleDeleteUser}
-      onSearch={handleSearch}
-      itemsPerPage={itemsPerPage}
-      currentPage={currentPage}
-      totalItems={filteredUsers.length}
-      onPageChange={handlePageChange}
-    />
+    <>
+      <DataTable
+        title="Kullanıcılar"
+        addButtonText="Kullanıcı Ekle"
+        addButtonColor="yellow"
+        columns={columns}
+        data={currentUsers}
+        searchPlaceholder="İsim Giriniz..."
+        onAdd={handleAddUser}
+        onEdit={handleEditUser}
+        onDelete={handleDeleteUser}
+        onSearch={handleSearch}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        totalItems={filteredUsers.length}
+        onPageChange={handlePageChange}
+        customButtons={customButtons}
+        headerColor="gray-800"
+        headerTextColor="white"
+        selectedItems={selectedItems}
+        onSelectedItemsChange={setSelectedItems}
+      />
+      <UserModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
+      <UserModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false)
+          setSelectedUser(null)
+        }}
+        isEditMode={true}
+        user={selectedUser}
+      />
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false)
+          setUserToDelete(null)
+        }}
+        onConfirm={confirmDelete}
+        title="Kullanıcı Silme"
+        message={`${userToDelete?.name || ''} ${userToDelete?.ids?.length > 1 ? 'kullanıcılarını' : 'kullanıcısını'} silmek istediğinizden emin misiniz?`}
+      />
+    </>
   )
 }
 
 export default UsersPage
-

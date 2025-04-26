@@ -1,16 +1,37 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DataTable from "../components/Admin/data-table";
-import { Info } from "lucide-react";
+import { Info, Trash2 } from "lucide-react";
 import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay";
+import CariModal from "../components/UI/Modals/CariModal";
+import DeleteConfirmationModal from "../components/UI/Modals/DeleteConfirmationModal";
 
 const Cariler = () => {
+  const navigate = useNavigate();
   const [currents, setCurrents] = useState([]);
   const [filteredCurrents, setFilteredCurrents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedCari, setSelectedCari] = useState(null);
+  const [cariToDelete, setCariToDelete] = useState(null);
+  const [selectedItems, setSelectedItems] = useState([]);
 
   // Sayfa başına gösterilecek cari hesap sayısı
   const itemsPerPage = 50;
+
+  // Detay butonu render fonksiyonu
+  const renderDetailButton = (cari) => (
+    <button
+      onClick={() => navigate(`/cari-hareketleri/${cari.id}`)}
+      className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-1 px-3 rounded-md flex items-center"
+    >
+      <Info size={16} className="mr-1" />
+      Detay Gör
+    </button>
+  );
 
   // Cariler tablosu sütun tanımları
   const columns = [
@@ -28,7 +49,11 @@ const Cariler = () => {
     { header: "Giriş", accessor: "inflow" },
     { header: "Çıkış", accessor: "checkout" },
     { header: "Bakiye", accessor: "balance" },
-    { header: "İşlemler", accessor: "transactions" },
+    { 
+      header: "İşlemler", 
+      accessor: "transactions",
+      render: renderDetailButton
+    },
   ];
 
   // Örnek veri yükleme - gerçek uygulamada API'den gelecek
@@ -43,10 +68,9 @@ const Cariler = () => {
         address: `Adres ${index + 1}`,
         taxOffice: `Vergi Dairesi ${index + 1}`,
         taxNumber: `${1000000000 + index}`,
-        inflow: `Giriş ${(index % 5) + 1}`,
-        checkout: `Çıkış ${index + 1}`,
-        balance: `${index + 1}$`,
-        transactions: ``,
+        inflow: `${(Math.random() * 10000).toFixed(2)} ₺`,
+        checkout: `${(Math.random() * 8000).toFixed(2)} ₺`,
+        balance: `${(Math.random() * 20000).toFixed(2)} ₺`,
       }));
 
       setCurrents(mockCurrents);
@@ -77,20 +101,42 @@ const Cariler = () => {
   );
 
   // Cari hesap ekleme işlemi
-  const handleAddCari = (newCompany) => {
-    // Yeni cari ekleme işlemi burada yapılacak
-    console.log("Yeni cari eklendi:");
+  const handleAddCari = () => {
+    setIsAddModalOpen(true);
   };
 
   // Cari hesap düzenleme işlemi
-  const handleEditCari = (updatedCompany) => {
-    // Cari düzenleme işlemi burada yapılacak
-    console.log("Düzenlenecek şirket:", updatedCompany);
+  const handleEditCari = (cari) => {
+    setSelectedCari(cari);
+    setIsEditModalOpen(true);
   };
 
   // Cari hesap silme işlemi
-  const handleDeleteCari = (id) => {
-    // Cari silme işlemi burada yapılacak
+  const handleDeleteCari = (cariId) => {
+    if (Array.isArray(cariId)) {
+      // Toplu silme
+      setCariToDelete({ ids: cariId, name: `${cariId.length} cari hesap` });
+    } else {
+      // Tekli silme
+      const cari = currents.find((c) => c.id === cariId);
+      setCariToDelete({ ids: [cariId], name: cari.name });
+    }
+    setIsDeleteModalOpen(true);
+  };
+
+  // Silme onaylama işlemi
+  const confirmDelete = () => {
+    if (cariToDelete) {
+      // API silme işlemi burada yapılacak
+      const updatedCurrents = currents.filter(
+        (cari) => !cariToDelete.ids.includes(cari.id)
+      );
+      setCurrents(updatedCurrents);
+      setFilteredCurrents(updatedCurrents);
+      setSelectedItems([]); // Seçili öğeleri temizle
+      setIsDeleteModalOpen(false);
+      setCariToDelete(null);
+    }
   };
 
   // Cari hesap arama işlemi
@@ -102,6 +148,22 @@ const Cariler = () => {
     );
     setCurrentPage(1);
   };
+
+  // Özel butonlar
+  const customButtons = (
+    <>
+      {detailButton}
+      {selectedItems.length > 0 && (
+        <button
+          onClick={() => handleDeleteCari(selectedItems)}
+          className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md flex items-center"
+        >
+          <Trash2 size={18} className="mr-2" />
+          Seçilenleri Sil ({selectedItems.length})
+        </button>
+      )}
+    </>
+  );
 
   // Sayfa başına listeleme işlemi
   const currentCariler = filteredCurrents.slice(
@@ -118,25 +180,52 @@ const Cariler = () => {
   }
 
   return (
-    <DataTable
-      title="Cariler"
-      addButtonText="Cari Ekle"
-      addButtonColor="yellow"
-      columns={columns}
-      data={currentCariler}
-      searchPlaceholder="Şirket Adı Giriniz..."
-      onAdd={handleAddCari}
-      onEdit={handleEditCari}
-      onDelete={handleDeleteCari}
-      onSearch={handleSearch}
-      itemsPerPage={itemsPerPage}
-      currentPage={currentPage}
-      totalItems={filteredCurrents.length}
-      onPageChange={handlePageChange}
-      detailButton={detailButton}
-      headerColor="gray-800"
-      headerTextColor="white"
-    />
+    <>
+      <DataTable
+        title="Cariler"
+        addButtonText="Cari Ekle"
+        addButtonColor="yellow"
+        columns={columns}
+        data={currentCariler}
+        searchPlaceholder="Şirket Adı Giriniz..."
+        onAdd={handleAddCari}
+        onEdit={handleEditCari}
+        onDelete={handleDeleteCari}
+        onSearch={handleSearch}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        totalItems={filteredCurrents.length}
+        onPageChange={handlePageChange}
+        customButtons={customButtons}
+        headerColor="gray-800"
+        headerTextColor="white"
+        selectedItems={selectedItems}
+        onSelectedItemsChange={setSelectedItems}
+      />
+      <CariModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
+      <CariModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedCari(null);
+        }}
+        isEditMode={true}
+        cari={selectedCari}
+      />
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setCariToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Cari Hesap Silme"
+        message={`${cariToDelete?.name || ''} ${cariToDelete?.ids?.length > 1 ? 'cari hesaplarını' : 'cari hesabını'} silmek istediğinizden emin misiniz?`}
+      />
+    </>
   );
 };
 

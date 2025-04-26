@@ -1,12 +1,21 @@
 import { useState, useEffect } from "react"
 import DataTable from "../../components/Admin/data-table"
 import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay"
+import InvoiceModal from "../../components/UI/Modals/InvoiceModal"
+import DeleteConfirmationModal from "../../components/UI/Modals/DeleteConfirmationModal"
+import { Trash2 } from "lucide-react"
 
 function InvoicesPage() {
   const [invoices, setInvoices] = useState([])
   const [filteredInvoices, setFilteredInvoices] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [selectedInvoice, setSelectedInvoice] = useState(null)
+  const [invoiceToDelete, setInvoiceToDelete] = useState(null)
+  const [selectedItems, setSelectedItems] = useState([])
 
   const itemsPerPage = 50
 
@@ -71,47 +80,109 @@ function InvoicesPage() {
 
   // Fatura ekleme işlemi
   const handleAddInvoice = () => {
-    console.log("Fatura ekleme modalı açılacak")
-    // Burada ekleme modalı açma işlemi yapılacak
+    setIsAddModalOpen(true)
   }
 
   // Fatura düzenleme işlemi
   const handleEditInvoice = (invoice) => {
-    console.log("Düzenlenecek fatura:", invoice)
-    // Burada düzenleme modalı açma işlemi yapılacak
+    setSelectedInvoice(invoice)
+    setIsEditModalOpen(true)
   }
 
   // Fatura silme işlemi
   const handleDeleteInvoice = (invoiceId) => {
-    console.log("Silinecek fatura ID:", invoiceId)
-    // Burada silme onayı ve silme işlemi yapılacak
+    if (Array.isArray(invoiceId)) {
+      // Toplu silme
+      setInvoiceToDelete({ ids: invoiceId, name: `${invoiceId.length} fatura` })
+    } else {
+      // Tekli silme
+      const invoice = invoices.find((i) => i.id === invoiceId)
+      setInvoiceToDelete({ ids: [invoiceId], name: invoice.invoiceNumber })
+    }
+    setIsDeleteModalOpen(true)
+  }
+
+  // Silme onaylama işlemi
+  const confirmDelete = () => {
+    if (invoiceToDelete) {
+      // API silme işlemi burada yapılacak
+      const updatedInvoices = invoices.filter(
+        (invoice) => !invoiceToDelete.ids.includes(invoice.id)
+      )
+      setInvoices(updatedInvoices)
+      setFilteredInvoices(updatedInvoices)
+      setSelectedItems([]) // Seçili öğeleri temizle
+      setIsDeleteModalOpen(false)
+      setInvoiceToDelete(null)
+    }
   }
 
   // Geçerli sayfadaki faturaları hesapla
   const currentInvoices = filteredInvoices.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
+  // Özel butonlar
+  const customButtons = selectedItems.length > 0 && (
+    <button
+      onClick={() => handleDeleteInvoice(selectedItems)}
+      className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md flex items-center"
+    >
+      <Trash2 size={18} className="mr-2" />
+      Seçilenleri Sil ({selectedItems.length})
+    </button>
+  )
 
   if (isLoading) {
     return <div className="p-6"><LoadingOverlay /></div>
   }
 
   return (
-    <DataTable
-      title="Faturalar"
-      addButtonText="Fatura Ekle"
-      columns={columns}
-      data={currentInvoices}
-      searchPlaceholder="Fatura No veya Müşteri Giriniz..."
-      onAdd={handleAddInvoice}
-      onEdit={handleEditInvoice}
-      onDelete={handleDeleteInvoice}
-      onSearch={handleSearch}
-      itemsPerPage={itemsPerPage}
-      currentPage={currentPage}
-      totalItems={filteredInvoices.length}
-      onPageChange={handlePageChange}
-    />
+    <>
+      <DataTable
+        title="Faturalar"
+        addButtonText="Fatura Ekle"
+        addButtonColor="yellow"
+        columns={columns}
+        data={currentInvoices}
+        searchPlaceholder="Fatura No veya Müşteri Giriniz..."
+        onAdd={handleAddInvoice}
+        onEdit={handleEditInvoice}
+        onDelete={handleDeleteInvoice}
+        onSearch={handleSearch}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        totalItems={filteredInvoices.length}
+        onPageChange={handlePageChange}
+        customButtons={customButtons}
+        headerColor="gray-800"
+        headerTextColor="white"
+        selectedItems={selectedItems}
+        onSelectedItemsChange={setSelectedItems}
+      />
+      <InvoiceModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
+      <InvoiceModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false)
+          setSelectedInvoice(null)
+        }}
+        isEditMode={true}
+        invoice={selectedInvoice}
+      />
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false)
+          setInvoiceToDelete(null)
+        }}
+        onConfirm={confirmDelete}
+        title="Fatura Silme"
+        message={`${invoiceToDelete?.name || ''} ${invoiceToDelete?.ids?.length > 1 ? 'faturalarını' : 'faturasını'} silmek istediğinizden emin misiniz?`}
+      />
+    </>
   )
 }
 
 export default InvoicesPage
-
