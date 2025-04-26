@@ -133,6 +133,7 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
         #region ProductDetail
         modelBuilder.Entity<ProductDetail>().Property(p => p.Deposit).HasColumnType("decimal(7,2)");
         modelBuilder.Entity<ProductDetail>().Property(p => p.Withdrawal).HasColumnType("decimal(7,2)");
+        modelBuilder.Entity<ProductDetail>().Property(p => p.Price).HasColumnType("money");
         #endregion
 
         #region Invoice
@@ -145,6 +146,7 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
         #region InvoiceDetail
         modelBuilder.Entity<InvoiceDetail>().Property(P => P.Quantity).HasColumnType("decimal(7,2)");
         modelBuilder.Entity<InvoiceDetail>().Property(P => P.Price).HasColumnType("money");
+        modelBuilder.Entity<InvoiceDetail>().HasQueryFilter(filter => !filter.Product!.IsDeleted);
         #endregion
     }
 }

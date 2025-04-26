@@ -11,8 +11,8 @@ public sealed class CustomerDetailTypeEnum : SmartEnum<CustomerDetailTypeEnum>
 {
     public static readonly CustomerDetailTypeEnum Bank = new("Banka", 1);
     public static readonly CustomerDetailTypeEnum CashRegister = new("Kasa", 2);
-    public static readonly CustomerDetailTypeEnum PurchaseInvoice = new("Alış Faturasi", 2);
-    public static readonly CustomerDetailTypeEnum SellingInvoice = new("Satış Faturasi", 2);
+    public static readonly CustomerDetailTypeEnum PurchaseInvoice = new("Alış Faturasi", 3);
+    public static readonly CustomerDetailTypeEnum SellingInvoice = new("Satış Faturasi", 4);
     public CustomerDetailTypeEnum(string name, int value) : base(name, value)
     {
     }
