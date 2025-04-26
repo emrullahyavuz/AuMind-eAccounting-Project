@@ -1,15 +1,32 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { X } from "lucide-react"
 
-function CashModal({ isOpen, onClose, onAddCash }) {
-  const [formData, setFormData] = useState({
-    cashName: "",
-    currencyType: "",
-    transactionNumber: "",
-    input: "",
-    output: "",
-    balance: "",
-  })
+const initialFormData = {
+  cashName: "",
+  currencyType: "",
+  transactionNumber: "",
+  input: 0,
+  output: 0,
+  balance: 0,
+}
+
+function CashModal({ isOpen,isEditMode,cash, onClose, onAddCash }) {
+  const [formData, setFormData] = useState(initialFormData)
+
+  useEffect(() => {
+    if (isEditMode && cash) {
+      setFormData({
+        cashName: cash.name || "",
+        currencyType: cash.type || "",
+        transactionNumber: cash.transactionNumber || "",
+        input: String(cash.inflow || 0).replace(/[^\d.-]/g, ''),
+        output: String(cash.checkout || 0).replace(/[^\d.-]/g, ''),
+        balance: String(cash.balance || 0).replace(/[^\d.-]/g, ''),
+      })
+    } else {
+      setFormData(initialFormData)
+    }
+  }, [isEditMode, cash])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -34,7 +51,9 @@ function CashModal({ isOpen, onClose, onAddCash }) {
           <X size={20} />
         </button>
 
-        <h2 className="text-center text-xl font-medium mb-4 underline">Kasa Ekleme</h2>
+        <h2 className="text-center text-xl font-medium mb-4 underline">
+          {isEditMode ? "Kasa Düzenle" : "Kasa Ekle"}
+          </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -113,7 +132,7 @@ function CashModal({ isOpen, onClose, onAddCash }) {
               type="submit"
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md"
             >
-              Kasa Ekle
+              {isEditMode ? "Güncelle" : "Ekle"}
             </button>
           </div>
         </form>

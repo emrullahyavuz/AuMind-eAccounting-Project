@@ -1,40 +1,61 @@
-import { useState } from "react"
-import { X } from "lucide-react"
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 
-function UserModal({ isOpen, onClose, onAddUser }) {
-  const [formData, setFormData] = useState({
-    username: "",
-    surname: "",
-    email: "",
-    password: "",
-    company: "Şirket\nŞirket",
-    isAdmin: false,
-  })
+const initialFormData = {
+  username: "",
+  surname: "",
+  email: "",
+  password: "",
+  company: "",
+  isAdmin: false,
+};
+
+function UserModal({ isOpen, isEditMode, user, onClose, onAddUser }) {
+  const [formData, setFormData] = useState(initialFormData);
+
+  // user prop'u değiştiğinde form verilerini güncelle
+  useEffect(() => {
+    if (user && isEditMode) {
+      setFormData({
+        username: user.username || "",
+        surname: user.surname || "",
+        email: user.email || "",
+        password: "", // Güvenlik için şifreyi boş bırakıyoruz
+        company: user.companies || "",
+        isAdmin: user.isAdmin || false,
+      });
+    }
+  }, [user, isEditMode]);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
-    })
-  }
+    });
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    onAddUser(formData)
-    onClose()
-  }
+    e.preventDefault();
+    onAddUser(formData);
+    onClose();
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-gray-200 rounded-lg p-6 w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+        >
           <X size={20} />
         </button>
 
-        <h2 className="text-center text-xl font-medium mb-4 underline">Kullanıcı Ekleme</h2>
+        <h2 className="text-center text-xl font-medium mb-4 underline">
+          {isEditMode ? "Kullanıcıyı Düzenle" : "Yeni Kullanıcı Ekle"}
+        </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -101,7 +122,13 @@ function UserModal({ isOpen, onClose, onAddUser }) {
           </div>
 
           <div className="mb-4 flex items-center">
-            <input type="checkbox" name="isAdmin" checked={formData.isAdmin} onChange={handleChange} className="mr-2" />
+            <input
+              type="checkbox"
+              name="isAdmin"
+              checked={formData.isAdmin}
+              onChange={handleChange}
+              className="mr-2"
+            />
             <label className="text-gray-700">Admin mi?</label>
           </div>
 
@@ -110,13 +137,13 @@ function UserModal({ isOpen, onClose, onAddUser }) {
               type="submit"
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md"
             >
-              Kullanıcı Ekle
+              {isEditMode ? "Kullanıcıyı Güncelle" : "Kullanıcıyı Ekle"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default UserModal
+export default UserModal;

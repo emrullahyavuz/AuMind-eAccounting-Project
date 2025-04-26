@@ -1,76 +1,87 @@
-import { useState } from "react"
-import { X, Calendar, ChevronDown, Plus } from "lucide-react"
+import { useState } from "react";
+import { X, Calendar, ChevronDown, Plus } from "lucide-react";
 
-function InvoiceModal({ isOpen, onClose, onAddInvoice }) {
+function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice }) {
   const [formData, setFormData] = useState({
-    invoiceType: "",
-    date: "",
-    customer: "",
-    invoiceNumber: "",
+    invoiceType: invoice?.invoiceType || "satis",
+    date: invoice?.date || new Date().toISOString().split("T")[0],
+    customer: invoice?.customer || "",
+    invoiceNumber: invoice?.invoiceNumber || "",
     items: [],
-  })
+  });
 
   const [newItem, setNewItem] = useState({
     product: "",
     quantity: "",
     unitPrice: "",
     total: "",
-  })
+  });
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
-    })
-  }
+    });
+  };
 
   const handleItemChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
 
     // Eğer adet veya birim fiyat değişirse, toplamı otomatik hesapla
-    const updatedItem = { ...newItem, [name]: value }
+    const updatedItem = { ...newItem, [name]: value };
 
     if (name === "quantity" || name === "unitPrice") {
-      const quantity = name === "quantity" ? Number.parseFloat(value) || 0 : Number.parseFloat(newItem.quantity) || 0
-      const unitPrice = name === "unitPrice" ? Number.parseFloat(value) || 0 : Number.parseFloat(newItem.unitPrice) || 0
-      updatedItem.total = (quantity * unitPrice).toFixed(2)
+      const quantity =
+        name === "quantity"
+          ? Number.parseFloat(value) || 0
+          : Number.parseFloat(newItem.quantity) || 0;
+      const unitPrice =
+        name === "unitPrice"
+          ? Number.parseFloat(value) || 0
+          : Number.parseFloat(newItem.unitPrice) || 0;
+      updatedItem.total = (quantity * unitPrice).toFixed(2);
     }
 
-    setNewItem(updatedItem)
-  }
+    setNewItem(updatedItem);
+  };
 
   const addItem = () => {
     if (newItem.product && newItem.quantity && newItem.unitPrice) {
       setFormData({
         ...formData,
         items: [...formData.items, { ...newItem, id: Date.now() }],
-      })
+      });
       setNewItem({
         product: "",
         quantity: "",
         unitPrice: "",
         total: "",
-      })
+      });
     }
-  }
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    onAddInvoice(formData)
-    onClose()
-  }
+    e.preventDefault();
+    onAddInvoice(formData);
+    onClose();
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-gray-200 rounded-lg p-6 w-full max-w-3xl relative">
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+        >
           <X size={20} />
         </button>
 
-        <h2 className="text-center text-2xl font-medium mb-6 underline">Fatura Ekleme</h2>
+        <h2 className="text-center text-2xl font-medium mb-6 underline">
+          {isEditMode ? "Faturayı Güncelle" : "Fatura Ekle"}
+        </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-6 mb-6">
@@ -88,7 +99,10 @@ function InvoiceModal({ isOpen, onClose, onAddInvoice }) {
                   <option value="satis">Satış Faturası</option>
                   <option value="alis">Alış Faturası</option>
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
+                <ChevronDown
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  size={16}
+                />
               </div>
             </div>
 
@@ -103,7 +117,10 @@ function InvoiceModal({ isOpen, onClose, onAddInvoice }) {
                   className="w-full border border-gray-300 rounded-md p-2 bg-white pr-10"
                   required
                 />
-                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
+                <Calendar
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  size={16}
+                />
               </div>
             </div>
 
@@ -121,12 +138,17 @@ function InvoiceModal({ isOpen, onClose, onAddInvoice }) {
                   <option value="musteri1">Müşteri 1</option>
                   <option value="musteri2">Müşteri 2</option>
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
+                <ChevronDown
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  size={16}
+                />
               </div>
             </div>
 
             <div>
-              <label className="block text-gray-700 mb-1">Fatura Numarası</label>
+              <label className="block text-gray-700 mb-1">
+                Fatura Numarası
+              </label>
               <input
                 type="text"
                 name="invoiceNumber"
@@ -220,8 +242,10 @@ function InvoiceModal({ isOpen, onClose, onAddInvoice }) {
                         onClick={() => {
                           setFormData({
                             ...formData,
-                            items: formData.items.filter((i) => i.id !== item.id),
-                          })
+                            items: formData.items.filter(
+                              (i) => i.id !== item.id
+                            ),
+                          });
                         }}
                         className="text-red-500 hover:text-red-700"
                       >
@@ -246,13 +270,13 @@ function InvoiceModal({ isOpen, onClose, onAddInvoice }) {
               type="submit"
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-8 rounded-md"
             >
-              FATURA EKLE
+              {isEditMode ? "Faturayı Güncelle" : "Faturayı Ekle"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default InvoiceModal
+export default InvoiceModal;

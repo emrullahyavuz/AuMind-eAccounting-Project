@@ -52,7 +52,7 @@ function App() {
               <Route path="/invoices" element={<InvoicesPage />} />
               <Route path="/settings/bot" element={<BotSettingsPage />} />
               <Route path="/chat" element={<ChatPage />} />
-              <Route path="/kasa" element={<CashPage />} />
+              <Route path="/safes" element={<CashPage />} />
               <Route path="/kasa-hareketleri" element={<CashTransactionPage />} />
               <Route path="/stok-karlilik" element={<StockProfitability />} />
               <Route path="*" element={<Navigate to="/auth/login" replace />} />

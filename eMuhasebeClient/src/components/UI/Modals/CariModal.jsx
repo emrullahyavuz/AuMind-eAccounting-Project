@@ -1,25 +1,56 @@
-import { useState } from "react"
+import { use, useEffect, useState } from "react"
 import { X, ChevronDown } from "lucide-react"
 
-function CariModal({ isOpen, onClose, onAddCari }) {
-  const [formData, setFormData] = useState({
-    cariName: "",
-    type: "",
-    province: "",
-    address: "",
-    taxOffice: "",
-    taxNumber: "",
-    input: "",
-    output: "",
-    balance: "",
-  })
+const initialState = {
+  cariName: "",
+  type: "",
+  province: "",
+  address: "",
+  taxOffice: "",
+  taxNumber: "",
+  input: "0",
+  output: "0",
+  balance: "0",
+}
+
+function CariModal({ isOpen,isEditMode,cari, onClose, onAddCari }) {
+  const [formData, setFormData] = useState(initialState)
+
+  useEffect(() => {
+    if (isEditMode && cari) {
+      setFormData({
+        cariName: cari.name || "",
+        type: cari.type || "",
+        province: cari.city || "",
+        address: cari.address || "",
+        taxOffice: cari.taxOffice || "",
+        taxNumber: cari.taxNumber || "",
+        inflow: String(cari.inflow || 0).replace(/[^\d.-]/g, ''),
+        checkout: String(cari.checkout || 0).replace(/[^\d.-]/g, ''),
+        balance: String(cari.balance || 0).replace(/[^\d.-]/g, '')
+      })
+    } else {
+      setFormData(initialState)
+    }
+  }, [isEditMode, cari, isOpen])
+
+  console.log(cari)
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
+    if (name === 'inflow' || name === 'checkout' || name === 'balance') {
+      // Sadece sayılar ve nokta karakterine izin ver
+      const sanitizedValue = value.replace(/[^\d.-]/g, '')
+      setFormData(prev => ({
+        ...prev,
+        [name]: sanitizedValue
+      }))
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }))
+    }
   }
 
   const handleSubmit = (e) => {
@@ -37,7 +68,9 @@ function CariModal({ isOpen, onClose, onAddCari }) {
           <X size={20} />
         </button>
 
-        <h2 className="text-center text-xl font-medium mb-4">Cari Ekleme</h2>
+        <h2 className="text-center text-xl font-medium mb-4">
+          { isEditMode ? "Cari Düzenle" : "Yeni Cari Ekle"}
+          </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
@@ -125,7 +158,7 @@ function CariModal({ isOpen, onClose, onAddCari }) {
               <input
                 type="number"
                 name="input"
-                value={formData.input}
+                value={formData.inflow}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
               />
@@ -136,7 +169,7 @@ function CariModal({ isOpen, onClose, onAddCari }) {
               <input
                 type="number"
                 name="output"
-                value={formData.output}
+                value={formData.checkout}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
               />
@@ -159,7 +192,7 @@ function CariModal({ isOpen, onClose, onAddCari }) {
               type="submit"
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md"
             >
-              Cari Ekle
+              { isEditMode ? "Güncelle" : "Ekle"}
             </button>
           </div>
         </form>

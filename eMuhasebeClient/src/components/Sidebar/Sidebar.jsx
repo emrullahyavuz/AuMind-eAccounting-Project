@@ -9,6 +9,7 @@ import {
   FaFileInvoice,
   FaChartLine,
   FaUser,
+  FaCashRegister,
 } from "react-icons/fa";
 import SidebarItem from "./SidebarItem";
 import { Bot, MessageSquare, X } from "lucide-react";
@@ -29,6 +30,7 @@ function Sidebar({ toggleSidebar }) {
     if (path.includes("/cariler")) return "cariler";
     if (path.includes("/products")) return "products";
     if (path.includes("/invoices")) return "invoices";
+    if (path.includes("/safes")) return "safes";
     if (path.includes("/stok-karlilik")) return "profitability";
     if (path.includes("/settings/bot")) return "bot-settings"
     if (path.includes("/chat")) return "chat"
@@ -142,6 +144,13 @@ function Sidebar({ toggleSidebar }) {
               icon={<FaFileInvoice size={collapsed ? 24 : 20} />}
               text="Faturalar"
               active={activeItem === "invoices"}
+              collapsed={collapsed}
+            />
+            <SidebarItem
+              to="/safes"
+              icon={<FaCashRegister size={collapsed ? 24 : 20} />}
+              text="Kasalar"
+              active={activeItem === "safes"}
               collapsed={collapsed}
             />
           </nav>
