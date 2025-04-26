@@ -29,7 +29,7 @@ function Sidebar({ toggleSidebar }) {
     if (path.includes("/cariler")) return "cariler";
     if (path.includes("/products")) return "products";
     if (path.includes("/invoices")) return "invoices";
-    if (path.includes("/profitability")) return "profitability";
+    if (path.includes("/stok-karlilik")) return "profitability";
     if (path.includes("/settings/bot")) return "bot-settings"
     if (path.includes("/chat")) return "chat"
     return "";
@@ -159,7 +159,7 @@ function Sidebar({ toggleSidebar }) {
           )}
           <nav>
             <SidebarItem
-              to="/profitability"
+              to="/stok-karlilik"
               icon={<FaChartLine size={collapsed ? 24 : 20} />}
               text="Ürün Kârlılık Raporu"
               active={activeItem === "profitability"}

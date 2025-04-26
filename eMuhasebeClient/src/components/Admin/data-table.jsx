@@ -30,6 +30,7 @@ function DataTable({
   headerColor = "gray-700", 
   headerTextColor = "white", 
   isCari=false, // Cari hesaplar için özel stil
+  isStock=false, // Stok hesaplar için özel stil
   selectedItems = [],
   onSelectedItemsChange = () => {},
 }) {
@@ -86,7 +87,7 @@ function DataTable({
       <div className="flex flex-wrap justify-between items-center mb-6">
         <div className="flex items-center mb-4 sm:mb-0">
           {
-            isCari ? "" : (
+            isCari || isStock ? "" : (
               <button
                 onClick={onAdd}
                 className={`flex items-center font-semibold px-4 py-2 rounded-md ${buttonColorClass}`}
@@ -121,7 +122,7 @@ function DataTable({
           {/* Tablo Başlığı */}
           <thead>
             <tr className={`bg-${headerColor} text-${headerTextColor}`}>
-              {!isCari && (
+              {!isCari && !isStock && (
                 <th className="w-12 p-3 text-left">
                   <Edit size={18} />
                 </th>
@@ -136,7 +137,7 @@ function DataTable({
                   {column.header}
                 </th>
               ))}
-              {!isCari && (
+              {!isCari && !isStock &&  (
                 <th className="w-12 p-3 text-center">
                   <input
                     type="checkbox"
@@ -157,7 +158,7 @@ function DataTable({
                     key={item.id || rowIndex}
                     className="border-b border-gray-300 hover:bg-gray-200"
                   >
-                    {!isCari && (
+                    {!isCari && !isStock && (
                       <td className="p-3">
                         <button
                           onClick={() => onEdit(item)}
@@ -177,7 +178,7 @@ function DataTable({
                       </td>
                     ))}
 
-                    {!isCari && (
+                    {!isCari && !isStock && (
                       <td className="p-3 text-center">
                         <div className="flex justify-center">
                           <input

@@ -16,6 +16,7 @@ import BotSettingsPage from "./pages/settings/bot-settings";
 import ChatPage from "./pages/Chat";
 import CashPage from "./pages/Cash";
 import CashTransactionPage from "./pages/CashTransaction";
+import StockProfitability from "./pages/StockProfitability";
 
 function App() {
   const [darkMode, setDarkMode] = useState(true);
@@ -53,6 +54,7 @@ function App() {
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/kasa" element={<CashPage />} />
               <Route path="/kasa-hareketleri" element={<CashTransactionPage />} />
+              <Route path="/stok-karlilik" element={<StockProfitability />} />
               <Route path="*" element={<Navigate to="/auth/login" replace />} />
             </Routes>
           </main>
