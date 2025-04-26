@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Plus,
@@ -30,9 +30,10 @@ function DataTable({
   headerColor = "gray-700", 
   headerTextColor = "white", 
   isCari=false, // Cari hesaplar için özel stil
+  selectedItems = [],
+  onSelectedItemsChange = () => {},
 }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedItems, setSelectedItems] = useState([]);
 
   // Arama işlemi
   const handleSearch = (e) => {
@@ -45,10 +46,21 @@ function DataTable({
 
   // Checkbox işlemleri
   const handleSelectItem = (id) => {
+    let newSelectedItems;
     if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter((item) => item !== id));
+      newSelectedItems = selectedItems.filter((item) => item !== id);
     } else {
-      setSelectedItems([...selectedItems, id]);
+      newSelectedItems = [...selectedItems, id];
+    }
+    onSelectedItemsChange(newSelectedItems);
+  };
+
+  // Tüm öğeleri seç/kaldır
+  const handleSelectAll = () => {
+    if (selectedItems.length === data.length) {
+      onSelectedItemsChange([]);
+    } else {
+      onSelectedItemsChange(data.map(item => item.id));
     }
   };
 
@@ -109,34 +121,31 @@ function DataTable({
           {/* Tablo Başlığı */}
           <thead>
             <tr className={`bg-${headerColor} text-${headerTextColor}`}>
-             {
-              isCari ? (
-                ""
-              ) : (
+              {!isCari && (
                 <th className="w-12 p-3 text-left">
-                <Edit size={18} />
-              </th>
-              )
-             }
+                  <Edit size={18} />
+                </th>
+              )}
               {columns.map((column, index) => (
                 <th
                   key={index}
-                  className={`p-3 ${column.header === "İşlemler" ? "text-right px-[60px]" : ""} text-left ${column.className || ""}`}
+                  className={`p-3 ${
+                    column.header === "İşlemler" ? "text-right px-[60px]" : ""
+                  } text-left ${column.className || ""}`}
                 >
                   {column.header}
-                  
                 </th>
               ))}
-              <th className="w-12 p-3 text-center">
-                {
-                  isCari ? "" : (
-                    <Trash2
-                  size={22}
-                  className="text-red-500 mx-auto cursor-pointer"
-                />
-                  )
-                }
-              </th>
+              {!isCari && (
+                <th className="w-12 p-3 text-center">
+                  <input
+                    type="checkbox"
+                    checked={data.length > 0 && selectedItems.length === data.length}
+                    onChange={handleSelectAll}
+                    className="h-5 w-5 text-red-500 border-gray-300 rounded focus:ring-red-500"
+                  />
+                </th>
+              )}
             </tr>
           </thead>
 
@@ -148,18 +157,16 @@ function DataTable({
                     key={item.id || rowIndex}
                     className="border-b border-gray-300 hover:bg-gray-200"
                   >
-                   {
-                    isCari ? "" : (
+                    {!isCari && (
                       <td className="p-3">
-                      <button
-                        onClick={() => onEdit(item)}
-                        className="text-blue-500 hover:text-blue-700 bg-blue-100 p-1 rounded"
-                      >
-                        <Edit size={18} />
-                      </button>
-                    </td>
-                    )
-                   }
+                        <button
+                          onClick={() => onEdit(item)}
+                          className="text-blue-500 hover:text-blue-700 bg-blue-100 p-1 rounded"
+                        >
+                          <Edit size={18} />
+                        </button>
+                      </td>
+                    )}
 
                     {columns.map((column, colIndex) => (
                       <td
@@ -167,25 +174,21 @@ function DataTable({
                         className={`p-3 ${column.className || ""}`}
                       >
                         {item[column.accessor] || (item[column.accessor] === "" && <div className="flex justify-end">{detailButton}</div>)}
-                       
                       </td>
-                      
                     ))}
 
-                    {
-                      isCari ? "" : (
-                        <td className="p-3 text-center">
-                      <div className="flex justify-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedItems.includes(item.id)}
-                          onChange={() => handleSelectItem(item.id)}
-                          className="h-5 w-5 text-red-500 border-gray-300 rounded focus:ring-red-500"
-                        />
-                      </div>
-                    </td>
-                      )
-                    }
+                    {!isCari && (
+                      <td className="p-3 text-center">
+                        <div className="flex justify-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedItems.includes(item.id)}
+                            onChange={() => handleSelectItem(item.id)}
+                            className="h-5 w-5 text-red-500 border-gray-300 rounded focus:ring-red-500"
+                          />
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))
               : // Veri yoksa boş satırlar göster
@@ -271,4 +274,7 @@ DataTable.propTypes = {
   detailButton: PropTypes.node,
   headerColor: PropTypes.string,
   headerTextColor: PropTypes.string,
+  isCari: PropTypes.bool,
+  selectedItems: PropTypes.array,
+  onSelectedItemsChange: PropTypes.func,
 };

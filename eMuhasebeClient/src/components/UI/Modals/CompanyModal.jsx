@@ -1,7 +1,7 @@
-import { useState } from "react"
-import { X } from "lucide-react"
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 
-function CompanyModal({ isOpen, onClose, onAddCompany }) {
+function CompanyModal({ isOpen, onClose, isEditMode, onAddCompany, company }) {
   const [formData, setFormData] = useState({
     companyName: "",
     address: "",
@@ -11,32 +11,56 @@ function CompanyModal({ isOpen, onClose, onAddCompany }) {
     databaseName: "",
     adminName: "",
     password: "",
-  })
+  });
 
+  // company prop'u değiştiğinde form verilerini güncelle
+  useEffect(() => {
+    if (company) {
+      setFormData({
+        companyName: company.name || "",
+        address: company.address || "",
+        taxOffice: company.taxOffice || "",
+        taxNumber: company.taxNumber || "",
+        server: company.server || "",
+        databaseName: company.databaseName || "",
+        adminName: company.adminName || "",
+        password: "",
+      });
+    }
+  }, [company]);
+
+  
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
-    })
-  }
+    });
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    onAddCompany(formData)
-    onClose()
-  }
+    e.preventDefault();
+    onAddCompany(formData);
+    onClose();
+  };
+  
 
-  if (!isOpen) return null
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-gray-200 rounded-lg p-6 w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+        >
           <X size={20} />
         </button>
 
-        <h2 className="text-center text-xl font-medium mb-4">Şirket Ekleme</h2>
+        <h2 className="text-center text-xl font-medium mb-4">
+          {isEditMode ? "Düzenleme İşlemi" : "Şirket Ekleme"}
+        </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
@@ -142,13 +166,13 @@ function CompanyModal({ isOpen, onClose, onAddCompany }) {
               type="submit"
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md"
             >
-              Şirket Ekle
+              {isEditMode ? "Güncelle" : "Ekle"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default CompanyModal
+export default CompanyModal;
