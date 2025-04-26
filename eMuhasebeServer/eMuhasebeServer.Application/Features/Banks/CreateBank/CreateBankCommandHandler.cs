@@ -9,7 +9,7 @@ namespace eMuhasebeServer.Application.Features.Banks.CreateBank;
 
 internal sealed class CreateBankCommandHandler(
     IBankRepository bankRepository,
-    IUnitOfWorkCompany unitOfWorkCompany
+    IUnitOfWorkCompany unitOfWorkCompany,
     IMapper mapper,
     ICacheService cacheService) : IRequestHandler<CreateBankCommand, Result<string>>
 {
