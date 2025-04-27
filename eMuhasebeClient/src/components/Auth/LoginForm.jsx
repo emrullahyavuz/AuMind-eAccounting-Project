@@ -3,16 +3,19 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../schemas/auth.schema";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
+import { useLoginMutation } from '../../store/api';
 import { useAuth } from "../../hooks/useAuth";
-
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   // AuthContext'ten login fonksiyonunu al
   const { login } = useAuth();
+
+  const [loginMutation, { isLoading }] = useLoginMutation();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -28,12 +31,13 @@ function LoginForm() {
 
   const onSubmit = async (data) => {
     try {
-      // Burada API çağrısı yapılacak
-      console.log("Login data:", data);
-      await login(data);
-      // Başarılı giriş sonrası yönlendirme yapılacak
+      const result = await loginMutation(data).unwrap();
+      if (result.token) {
+        localStorage.setItem('token', result.token);
+        navigate('/dashboard');
+      }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error('Failed to login:', error);
     }
   };
 
@@ -122,10 +126,10 @@ function LoginForm() {
           {/* Giriş Yap Butonu */}
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isLoading || isSubmitting}
             className="w-full bg-gray-700 hover:bg-gray-800 text-yellow-500 font-medium py-2 px-4 rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500"
           >
-            {isSubmitting ? "Giriş Yapılıyor..." : "Giriş Yap"}
+            {isLoading || isSubmitting ? "Giriş Yapılıyor..." : "Giriş Yap"}
           </button>
 
           {/* Onay Maili Linki */}
