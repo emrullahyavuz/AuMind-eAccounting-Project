@@ -15,7 +15,8 @@ internal sealed class ChangeCompanyCommandHandler(
     ICompanyUserRepository companyUserRepository,
     UserManager<AppUser> userManager,
     IHttpContextAccessor httpContextAccessor,
-    IJwtProvider jwtProvider) : IRequestHandler<ChangeCompanyCommand, Result<LoginCommandResponse>>
+    IJwtProvider jwtProvider,
+    ICacheService cacheService) : IRequestHandler<ChangeCompanyCommand, Result<LoginCommandResponse>>
 {
     public async Task<Result<LoginCommandResponse>> Handle(ChangeCompanyCommand request, CancellationToken cancellationToken)
     {
@@ -50,6 +51,8 @@ internal sealed class ChangeCompanyCommandHandler(
         }).ToList();
 
         var response = await jwtProvider.CreateToken(appUser, request.CompanyId, companies);
+
+        cacheService.RemoveAll();
 
         return response;
     }
