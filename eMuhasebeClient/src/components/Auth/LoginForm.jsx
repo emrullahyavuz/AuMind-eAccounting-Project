@@ -5,7 +5,7 @@ import { loginSchema } from "../../schemas/auth.schema";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
-import { useLoginMutation } from '../../store/api';
+import { useLoginMutation } from "../../store/api";
 import { useAuth } from "../../hooks/useAuth";
 
 function LoginForm() {
@@ -24,21 +24,23 @@ function LoginForm() {
   } = useForm({
     resolver: yupResolver(loginSchema),
     defaultValues: {
-      username: "",
+      emailOrUserName: "",
       password: "",
     },
   });
 
   const onSubmit = async (data) => {
     try {
-      debugger
       const result = await loginMutation(data).unwrap();
-      if (result.token) {
-        localStorage.setItem('token', result.token);
-        navigate('/dashboard');
+      console.log("Login response:", result);
+      if (result.data.token) {
+        localStorage.setItem("token", result.data.token);
+        // Token'ı store'a da kaydet
+
+        navigate("/dashboard");
       }
     } catch (error) {
-      console.error('Failed to login:', error);
+      console.error("Failed to login:", error);
     }
   };
 
@@ -62,7 +64,7 @@ function LoginForm() {
           {/* Kullanıcı Adı */}
           <div className="space-y-2">
             <label
-              htmlFor="username"
+              htmlFor="emailOrUserName"
               className="block text-gray-700 font-medium"
             >
               Kullanıcı Adı
@@ -72,17 +74,19 @@ function LoginForm() {
                 <User className="h-5 w-5 text-gray-500" />
               </div>
               <input
-                id="username"
+                id="emailOrUserName"
                 type="text"
-                {...register("username")}
+                {...register("emailOrUserName")}
                 className={`w-full pl-10 pr-3 py-2 border ${
-                  errors.username ? "border-red-500" : "border-gray-300"
+                  errors.emailOrUserName ? "border-red-500" : "border-gray-300"
                 } rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500`}
                 placeholder="Kullanıcı adınızı giriniz"
               />
             </div>
-            {errors.username && (
-              <p className="text-red-500 text-sm">{errors.username.message}</p>
+            {errors.emailOrUserName && (
+              <p className="text-red-500 text-sm">
+                {errors.emailOrUserName.message}
+              </p>
             )}
           </div>
 

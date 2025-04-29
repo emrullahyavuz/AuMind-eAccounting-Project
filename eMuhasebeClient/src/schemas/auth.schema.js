@@ -2,7 +2,7 @@ import * as yup from "yup"
 
 // Login formu için doğrulama şeması
 export const loginSchema = yup.object({
-  username: yup.string().required("Kullanıcı adı zorunludur").min(3, "Kullanıcı adı en az 3 karakter olmalıdır"),
+  emailOrUserName: yup.string().required("Kullanıcı adı zorunludur").min(3, "Kullanıcı adı en az 3 karakter olmalıdır"),
   password: yup.string().required("Şifre zorunludur").min(6, "Şifre en az 6 karakter olmalıdır"),
 })
 

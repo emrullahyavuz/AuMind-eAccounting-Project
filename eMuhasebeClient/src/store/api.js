@@ -1,13 +1,13 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const api = createApi({
-  reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ 
-    baseUrl: 'http://localhost:5000/api',
+  reducerPath: "api",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:5193/api",
     prepareHeaders: (headers, { getState }) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
-        headers.set('authorization', `Bearer ${token}`);
+        headers.set("authorization", `Bearer ${token}`);
       }
       return headers;
     },
@@ -16,53 +16,54 @@ export const api = createApi({
     // Auth endpoints
     login: builder.mutation({
       query: (credentials) => ({
-        url: '/auth/login',
-        method: 'POST',
+        url: "/Auth/Login",
+        method: "POST",
         body: credentials,
       }),
+      invalidatesTags: ["Auth"],
     }),
-    
+
     // Company endpoints
     changeCompany: builder.mutation({
       query: (companyId) => ({
-        url: '/auth/changeCompany',
-        method: 'POST',
+        url: "/auth/changeCompany",
+        method: "POST",
         body: { companyId },
       }),
     }),
 
     // Customer endpoints
     getCustomers: builder.query({
-      query: () => '/customers',
+      query: () => "/customers",
     }),
     addCustomer: builder.mutation({
       query: (customer) => ({
-        url: '/customers',
-        method: 'POST',
+        url: "/customers",
+        method: "POST",
         body: customer,
       }),
     }),
 
     // Product endpoints
     getProducts: builder.query({
-      query: () => '/products',
+      query: () => "/products",
     }),
     addProduct: builder.mutation({
       query: (product) => ({
-        url: '/products',
-        method: 'POST',
+        url: "/products",
+        method: "POST",
         body: product,
       }),
     }),
 
     // Cash Register endpoints
     getCashRegisters: builder.query({
-      query: () => '/cashRegisters',
+      query: () => "/cashRegisters",
     }),
     addCashRegister: builder.mutation({
       query: (cashRegister) => ({
-        url: '/cashRegisters',
-        method: 'POST',
+        url: "/cashRegisters",
+        method: "POST",
         body: cashRegister,
       }),
     }),

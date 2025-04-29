@@ -18,3 +18,23 @@ C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServe
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.genruntimeconfig.cache
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\ref\eMuhasebeServer.Infrastructure.dll
 C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.sourcelink.json
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\bin\Debug\net8.0\eMuhasebeServer.Infrastructure.deps.json
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\bin\Debug\net8.0\eMuhasebeServer.Infrastructure.runtimeconfig.json
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\bin\Debug\net8.0\eMuhasebeServer.Infrastructure.dll
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\bin\Debug\net8.0\eMuhasebeServer.Infrastructure.pdb
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\bin\Debug\net8.0\eMuhasebeServer.Application.dll
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\bin\Debug\net8.0\eMuhasebeServer.Domain.dll
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\bin\Debug\net8.0\eMuhasebeServer.Application.pdb
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\bin\Debug\net8.0\eMuhasebeServer.Domain.pdb
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.AssemblyInfo.cs
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.sourcelink.json
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhaseb.3BAE3BD5.Up2Date
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.dll
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\refint\eMuhasebeServer.Infrastructure.dll
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.pdb
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\eMuhasebeServer.Infrastructure.genruntimeconfig.cache
+C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.Infrastructure\obj\Debug\net8.0\ref\eMuhasebeServer.Infrastructure.dll
