@@ -343,3 +343,4 @@ C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuha
 C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.WebAPI\obj\Debug\net8.0\eMuhasebeServer.WebAPI.pdb
 C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.WebAPI\obj\Debug\net8.0\eMuhasebeServer.WebAPI.genruntimeconfig.cache
 C:\Users\softw\OneDrive\Masaüstü\AuMind-e-Accounting\eAccounting-Project\eMuhasebeServer\eMuhasebeServer.WebAPI\obj\Debug\net8.0\ref\eMuhasebeServer.WebAPI.dll
+C:\Users\Şeref\Desktop\Code\Muhasebe Uygulaması\eMuhasebeServer\eMuhasebeServer.WebAPI\bin\Debug\net8.0\Microsoft.Extensions.ObjectPool.dll
