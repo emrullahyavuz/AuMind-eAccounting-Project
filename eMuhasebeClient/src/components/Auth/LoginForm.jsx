@@ -31,6 +31,7 @@ function LoginForm() {
 
   const onSubmit = async (data) => {
     try {
+      debugger
       const result = await loginMutation(data).unwrap();
       if (result.token) {
         localStorage.setItem('token', result.token);
