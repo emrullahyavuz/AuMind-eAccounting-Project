@@ -5400,43 +5400,36 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Şeref\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\softw\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Şeref\\Desktop\\Code\\Muhasebe Uygulaması\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj",
+      "projectUniqueName": "C:\\Users\\softw\\OneDrive\\Masaüstü\\AuMind-e-Accounting\\eAccounting-Project\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj",
       "projectName": "eMuhasebeServer.Infrastructure",
-      "projectPath": "C:\\Users\\Şeref\\Desktop\\Code\\Muhasebe Uygulaması\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj",
-      "packagesPath": "C:\\Users\\Şeref\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Şeref\\Desktop\\Code\\Muhasebe Uygulaması\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\obj\\",
+      "projectPath": "C:\\Users\\softw\\OneDrive\\Masaüstü\\AuMind-e-Accounting\\eAccounting-Project\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\eMuhasebeServer.Infrastructure.csproj",
+      "packagesPath": "C:\\Users\\softw\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\softw\\OneDrive\\Masaüstü\\AuMind-e-Accounting\\eAccounting-Project\\eMuhasebeServer\\eMuhasebeServer.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Şeref\\Desktop\\Code\\Muhasebe Uygulaması\\eMuhasebeServer\\NuGet.Config",
-        "C:\\Users\\Şeref\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\softw\\OneDrive\\Masaüstü\\AuMind-e-Accounting\\eAccounting-Project\\eMuhasebeServer\\NuGet.Config",
+        "C:\\Users\\softw\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\Şeref\\Desktop\\Code\\Muhasebe Uygulaması\\eMuhasebeServer\\eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj": {
-              "projectPath": "C:\\Users\\Şeref\\Desktop\\Code\\Muhasebe Uygulaması\\eMuhasebeServer\\eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj"
+            "C:\\Users\\softw\\OneDrive\\Masaüstü\\AuMind-e-Accounting\\eAccounting-Project\\eMuhasebeServer\\eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj": {
+              "projectPath": "C:\\Users\\softw\\OneDrive\\Masaüstü\\AuMind-e-Accounting\\eAccounting-Project\\eMuhasebeServer\\eMuhasebeServer.Application\\eMuhasebeServer.Application.csproj"
             },
-            "C:\\Users\\Şeref\\Desktop\\Code\\Muhasebe Uygulaması\\eMuhasebeServer\\eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj": {
-              "projectPath": "C:\\Users\\Şeref\\Desktop\\Code\\Muhasebe Uygulaması\\eMuhasebeServer\\eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj"
+            "C:\\Users\\softw\\OneDrive\\Masaüstü\\AuMind-e-Accounting\\eAccounting-Project\\eMuhasebeServer\\eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj": {
+              "projectPath": "C:\\Users\\softw\\OneDrive\\Masaüstü\\AuMind-e-Accounting\\eAccounting-Project\\eMuhasebeServer\\eMuhasebeServer.Domain\\eMuhasebeServer.Domain.csproj"
             }
           }
         }
@@ -5451,8 +5444,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.200"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -5529,7 +5521,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.408/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
