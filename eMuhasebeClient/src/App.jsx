@@ -5,6 +5,7 @@ import CariHareketleri from "./pages/CariHareketleri";
 import LoginForm from "./components/Auth/LoginForm";
 import { Routes, Route, Navigate } from "react-router-dom";
 import RegisterForm from "./components/Auth/RegisterForm";
+import ConfirmEmail from "./components/Auth/ConfirmEmail";
 import Header from "./components/Header/Header";
 import UsersPage from "./pages/Admin/Users";
 import InvoicesPage from "./pages/Admin/Invoices";
@@ -43,6 +44,7 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/auth/login" element={<LoginForm />} />
               <Route path="/auth/register" element={<RegisterForm />} />
+              <Route path="/auth/confirm-email" element={<ConfirmEmail />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/admin/companies" element={<CompaniesPage />} />
               <Route path="/admin/users" element={<UsersPage />} />

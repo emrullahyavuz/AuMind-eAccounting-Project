@@ -14,6 +14,20 @@ export const api = createApi({
   }),
   endpoints: (builder) => ({
     // Auth endpoints
+    confirmEmail: builder.mutation({
+      query: (data) => ({
+        url: "/Auth/ConfirmEmail",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    sendConfirmEmail: builder.mutation({
+      query: (email) => ({
+        url: "/Auth/SendConfirmEmail",
+        method: "POST",
+        body: { email },
+      }),
+    }),
     login: builder.mutation({
       query: (credentials) => ({
         url: "/Auth/Login",
@@ -34,11 +48,18 @@ export const api = createApi({
 
     // Customer endpoints
     getCustomers: builder.query({
-      query: () => "/customers",
+      query: () => ({
+        url: "/Customers/GetAll",
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({}) // Eğer API boş bir gövde bekliyorsa
+      })
     }),
     addCustomer: builder.mutation({
       query: (customer) => ({
-        url: "/customers",
+        url: "/Customers/Create",
         method: "POST",
         body: customer,
       }),
@@ -46,11 +67,11 @@ export const api = createApi({
 
     // Product endpoints
     getProducts: builder.query({
-      query: () => "/products",
+      query: () => "/Products/GetAll",
     }),
     addProduct: builder.mutation({
       query: (product) => ({
-        url: "/products",
+        url: "/Products/Create",
         method: "POST",
         body: product,
       }),
@@ -58,13 +79,42 @@ export const api = createApi({
 
     // Cash Register endpoints
     getCashRegisters: builder.query({
-      query: () => "/cashRegisters",
+      query: () => "/CashRegisters/GetAll",
     }),
     addCashRegister: builder.mutation({
       query: (cashRegister) => ({
-        url: "/cashRegisters",
+        url: "/CashRegisters/Create",
         method: "POST",
         body: cashRegister,
+      }),
+    }),
+
+    // Users endpoints
+    getAllUsers: builder.query({
+      query: () => ({
+        url: "/Users/GetAll",
+        method: "POST",
+      }),
+    }),
+    createUser: builder.mutation({
+      query: (userData) => ({
+        url: "/Users/Create",
+        method: "POST",
+        body: userData,
+      }),
+    }),
+    updateUser: builder.mutation({
+      query: (userData) => ({
+        url: "/Users/Update",
+        method: "POST",
+        body: userData,
+      }),
+    }),
+    deleteUser: builder.mutation({
+      query: (userId) => ({
+        url: "/Users/DeleteById",
+        method: "POST",
+        body: { id: userId },
       }),
     }),
   }),
@@ -80,4 +130,9 @@ export const {
   useAddProductMutation,
   useGetCashRegistersQuery,
   useAddCashRegisterMutation,
+  useGetAllUsersQuery,
+  useCreateUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+  useConfirmEmailMutation,
 } = api;
