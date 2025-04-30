@@ -4,18 +4,37 @@ import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay"
 import UserModal from "../../components/UI/Modals/UserModal"
 import DeleteConfirmationModal from "../../components/UI/Modals/DeleteConfirmationModal"
 import { Trash2 } from "lucide-react"
+import { useGetCustomersQuery } from "../../store/api"
 
 function UsersPage() {
   const [users, setUsers] = useState([])
   const [filteredUsers, setFilteredUsers] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(true)
+  // const [isLoading, setIsLoading] = useState(true)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
   const [userToDelete, setUserToDelete] = useState(null)
   const [selectedItems, setSelectedItems] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
+
+  const {data, isLoading: isUsersLoading} = useGetCustomersQuery()
+  
+  useEffect(() => {
+    if (data) {
+      const formattedData = Array.isArray(data) ? data : [];
+      setUsers(formattedData);
+      setFilteredUsers(formattedData);
+      setIsLoading(false);
+    }
+  }, [data]);
+
+  
+
+  useEffect(() => {
+    handleSearch(searchTerm);
+  }, [searchTerm]);
 
   const itemsPerPage = 50
 
@@ -28,23 +47,7 @@ function UsersPage() {
     { header: "Bağlı Olduğu Şirketler", accessor: "companies" },
   ]
 
-  // Örnek veri yükleme - daha sonra gerçek uygulamada API'den gelecek
-  useEffect(() => {
-    // API çağrısı örneği
-    setTimeout(() => {
-      const mockUsers = Array.from({ length: 120 }, (_, index) => ({
-        id: index + 1,
-        username: `kullanici${index + 1}`,
-        surname: `soyad${index + 1}`,
-        email: `kullanici${index + 1}@example.com`,
-        companies: `Şirket ${Math.floor(index / 10) + 1}`,
-      }))
 
-      setUsers(mockUsers)
-      setFilteredUsers(mockUsers)
-      setIsLoading(false)
-    }, 1000)
-  }, [])
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
@@ -122,7 +125,7 @@ function UsersPage() {
     </button>
   )
 
-  if (isLoading) {
+  if (isUsersLoading) {
     return <div className="p-6"><LoadingOverlay /></div>
   }
 
