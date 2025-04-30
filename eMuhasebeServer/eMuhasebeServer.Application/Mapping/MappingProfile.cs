@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Azure.Core;
+using eMuhasebeServer.Application.Features.Auth.Register;
 using eMuhasebeServer.Application.Features.Banks.CreateBank;
 using eMuhasebeServer.Application.Features.Banks.UpdateBank;
 using eMuhasebeServer.Application.Features.CashRegisters.CreateCashRegister;
@@ -24,6 +25,7 @@ namespace eMuhasebeServer.Application.Mapping
         {
             CreateMap<CreateUserCommand, AppUser>();
             CreateMap<UpdateUserCommand, AppUser>();
+            CreateMap<RegisterCommand, AppUser>();
 
             CreateMap<CreateCompanyCommand, Company>();
             CreateMap<UpdateCompanyCommand, Company>();
