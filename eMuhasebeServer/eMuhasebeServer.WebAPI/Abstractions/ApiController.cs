@@ -7,7 +7,6 @@ namespace eMuhasebeServer.WebAPI.Abstractions
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    [AllowAnonymous]
     public abstract class ApiController : ControllerBase
     {
         public readonly IMediator _mediator;
