@@ -6,17 +6,16 @@ import { User, Lock, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 import { useLoginMutation } from "../../store/api";
-import { useAuth } from "../../hooks/useAuth";
+import { useToast } from "../../hooks/useToast";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
-  // AuthContext'ten login fonksiyonunu al
-  const { login } = useAuth();
+
 
   const [loginMutation, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
-
+  const { showToast } = useToast();
   const {
     register,
     handleSubmit,
@@ -36,11 +35,15 @@ function LoginForm() {
       if (result.data.token) {
         localStorage.setItem("token", result.data.token);
         // Token'ı store'a da kaydet
-
+        showToast("Giriş yapıldı", "success");
         navigate("/dashboard");
       }
     } catch (error) {
-      console.error("Failed to login:", error);
+      console.error("Failed to login:", error)
+      showToast(
+        `${error.data.errorMessages[0]}`,
+        "error"
+      )
     }
   };
 

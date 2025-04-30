@@ -1,15 +1,21 @@
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup"
-import { registerSchema } from "../../schemas/auth.schema"
-import { User, Mail, Lock, Eye, EyeOff, UserPlus } from "lucide-react"
-import { Link } from "react-router-dom"
-import "./Auth.css"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { registerSchema } from "../../schemas/auth.schema";
+import { User, Mail, Lock, Eye, EyeOff, UserPlus } from "lucide-react";
+import { Link } from "react-router-dom";
+import "./Auth.css";
+import { useCreateUserMutation, useConfirmEmailMutation } from "../../store/api";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "../../hooks/useToast";
 
 function RegisterForm() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [createUser] = useCreateUserMutation();
+  const [sendConfirmEmail] = useConfirmEmailMutation();
+  const navigate = useNavigate();
+  const { showToast } = useToast();
   const {
     register,
     handleSubmit,
@@ -17,68 +23,140 @@ function RegisterForm() {
   } = useForm({
     resolver: yupResolver(registerSchema),
     defaultValues: {
-      fullName: "",
-      email: "",
+      firstName: "",
+      lastName: "",
       username: "",
+      email: "",
       password: "",
       confirmPassword: "",
+      companyIds: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
       terms: false,
     },
-  })
+  });
 
   const onSubmit = async (data) => {
     try {
-      // Burada API çağrısı yapılacak
-      console.log("Register data:", data)
-      // Başarılı kayıt sonrası yönlendirme yapılabilir
+      console.log("Register data:", data);
+      const result = await createUser(data).unwrap();
+      console.log(result)
+      if (result?.success) {
+        // Send confirm email
+        await sendConfirmEmail(data.email).unwrap();
+        showToast("Kayıt başarılı! Lütfen e-postanızı kontrol edin", "success");
+        navigate("/auth/confirm-email", {
+          state: { email: data.email }
+        });
+      }
     } catch (error) {
-      console.error("Register error:", error)
+      console.error("Register error:", error);
+      showToast(error.data?.errorMessages?.[0] || "Kayıt sırasında bir hata oluştu", "error");
     }
-  }
+  };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword)
-  }
+    setShowPassword(!showPassword);
+  };
 
   const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword)
-  }
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-300 bg-opacity-80 bg-[url('/images/auth-bg.jpg')] bg-cover bg-blend-overlay">
       <div className="w-full max-w-md p-8 flex flex-col items-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">AuMind Muhasebe Sistemi</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          AuMind Muhasebe Sistemi
+        </h1>
 
         {/* Logo */}
-        <div className="w-24 h-24 bg-black mb-8"></div>
+        <div className="w-24 h-24 bg-black mb-2"></div>
 
-        <h2 className="text-xl font-semibold text-gray-800 mb-6">Yeni Hesap Oluştur</h2>
+        <h2 className="text-xl font-semibold text-gray-800 mb-2">
+          Yeni Hesap Oluştur
+        </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
-          {/* Ad Soyad */}
-          <div className="space-y-2">
-            <label htmlFor="fullName" className="block text-gray-700 font-medium">
-              Ad Soyad
+          {/* Ad */}
+          <div className="space-y-2 !mt-1">
+            <label
+              htmlFor="firstName"
+              className="block text-gray-700 font-medium"
+            >
+              Ad
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <User className="h-5 w-5 text-gray-500" />
               </div>
               <input
-                id="fullName"
+                id="firstName"
                 type="text"
-                {...register("fullName")}
+                {...register("firstName")}
                 className={`w-full pl-10 pr-3 py-2 border ${
-                  errors.fullName ? "border-red-500" : "border-gray-300"
+                  errors.firstName ? "border-red-500" : "border-gray-300"
                 } rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500`}
                 placeholder="Ad ve soyadınızı giriniz"
               />
             </div>
-            {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName.message}</p>}
+            {errors.firstName && (
+              <p className="text-red-500 text-sm">{errors.firstName.message}</p>
+            )}
+          </div>
+          {/* Soyad */}
+          <div className="space-y-2 !mt-1">
+            <label
+              htmlFor="lastName"
+              className="block text-gray-700 font-medium"
+            >
+              Soyad
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <User className="h-5 w-5 text-gray-500" />
+              </div>
+              <input
+                id="lastName"
+                type="text"
+                {...register("lastName")}
+                className={`w-full pl-10 pr-3 py-2 border ${
+                  errors.lastName ? "border-red-500" : "border-gray-300"
+                } rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500`}
+                placeholder="Soyadınızı giriniz"
+              />
+            </div>
+            {errors.lastName && (
+              <p className="text-red-500 text-sm">{errors.lastName.message}</p>
+            )}
+          </div>
+          {/* Kullanıcı Adı */}
+          <div className="space-y-2 !mt-1">
+            <label
+              htmlFor="username"
+              className="block text-gray-700 font-medium"
+            >
+              Kullanıcı Adı
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <UserPlus className="h-5 w-5 text-gray-500" />
+              </div>
+              <input
+                id="username"
+                type="text"
+                {...register("username")}
+                className={`w-full pl-10 pr-3 py-2 border ${
+                  errors.username ? "border-red-500" : "border-gray-300"
+                } rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500`}
+                placeholder="Kullanıcı adınızı giriniz"
+              />
+            </div>
+            {errors.username && (
+              <p className="text-red-500 text-sm">{errors.username.message}</p>
+            )}
           </div>
 
           {/* E-posta */}
-          <div className="space-y-2">
+          <div className="space-y-2 !mt-1">
             <label htmlFor="email" className="block text-gray-700 font-medium">
               E-posta
             </label>
@@ -96,34 +174,17 @@ function RegisterForm() {
                 placeholder="E-posta adresinizi giriniz"
               />
             </div>
-            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-          </div>
-
-          {/* Kullanıcı Adı */}
-          <div className="space-y-2">
-            <label htmlFor="username" className="block text-gray-700 font-medium">
-              Kullanıcı Adı
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <UserPlus className="h-5 w-5 text-gray-500" />
-              </div>
-              <input
-                id="username"
-                type="text"
-                {...register("username")}
-                className={`w-full pl-10 pr-3 py-2 border ${
-                  errors.username ? "border-red-500" : "border-gray-300"
-                } rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500`}
-                placeholder="Kullanıcı adınızı giriniz"
-              />
-            </div>
-            {errors.username && <p className="text-red-500 text-sm">{errors.username.message}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
           </div>
 
           {/* Şifre */}
-          <div className="space-y-2">
-            <label htmlFor="password" className="block text-gray-700 font-medium">
+          <div className="space-y-2 !mt-1">
+            <label
+              htmlFor="password"
+              className="block text-gray-700 font-medium"
+            >
               Şifre
             </label>
             <div className="relative">
@@ -151,12 +212,17 @@ function RegisterForm() {
                 )}
               </button>
             </div>
-            {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password.message}</p>
+            )}
           </div>
 
           {/* Şifre Tekrarı */}
-          <div className="space-y-2">
-            <label htmlFor="confirmPassword" className="block text-gray-700 font-medium">
+          <div className="space-y-2 !mt-1">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-gray-700 font-medium"
+            >
               Şifre Tekrarı
             </label>
             <div className="relative">
@@ -184,7 +250,11 @@ function RegisterForm() {
                 )}
               </button>
             </div>
-            {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
 
           {/* Kullanım Koşulları */}
@@ -213,7 +283,9 @@ function RegisterForm() {
                   okudum ve kabul ediyorum
                 </span>
               </label>
-              {errors.terms && <p className="text-red-500 text-sm">{errors.terms.message}</p>}
+              {errors.terms && (
+                <p className="text-red-500 text-sm">{errors.terms.message}</p>
+              )}
             </div>
           </div>
 
@@ -230,7 +302,10 @@ function RegisterForm() {
           <div className="text-center pt-4 border-t border-gray-300">
             <p className="text-gray-700 text-sm">
               Zaten hesabınız var mı?{" "}
-              <Link to="/auth/login" className="text-yellow-600 font-medium hover:underline">
+              <Link
+                to="/auth/login"
+                className="text-yellow-600 font-medium hover:underline"
+              >
                 Giriş Yap
               </Link>
             </p>
@@ -238,8 +313,7 @@ function RegisterForm() {
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default RegisterForm
-
+export default RegisterForm;
