@@ -1,6 +1,7 @@
 ﻿using eMuhasebeServer.Application.Features.Auth.ChangeCompany;
 using eMuhasebeServer.Application.Features.Auth.ConfirmEmail;
 using eMuhasebeServer.Application.Features.Auth.Login;
+using eMuhasebeServer.Application.Features.Auth.Register;
 using eMuhasebeServer.Application.Features.Auth.SendConfirmEmail;
 using eMuhasebeServer.WebAPI.Abstractions;
 using MediatR;
@@ -22,6 +23,14 @@ namespace eMuhasebeServer.WebAPI.Controllers
             var response = await _mediator.Send(request, cancellationToken);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterCommand request, CancellationToken cancellationToken)
+        {
+            var response = await _mediator.Send(request, cancellationToken);
+            return StatusCode(response.StatusCode, response);
+        }
+
         [HttpPost]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailCommand request, CancellationToken cancellationToken)
         {
