@@ -21,13 +21,7 @@ export const api = createApi({
         body: data,
       }),
     }),
-    sendConfirmEmail: builder.mutation({
-      query: (email) => ({
-        url: "/Auth/SendConfirmEmail",
-        method: "POST",
-        body: { email },
-      }),
-    }),
+
     login: builder.mutation({
       query: (credentials) => ({
         url: "/Auth/Login",
@@ -52,10 +46,11 @@ export const api = createApi({
         url: "/Customers/GetAll",
         method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({}) // Eğer API boş bir gövde bekliyorsa
-      })
+        body: JSON.stringify({}), // Eğer API boş bir gövde bekliyorsa
+      }),
+      invalidatesTags: ["Customers"],
     }),
     addCustomer: builder.mutation({
       query: (customer) => ({
@@ -90,11 +85,16 @@ export const api = createApi({
     }),
 
     // Users endpoints
-    getAllUsers: builder.query({
+    getAllUsers: builder.mutation({
       query: () => ({
         url: "/Users/GetAll",
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
       }),
+      providesTags: ["Users"],
     }),
     createUser: builder.mutation({
       query: (userData) => ({
@@ -102,6 +102,7 @@ export const api = createApi({
         method: "POST",
         body: userData,
       }),
+      invalidatesTags: ["Users"],
     }),
     updateUser: builder.mutation({
       query: (userData) => ({
@@ -109,6 +110,7 @@ export const api = createApi({
         method: "POST",
         body: userData,
       }),
+      invalidatesTags: ["Users"],
     }),
     deleteUser: builder.mutation({
       query: (userId) => ({
@@ -116,6 +118,7 @@ export const api = createApi({
         method: "POST",
         body: { id: userId },
       }),
+      invalidatesTags: ["Users"],
     }),
   }),
 });
@@ -130,7 +133,7 @@ export const {
   useAddProductMutation,
   useGetCashRegistersQuery,
   useAddCashRegisterMutation,
-  useGetAllUsersQuery,
+  useGetAllUsersMutation,
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,

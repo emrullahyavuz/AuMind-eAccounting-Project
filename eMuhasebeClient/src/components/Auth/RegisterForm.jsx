@@ -39,7 +39,7 @@ function RegisterForm() {
       console.log("Register data:", data);
       const result = await createUser(data).unwrap();
       console.log(result)
-      if (result?.success) {
+      if (result?.isSuccessful) {
         // Send confirm email
         await sendConfirmEmail(data.email).unwrap();
         showToast("Kayıt başarılı! Lütfen e-postanızı kontrol edin", "success");
