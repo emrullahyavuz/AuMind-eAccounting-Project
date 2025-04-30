@@ -1,100 +1,169 @@
-import { useState, useEffect } from "react"
-import DataTable from "../../components/Admin/data-table"
-import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay"
-import UserModal from "../../components/UI/Modals/UserModal"
-import DeleteConfirmationModal from "../../components/UI/Modals/DeleteConfirmationModal"
-import { Trash2 } from "lucide-react"
-import { useGetCustomersQuery } from "../../store/api"
+import { useState, useEffect } from "react";
+import DataTable from "../../components/Admin/data-table";
+import UserModal from "../../components/UI/Modals/UserModal";
+import DeleteConfirmationModal from "../../components/UI/Modals/DeleteConfirmationModal";
+import { Trash2 } from "lucide-react";
+import {
+  useGetAllUsersMutation,
+  useCreateUserMutation,
+  useUpdateUserMutation,
+} from "../../store/api";
+import { useToast } from "../../hooks/useToast";
 
 function UsersPage() {
-  const [users, setUsers] = useState([])
-  const [filteredUsers, setFilteredUsers] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
+  const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   // const [isLoading, setIsLoading] = useState(true)
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState(null)
-  const [userToDelete, setUserToDelete] = useState(null)
-  const [selectedItems, setSelectedItems] = useState([])
-  const [searchTerm, setSearchTerm] = useState("")
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const { showToast } = useToast();
 
-  const {data, isLoading: isUsersLoading} = useGetCustomersQuery()
-  
+  const [getAllUsers, { data, isUsersLoading, error }] =
+    useGetAllUsersMutation();
+  const [createUser, { isLoading: isCreatingUser }] = useCreateUserMutation();
+  const [updateUser, { isLoading: isUpdatingUser }] = useUpdateUserMutation();
+
   useEffect(() => {
-    if (data) {
-      const formattedData = Array.isArray(data) ? data : [];
-      setUsers(formattedData);
-      setFilteredUsers(formattedData);
-      setIsLoading(false);
-    }
-  }, [data]);
+    const fetchData = async () => {
+      try {
+       
+        const result = await getAllUsers().unwrap();
+        if (result?.isSuccessful) {
+          const formattedData = Array.isArray(result.data) ? result.data : [];
+          setUsers(formattedData);
+          setFilteredUsers(formattedData);
+        } else {
+          console.error("Error fetching users:", result?.errorMessages);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      }
+    };
 
-  
+    fetchData();
+  }, [getAllUsers]);
 
   useEffect(() => {
     handleSearch(searchTerm);
   }, [searchTerm]);
 
-  const itemsPerPage = 50
+  const itemsPerPage = 50;
 
   // Kullanıcı sütun tanımları
   const columns = [
-    { header: "# Numara", accessor: "id", className: "w-24 font-bold text-yellow-500" },
-    { header: "Kullanıcı Adı", accessor: "username" },
-    { header: "Kullanıcı Soyadı", accessor: "surname" },
+    {
+      header: "# Numara",
+      accessor: "id",
+      className: "w-24 font-bold text-yellow-500",
+    },
+    { header: "Kullanıcı Adı", accessor: "firstName" },
+    { header: "Kullanıcı Soyadı", accessor: "lastName" },
     { header: "E-Mail Adresi", accessor: "email" },
     { header: "Bağlı Olduğu Şirketler", accessor: "companies" },
-  ]
-
-
+  ];
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= Math.ceil(filteredUsers.length / itemsPerPage)) {
-      setCurrentPage(newPage)
+    if (
+      newPage >= 1 &&
+      newPage <= Math.ceil(filteredUsers.length / itemsPerPage)
+    ) {
+      setCurrentPage(newPage);
     }
-  }
+  };
 
   // Arama işlemi
   const handleSearch = (searchTerm) => {
     if (searchTerm.trim() === "") {
-      setFilteredUsers(users)
+      setFilteredUsers(users);
     } else {
       const filtered = users.filter(
         (user) =>
-          user.username.toLowerCase().trim().includes(searchTerm.toLowerCase().trim()) ||
-          user.surname.toLowerCase().trim().includes(searchTerm.toLowerCase().trim()) ||
-          user.email.toLowerCase().trim().includes(searchTerm.toLowerCase().trim()),
-      )
-      setFilteredUsers(filtered)
-      setCurrentPage(1) // Arama yapıldığında ilk sayfaya dön
+          user.firstName
+            .toLowerCase()
+            .trim()
+            .includes(searchTerm.toLowerCase().trim()) ||
+          user.lastName
+            .toLowerCase()
+            .trim()
+            .includes(searchTerm.toLowerCase().trim()) ||
+          user.email
+            .toLowerCase()
+            .trim()
+            .includes(searchTerm.toLowerCase().trim())
+      );
+      setFilteredUsers(filtered);
+      setCurrentPage(1); // Arama yapıldığında ilk sayfaya dön
     }
-  }
+  };
 
-  // Kullanıcı ekleme işlemi
+  // Kullanıcı ekleme modalını aç
   const handleAddUser = () => {
-    setIsAddModalOpen(true)
-  }
+    setIsAddModalOpen(true);
+  };
+
+  // Kullanıcı oluşturma işlemi
+  const handleUserSubmit = async (userData) => {
+    try {
+      await createUser(userData).unwrap();
+      await getAllUsers().unwrap();
+      showToast("Kullanıcı başarıyla oluşturuldu", "success");
+      setIsAddModalOpen(false);
+      // Kullanıcı listesini yenile
+      await getAllUsers().unwrap();
+    } catch (err) {
+      console.error("Error creating user:", err);
+      showToast(
+        err.data?.errorMessages?.[0] ||
+          "Kullanıcı oluşturulurken bir hata oluştu",
+        "error"
+      );
+    }
+  };
+  const handleEditSubmit = async (userData) => {
+    try {
+      console.log(userData)
+      
+      await updateUser({id:userData.id, ...userData}).unwrap();
+      await getAllUsers().unwrap();
+      showToast("Kullanıcı başarıyla güncellendi", "success");
+      setIsEditModalOpen(false);
+      // Kullanıcı listesini yenile
+      await getAllUsers().unwrap();
+    } catch (err) {
+      console.error("Error updating user:", err);
+      showToast(
+        err.data?.errorMessages?.[0] ||
+          "Kullanıcı güncellenirken bir hata oluştu",
+        "error"
+      );
+    }
+  };
 
   // Kullanıcı düzenleme işlemi
   const handleEditUser = (user) => {
-    setSelectedUser(user)
-    setIsEditModalOpen(true)
-  }
+    setSelectedUser(user);
+    setIsEditModalOpen(true);
+  };
 
   // Kullanıcı silme işlemi
   const handleDeleteUser = (userId) => {
     if (Array.isArray(userId)) {
       // Toplu silme
-      setUserToDelete({ ids: userId, name: `${userId.length} kullanıcı` })
+      setUserToDelete({ ids: userId, name: `${userId.length} kullanıcı` });
     } else {
       // Tekli silme
-      const user = users.find((u) => u.id === userId)
-      setUserToDelete({ ids: [userId], name: user.username })
+      const user = users.find((u) => u.id === userId);
+      setUserToDelete({ ids: [userId], name: user.firstName });
     }
-    setIsDeleteModalOpen(true)
-  }
+    setIsDeleteModalOpen(true);
+  };
 
   // Silme onaylama işlemi
   const confirmDelete = () => {
@@ -102,17 +171,20 @@ function UsersPage() {
       // API silme işlemi burada yapılacak
       const updatedUsers = users.filter(
         (user) => !userToDelete.ids.includes(user.id)
-      )
-      setUsers(updatedUsers)
-      setFilteredUsers(updatedUsers)
-      setSelectedItems([]) // Seçili öğeleri temizle
-      setIsDeleteModalOpen(false)
-      setUserToDelete(null)
+      );
+      setUsers(updatedUsers);
+      setFilteredUsers(updatedUsers);
+      setSelectedItems([]); // Seçili öğeleri temizle
+      setIsDeleteModalOpen(false);
+      setUserToDelete(null);
     }
-  }
+  };
 
   // Geçerli sayfadaki kullanıcıları hesapla
-  const currentUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+  const currentUsers = filteredUsers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // Özel butonlar
   const customButtons = selectedItems.length > 0 && (
@@ -123,10 +195,14 @@ function UsersPage() {
       <Trash2 size={18} className="mr-2" />
       Seçilenleri Sil ({selectedItems.length})
     </button>
-  )
+  );
 
   if (isUsersLoading) {
-    return <div className="p-6"><LoadingOverlay /></div>
+    return (
+      <div className="p-6">
+        <LoadingOverlay />
+      </div>
+    );
   }
 
   return (
@@ -155,28 +231,32 @@ function UsersPage() {
       <UserModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleUserSubmit}
       />
       <UserModal
         isOpen={isEditModalOpen}
         onClose={() => {
-          setIsEditModalOpen(false)
-          setSelectedUser(null)
+          setIsEditModalOpen(false);
+          setSelectedUser(null);
         }}
         isEditMode={true}
         user={selectedUser}
+        onEditSubmit={handleEditSubmit}
       />
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => {
-          setIsDeleteModalOpen(false)
-          setUserToDelete(null)
+          setIsDeleteModalOpen(false);
+          setUserToDelete(null);
         }}
         onConfirm={confirmDelete}
         title="Kullanıcı Silme"
-        message={`${userToDelete?.name || ''} ${userToDelete?.ids?.length > 1 ? 'kullanıcılarını' : 'kullanıcısını'} silmek istediğinizden emin misiniz?`}
+        message={`${userToDelete?.name || ""} ${
+          userToDelete?.ids?.length > 1 ? "kullanıcılarını" : "kullanıcısını"
+        } silmek istediğinizden emin misiniz?`}
       />
     </>
-  )
+  );
 }
 
-export default UsersPage
+export default UsersPage;
