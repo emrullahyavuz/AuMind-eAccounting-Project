@@ -8,7 +8,7 @@ import {
   logout,
   setCurrentCompany 
 } from '../store/slices/authSlice';
-import { useLoginMutation, useChangeCompanyMutation } from '../store/api';
+import { useLoginMutation, useChangeCompanyMutation } from '../store/api/authApi';
 
 // Auth Custom hook
 export const useAuth = () => {

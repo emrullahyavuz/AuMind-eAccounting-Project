@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { api } from '../api';
+import { authApi } from '../api/authApi';
 
 const initialState = {
   user: null,
@@ -26,7 +26,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(
-        api.endpoints.login.matchFulfilled,
+        authApi.endpoints.login.matchFulfilled,
         (state, { payload }) => {
           state.token = payload.token;
           state.user = payload.user;
@@ -34,12 +34,7 @@ const authSlice = createSlice({
           localStorage.setItem('token', payload.token);
         }
       )
-      .addMatcher(
-        api.endpoints.changeCompany.matchFulfilled,
-        (state, { payload }) => {
-          state.currentCompany = payload.company;
-        }
-      );
+      
   },
 });
 
