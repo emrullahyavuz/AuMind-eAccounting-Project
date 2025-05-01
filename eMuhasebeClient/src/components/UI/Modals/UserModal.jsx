@@ -11,11 +11,26 @@ const initialFormData = {
   isAdmin: false,
 };
 
-function UserModal({ isOpen, isEditMode, onClose, onEditSubmit, onSubmit }) {
+function UserModal({
+  isOpen,
+  isEditMode,
+  onClose,
+  onEditSubmit,
+  onSubmit,
+  user,
+}) {
   const [formData, setFormData] = useState(initialFormData);
-  
+
   // user prop'u değiştiğinde form verilerini güncelle
 
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        ...initialFormData,
+        ...user,
+      });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -24,18 +39,13 @@ function UserModal({ isOpen, isEditMode, onClose, onEditSubmit, onSubmit }) {
       [name]: type === "checkbox" ? checked : value,
     });
   };
-  
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(onSubmit)
-    {
+    if (onSubmit) {
       onSubmit(formData);
-    }
-    else if(onEditSubmit)
-    {
-     
-      onEditSubmit(formData);
+    } else if (onEditSubmit) {
+      onEditSubmit(formData, user?.id);
     }
     onClose();
   };
@@ -66,7 +76,6 @@ function UserModal({ isOpen, isEditMode, onClose, onEditSubmit, onSubmit }) {
               onChange={handleChange}
               placeholder="Kullanıcı ismi giriniz..."
               className="w-full border border-gray-300 rounded-md p-2 bg-white"
-              
             />
           </div>
           <div className="mb-4">
@@ -78,12 +87,13 @@ function UserModal({ isOpen, isEditMode, onClose, onEditSubmit, onSubmit }) {
               onChange={handleChange}
               placeholder="Kullanıcı soyadı giriniz..."
               className="w-full border border-gray-300 rounded-md p-2 bg-white"
-              
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-1">Kullanıcı Username</label>
+            <label className="block text-gray-700 mb-1">
+              Kullanıcı Username
+            </label>
             <input
               type="text"
               name="userName"
@@ -91,10 +101,8 @@ function UserModal({ isOpen, isEditMode, onClose, onEditSubmit, onSubmit }) {
               onChange={handleChange}
               placeholder="Kullanıcı username giriniz..."
               className="w-full border border-gray-300 rounded-md p-2 bg-white"
-             
             />
           </div>
-          
 
           <div className="mb-4">
             <label className="block text-gray-700 mb-1">E-Mail Adresi</label>
@@ -105,7 +113,6 @@ function UserModal({ isOpen, isEditMode, onClose, onEditSubmit, onSubmit }) {
               onChange={handleChange}
               placeholder="E-Mail adresi giriniz..."
               className="w-full border border-gray-300 rounded-md p-2 bg-white"
-             
             />
           </div>
 
@@ -118,7 +125,6 @@ function UserModal({ isOpen, isEditMode, onClose, onEditSubmit, onSubmit }) {
               onChange={handleChange}
               placeholder="Şifre giriniz..."
               className="w-full border border-gray-300 rounded-md p-2 bg-white"
-             
             />
           </div>
 
@@ -126,13 +132,19 @@ function UserModal({ isOpen, isEditMode, onClose, onEditSubmit, onSubmit }) {
             <label className="block text-gray-700 mb-1">Şirket</label>
             <select
               name="companyIds"
-              value={formData.companyIds[0] || ''}
-              onChange={(e) => setFormData({ ...formData, companyIds: [e.target.value] })}
+              value={formData.companyIds[0] || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, companyIds: [e.target.value] })
+              }
               className="w-full border border-gray-300 rounded-md p-2 bg-white"
             >
               <option value="">Şirket seçin</option>
-              <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">Şirket 1</option>
-              <option value="4fa85f64-5717-4562-b3fc-2c963f66afa7">Şirket 2</option>
+              <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">
+                Şirket 1
+              </option>
+              <option value="4fa85f64-5717-4562-b3fc-2c963f66afa7">
+                Şirket 2
+              </option>
             </select>
           </div>
 
