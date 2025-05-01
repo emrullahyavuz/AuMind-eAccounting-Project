@@ -9,20 +9,24 @@ import {
   useUpdateUserMutation,
 } from "../../store/api/usersApi";
 import { useToast } from "../../hooks/useToast";
+import { useDispatch, useSelector } from "react-redux";
+import { openAddModal, closeAddModal, openEditModal, closeEditModal, openDeleteModal, closeDeleteModal } from "../../store/slices/modalSlice";
+import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay";
 
 function UsersPage() {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  // const [isLoading, setIsLoading] = useState(true)
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { showToast } = useToast();
+  const dispatch = useDispatch();
+  const { isAddModalOpen, isEditModalOpen, isDeleteModalOpen } = useSelector(
+    (state) => state.modal
+  );
+
 
   const [getAllUsers, { data, isUsersLoading, error }] =
     useGetAllUsersMutation();
@@ -107,7 +111,7 @@ function UsersPage() {
 
   // Kullanıcı ekleme modalını aç
   const handleAddUser = () => {
-    setIsAddModalOpen(true);
+    dispatch(openAddModal());
   };
 
   // Kullanıcı oluşturma işlemi
@@ -115,7 +119,7 @@ function UsersPage() {
     try {
       await createUser(userData).unwrap();
       showToast("Kullanıcı başarıyla oluşturuldu", "success");
-      setIsAddModalOpen(false);
+      dispatch(closeAddModal());
       // Kullanıcı listesini yenile
       await getAllUsers().unwrap();
     } catch (err) {
@@ -138,7 +142,7 @@ function UsersPage() {
       }).unwrap();
 
       showToast("Kullanıcı başarıyla güncellendi", "success");
-      setIsEditModalOpen(false);
+      dispatch(closeEditModal());
       setSelectedUser(null);
     } catch (err) {
       console.error("Error updating user:", err);
@@ -153,7 +157,7 @@ function UsersPage() {
   // Kullanıcı düzenleme işlemi
   const handleEditUser = (user) => {
     setSelectedUser(user);
-    setIsEditModalOpen(true);
+    dispatch(openEditModal());
   };
 
   // Kullanıcı silme işlemi
@@ -166,7 +170,7 @@ function UsersPage() {
       const user = users.find((u) => u.id === userId);
       setUserToDelete({ ids: [userId], name: user.firstName });
     }
-    setIsDeleteModalOpen(true);
+    dispatch(openDeleteModal());
   };
 
   // Silme onaylama işlemi
@@ -179,7 +183,7 @@ function UsersPage() {
       setUsers(updatedUsers);
       setFilteredUsers(updatedUsers);
       setSelectedItems([]); // Seçili öğeleri temizle
-      setIsDeleteModalOpen(false);
+      dispatch(closeDeleteModal());
       setUserToDelete(null);
     }
   };
@@ -201,7 +205,7 @@ function UsersPage() {
     </button>
   );
 
-  if (isUsersLoading) {
+  if (isUsersLoading || isCreatingUser || isUpdatingUser) {
     return (
       <div className="p-6">
         <LoadingOverlay />
@@ -234,13 +238,13 @@ function UsersPage() {
       />
       <UserModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => dispatch(closeAddModal())}
         onSubmit={handleUserSubmit}
       />
       <UserModal
         isOpen={isEditModalOpen}
         onClose={() => {
-          setIsEditModalOpen(false);
+          dispatch(closeEditModal());
           setSelectedUser(null);
         }}
         isEditMode={true}
@@ -250,7 +254,7 @@ function UsersPage() {
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => {
-          setIsDeleteModalOpen(false);
+          dispatch(closeDeleteModal());
           setUserToDelete(null);
         }}
         onConfirm={confirmDelete}

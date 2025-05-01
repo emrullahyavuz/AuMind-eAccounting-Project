@@ -13,21 +13,31 @@ import {
   useMigrateAllCompaniesMutation,
 } from "../../store/api/companiesApi";
 import { useToast } from "../../hooks/useToast";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  openAddModal,
+  closeAddModal,
+  openEditModal,
+  closeEditModal,
+  openDeleteModal,
+  closeDeleteModal,
+} from "../../store/slices/modalSlice";
 
 function Companies() {
   const [companies, setCompanies] = useState([]);
   const [filteredCompanies, setFilteredCompanies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [companyToDelete, setCompanyToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
   const { showToast } = useToast();
+  const dispatch = useDispatch();
 
-  // API hooks
+  const { isAddModalOpen, isEditModalOpen, isDeleteModalOpen } = useSelector(
+    (state) => state.modal
+  );
+
   const getAllCompanies = useGetAllCompaniesQuery();
   const [createCompany] = useCreateCompanyMutation();
   const [updateCompany] = useUpdateCompanyMutation();
@@ -56,7 +66,7 @@ function Companies() {
   useEffect(() => {
     if (getAllCompanies.data) {
       const data = getAllCompanies.data.data || getAllCompanies.data;
-      console.log('Received company data:', data);
+      console.log("Received company data:", data);
       setCompanies(data);
       setFilteredCompanies(data);
       setIsLoading(false);
@@ -96,7 +106,7 @@ function Companies() {
 
   // Şirket ekleme işlemi
   const handleAddCompany = () => {
-    setIsAddModalOpen(true);
+    dispatch(openAddModal());
   };
 
   // Database güncelleme işlemi
@@ -113,8 +123,9 @@ function Companies() {
   // Şirket düzenleme işlemi
   const handleEditCompany = (company) => {
     console.log("Düzenlenecek şirket:", company);
-    setIsEditModalOpen(true);
+    dispatch(openEditModal());
     setSelectedCompany(company); // Düzenlenecek şirket bilgilerini ayarla
+    console.log(selectedCompany)
   };
 
   // Şirket silme işlemi
@@ -130,7 +141,7 @@ function Companies() {
       const company = companies.find((c) => c.id === companyId);
       setCompanyToDelete({ ids: [companyId], name: company.name });
     }
-    setIsDeleteModalOpen(true);
+    dispatch(openDeleteModal());
   };
 
   const confirmDelete = () => {
@@ -142,18 +153,17 @@ function Companies() {
       setCompanies(updatedCompanies);
       setFilteredCompanies(updatedCompanies);
       setSelectedItems([]); // Seçili öğeleri temizle
-      setIsDeleteModalOpen(false);
+      dispatch(closeDeleteModal());
       setCompanyToDelete(null);
     }
   };
 
   const handleCompanySubmit = async (companyData) => {
     try {
-      debugger
+      debugger;
       await createCompany(companyData).unwrap();
       showToast("Şirket başarıyla oluşturuldu", "success");
-      setIsAddModalOpen(false);
-      
+      dispatch(closeAddModal());
     } catch (err) {
       console.error("Error creating company:", err);
       showToast(
@@ -165,10 +175,10 @@ function Companies() {
 
   const handleEditSubmit = async (companyData) => {
     try {
-      debugger
+      debugger;
       await updateCompany({ id: selectedCompany.id, ...companyData }).unwrap();
       showToast("Şirket başarıyla güncellendi", "success");
-      setIsEditModalOpen(false);
+      dispatch(closeEditModal());
       setSelectedCompany(null);
     } catch (err) {
       console.error("Error updating company:", err);
@@ -180,13 +190,12 @@ function Companies() {
   };
 
   // Geçerli sayfadaki şirketleri hesapla
-  const currentCompanies = filteredCompanies.map(company => ({
-    ...company,
-    database: company.database || {}
-  })).slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const currentCompanies = filteredCompanies
+    .map((company) => ({
+      ...company,
+      database: company.database || {},
+    }))
+    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   // Özel butonlar
   const customButtons = (
@@ -243,13 +252,13 @@ function Companies() {
       />
       <CompanyModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => dispatch(closeAddModal())}
         onSubmit={handleCompanySubmit}
       />
       <CompanyModal
         isOpen={isEditModalOpen}
         onClose={() => {
-          setIsEditModalOpen(false);
+          dispatch(closeEditModal());
           setSelectedCompany(null); // Modal kapandığında seçili şirketi sıfırla
         }}
         isEditMode={true} // Düzenleme modunda aç
@@ -259,7 +268,7 @@ function Companies() {
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => {
-          setIsDeleteModalOpen(false);
+          dispatch(closeDeleteModal());
           setCompanyToDelete(null);
         }}
         onConfirm={confirmDelete}
