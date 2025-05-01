@@ -7,7 +7,7 @@ import {
   useGetAllUsersMutation,
   useCreateUserMutation,
   useUpdateUserMutation,
-} from "../../store/api";
+} from "../../store/api/usersApi";
 import { useToast } from "../../hooks/useToast";
 
 function UsersPage() {

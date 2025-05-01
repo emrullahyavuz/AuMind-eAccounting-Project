@@ -5,7 +5,7 @@ import { loginSchema } from "../../schemas/auth.schema";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
-import { useLoginMutation } from "../../store/api";
+import { useLoginMutation } from "../../store/api/authApi";
 import { useToast } from "../../hooks/useToast";
 
 function LoginForm() {

@@ -31,7 +31,15 @@ export const api = createApi({
       invalidatesTags: ["Auth"],
     }),
 
-    // Company endpoints
+    register: builder.mutation({
+      query: (credentials) => ({
+        url: "/Auth/Register",
+        method: "POST",
+        body: credentials,
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
     changeCompany: builder.mutation({
       query: (companyId) => ({
         url: "/auth/changeCompany",
@@ -40,47 +48,48 @@ export const api = createApi({
       }),
     }),
 
-    // Customer endpoints
-    getCustomers: builder.query({
+    // Invoice endpoints
+    getAllInvoices: builder.query({
       query: () => ({
-        url: "/Customers/GetAll",
+        url: "/Invoices/GetAll",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({}), // Eğer API boş bir gövde bekliyorsa
-      }),
-      invalidatesTags: ["Customers"],
-    }),
-    addCustomer: builder.mutation({
-      query: (customer) => ({
-        url: "/Customers/Create",
-        method: "POST",
-        body: customer,
+        body: JSON.stringify({}),
       }),
     }),
 
-    // Product endpoints
-    getProducts: builder.query({
-      query: () => "/Products/GetAll",
-    }),
-    addProduct: builder.mutation({
-      query: (product) => ({
-        url: "/Products/Create",
+    createInvoice: builder.mutation({
+      query: (invoiceData) => ({
+        url: "/Invoices/Create",
         method: "POST",
-        body: product,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(invoiceData),
       }),
     }),
 
-    // Cash Register endpoints
-    getCashRegisters: builder.query({
-      query: () => "/CashRegisters/GetAll",
+    updateInvoice: builder.mutation({
+      query: (invoiceData) => ({
+        url: "/Invoices/Update",
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(invoiceData),
+      }),
     }),
-    addCashRegister: builder.mutation({
-      query: (cashRegister) => ({
-        url: "/CashRegisters/Create",
-        method: "POST",
-        body: cashRegister,
+
+    deleteInvoice: builder.mutation({
+      query: (invoiceIds) => ({
+        url: "/Invoices/Delete",
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: invoiceIds }),
       }),
     }),
 
@@ -96,6 +105,7 @@ export const api = createApi({
       }),
       providesTags: ["Companies"],
     }),
+
     createCompany: builder.mutation({
       query: (company) => ({
         url: "/Companies/Create",
@@ -107,6 +117,7 @@ export const api = createApi({
       }),
       invalidatesTags: ["Companies"],
     }),
+
     updateCompany: builder.mutation({
       query: (company) => ({
         url: "/Companies/Update",
@@ -118,6 +129,7 @@ export const api = createApi({
       }),
       invalidatesTags: ["Companies"],
     }),
+
     deleteCompany: builder.mutation({
       query: (companyId) => ({
         url: "/Companies/DeleteById",
@@ -129,6 +141,7 @@ export const api = createApi({
       }),
       invalidatesTags: ["Companies"],
     }),
+
     migrateAllCompanies: builder.mutation({
       query: () => ({
         url: "/Companies/MigrateAll",
@@ -153,6 +166,7 @@ export const api = createApi({
       }),
       providesTags: ["Users"],
     }),
+
     createUser: builder.mutation({
       query: (userData) => ({
         url: "/Users/Create",
@@ -161,6 +175,7 @@ export const api = createApi({
       }),
       invalidatesTags: ["Users"],
     }),
+
     updateUser: builder.mutation({
       query: (userData) => ({
         url: "/Users/Update",
@@ -169,6 +184,7 @@ export const api = createApi({
       }),
       invalidatesTags: ["Users"],
     }),
+    
     deleteUser: builder.mutation({
       query: (userId) => ({
         url: "/Users/DeleteById",
@@ -179,10 +195,10 @@ export const api = createApi({
     }),
   }),
 });
-
 // Export hooks for usage in components
 export const {
   useLoginMutation,
+  useRegisterMutation,
   useChangeCompanyMutation,
   useGetCustomersQuery,
   useAddCustomerMutation,
@@ -200,4 +216,8 @@ export const {
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
   useMigrateAllCompaniesMutation,
+  useGetAllInvoicesQuery,
+  useCreateInvoiceMutation,
+  useUpdateInvoiceMutation,
+  useDeleteInvoiceMutation,
 } = api;

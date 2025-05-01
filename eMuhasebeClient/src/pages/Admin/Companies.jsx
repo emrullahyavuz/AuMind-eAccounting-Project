@@ -11,7 +11,7 @@ import {
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
   useMigrateAllCompaniesMutation,
-} from "../../store/api";
+} from "../../store/api/companiesApi";
 import { useToast } from "../../hooks/useToast";
 
 function Companies() {
