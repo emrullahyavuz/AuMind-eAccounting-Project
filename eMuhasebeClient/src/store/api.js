@@ -21,13 +21,7 @@ export const api = createApi({
         body: data,
       }),
     }),
-    sendConfirmEmail: builder.mutation({
-      query: (email) => ({
-        url: "/Auth/SendConfirmEmail",
-        method: "POST",
-        body: { email },
-      }),
-    }),
+
     login: builder.mutation({
       query: (credentials) => ({
         url: "/Auth/Login",
@@ -37,7 +31,15 @@ export const api = createApi({
       invalidatesTags: ["Auth"],
     }),
 
-    // Company endpoints
+    register: builder.mutation({
+      query: (credentials) => ({
+        url: "/Auth/Register",
+        method: "POST",
+        body: credentials,
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
     changeCompany: builder.mutation({
       query: (companyId) => ({
         url: "/auth/changeCompany",
@@ -46,83 +48,157 @@ export const api = createApi({
       }),
     }),
 
-    // Customer endpoints
-    getCustomers: builder.query({
+    // Invoice endpoints
+    getAllInvoices: builder.query({
       query: () => ({
-        url: "/Customers/GetAll",
+        url: "/Invoices/GetAll",
         method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({}) // Eğer API boş bir gövde bekliyorsa
-      })
-    }),
-    addCustomer: builder.mutation({
-      query: (customer) => ({
-        url: "/Customers/Create",
-        method: "POST",
-        body: customer,
+        body: JSON.stringify({}),
       }),
     }),
 
-    // Product endpoints
-    getProducts: builder.query({
-      query: () => "/Products/GetAll",
-    }),
-    addProduct: builder.mutation({
-      query: (product) => ({
-        url: "/Products/Create",
+    createInvoice: builder.mutation({
+      query: (invoiceData) => ({
+        url: "/Invoices/Create",
         method: "POST",
-        body: product,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(invoiceData),
       }),
     }),
 
-    // Cash Register endpoints
-    getCashRegisters: builder.query({
-      query: () => "/CashRegisters/GetAll",
-    }),
-    addCashRegister: builder.mutation({
-      query: (cashRegister) => ({
-        url: "/CashRegisters/Create",
-        method: "POST",
-        body: cashRegister,
+    updateInvoice: builder.mutation({
+      query: (invoiceData) => ({
+        url: "/Invoices/Update",
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(invoiceData),
       }),
+    }),
+
+    deleteInvoice: builder.mutation({
+      query: (invoiceIds) => ({
+        url: "/Invoices/Delete",
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: invoiceIds }),
+      }),
+    }),
+
+    // Companies endpoints
+    getAllCompanies: builder.query({
+      query: () => ({
+        url: "/Companies/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }),
+      providesTags: ["Companies"],
+    }),
+
+    createCompany: builder.mutation({
+      query: (company) => ({
+        url: "/Companies/Create",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: company,
+      }),
+      invalidatesTags: ["Companies"],
+    }),
+
+    updateCompany: builder.mutation({
+      query: (company) => ({
+        url: "/Companies/Update",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: company,
+      }),
+      invalidatesTags: ["Companies"],
+    }),
+
+    deleteCompany: builder.mutation({
+      query: (companyId) => ({
+        url: "/Companies/DeleteById",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: { id: companyId },
+      }),
+      invalidatesTags: ["Companies"],
+    }),
+
+    migrateAllCompanies: builder.mutation({
+      query: () => ({
+        url: "/Companies/MigrateAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }),
+      invalidatesTags: ["Companies"],
     }),
 
     // Users endpoints
-    getAllUsers: builder.query({
+    getAllUsers: builder.mutation({
       query: () => ({
         url: "/Users/GetAll",
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
       }),
+      providesTags: ["Users"],
     }),
+
     createUser: builder.mutation({
       query: (userData) => ({
         url: "/Users/Create",
         method: "POST",
         body: userData,
       }),
+      invalidatesTags: ["Users"],
     }),
+
     updateUser: builder.mutation({
       query: (userData) => ({
         url: "/Users/Update",
         method: "POST",
         body: userData,
       }),
+      invalidatesTags: ["Users"],
     }),
+    
     deleteUser: builder.mutation({
       query: (userId) => ({
         url: "/Users/DeleteById",
         method: "POST",
         body: { id: userId },
       }),
+      invalidatesTags: ["Users"],
     }),
   }),
 });
-
 // Export hooks for usage in components
 export const {
   useLoginMutation,
+  useRegisterMutation,
   useChangeCompanyMutation,
   useGetCustomersQuery,
   useAddCustomerMutation,
@@ -130,9 +206,18 @@ export const {
   useAddProductMutation,
   useGetCashRegistersQuery,
   useAddCashRegisterMutation,
-  useGetAllUsersQuery,
+  useGetAllUsersMutation,
   useCreateUserMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
   useConfirmEmailMutation,
+  useGetAllCompaniesQuery,
+  useCreateCompanyMutation,
+  useUpdateCompanyMutation,
+  useDeleteCompanyMutation,
+  useMigrateAllCompaniesMutation,
+  useGetAllInvoicesQuery,
+  useCreateInvoiceMutation,
+  useUpdateInvoiceMutation,
+  useDeleteInvoiceMutation,
 } = api;

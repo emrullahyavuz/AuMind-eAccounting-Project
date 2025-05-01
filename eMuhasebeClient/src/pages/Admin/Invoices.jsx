@@ -4,6 +4,13 @@ import { Info, Trash2 } from "lucide-react";
 import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay";
 import InvoiceModal from "../../components/UI/Modals/InvoiceModal";
 import DeleteConfirmationModal from "../../components/UI/Modals/DeleteConfirmationModal";
+import { useToast } from "../../hooks/useToast";
+import {
+  useGetAllInvoicesQuery,
+  useCreateInvoiceMutation,
+  useUpdateInvoiceMutation,
+  useDeleteInvoiceMutation,
+} from "../../store/api/invoicesApi";
 
 const Faturalar = () => {
   const [faturalar, setFaturalar] = useState([]);
@@ -17,6 +24,12 @@ const Faturalar = () => {
   const [faturaToDelete, setFaturaToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
 
+  const { showToast } = useToast();
+  const getAllInvoices = useGetAllInvoicesQuery();
+  const [createInvoice] = useCreateInvoiceMutation();
+  const [updateInvoice] = useUpdateInvoiceMutation();
+  const [deleteInvoice] = useDeleteInvoiceMutation();
+
   const itemsPerPage = 50;
 
   // Faturalar tablosu sütun tanımları
@@ -26,7 +39,7 @@ const Faturalar = () => {
       accessor: "id",
       className: "w-24 font-bold text-yellow-500",
     },
-    {header:"Fatura Tipi", accessor: "invoiceType"},
+    { header: "Fatura Tipi", accessor: "invoiceType" },
     { header: "Fatura No", accessor: "invoiceNumber" },
     { header: "Tarih", accessor: "date" },
     { header: "Müşteri", accessor: "customer" },
@@ -36,35 +49,16 @@ const Faturalar = () => {
     { header: "Durum", accessor: "status" },
   ];
 
-  // Örnek veri yükleme - gerçek uygulamada API'den gelecek
+  // Faturalar için useEffect
   useEffect(() => {
-    // API çağrısı simülasyonu
-    setTimeout(() => {
-      const mockFaturalar = Array.from({ length: 80 }, (_, index) => {
-        const amount = Math.floor(Math.random() * 10000) / 100;
-        const tax = amount * 0.18;
-        const total = amount + tax;
-
-        return {
-          id: index + 1,
-          invoiceType: index % 2 === 0 ? "Satış" : "Alış",
-          invoiceNumber: `FTR-${2024}-${10000 + index}`,
-          date: `${Math.floor(Math.random() * 28) + 1}.${
-            Math.floor(Math.random() * 12) + 1
-          }.2024`,
-          customer: `Müşteri ${Math.floor(index / 5) + 1}`,
-          amount: `${amount.toFixed(2)} ₺`,
-          tax: `${tax.toFixed(2)} ₺`,
-          total: `${total.toFixed(2)} ₺`,
-          status: index % 3 === 0 ? "Ödendi" : index % 3 === 1 ? "Beklemede" : "İptal",
-        };
-      });
-
-      setFaturalar(mockFaturalar);
-      setFilteredFaturalar(mockFaturalar);
+    if (getAllInvoices.data) {
+      const data = getAllInvoices.data.data || getAllInvoices.data;
+      console.log("Received company data:", data);
+      setFaturalar(data);
+      setFilteredFaturalar(data);
       setIsLoading(false);
-    }, 1000);
-  }, []);
+    }
+  }, [getAllInvoices]);
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
@@ -75,8 +69,6 @@ const Faturalar = () => {
       setCurrentPage(newPage);
     }
   };
-
- 
 
   // Fatura ekleme işlemi
   const handleAddFatura = () => {
@@ -117,6 +109,39 @@ const Faturalar = () => {
     }
   };
 
+  // Fatura ekleme işlemi
+  const handleInvoiceSubmit = async (invoiceData) => {
+    try {
+      debugger;
+      await createInvoice(invoiceData).unwrap();
+      showToast("Fatura başarıyla oluşturuldu", "success");
+      setIsAddModalOpen(false);
+    } catch (err) {
+      console.error("Error creating invoice:", err);
+      showToast(
+        err.data?.errorMessages?.[0] || "Fatura oluşturulurken bir hata oluştu",
+        "error"
+      );
+    }
+  };
+
+  // Fatura güncelleme işlemi
+  const handleEditSubmit = async (invoiceData) => {
+    try {
+      debugger;
+      await updateInvoice({ id: selectedFatura.id, ...invoiceData }).unwrap();
+      showToast("Fatura başarıyla güncellendi", "success");
+      setIsEditModalOpen(false);
+      setSelectedFatura(null);
+    } catch (err) {
+      console.error("Error updating invoice:", err);
+      showToast(
+        err.data?.errorMessages?.[0] || "Fatura güncellenirken bir hata oluştu",
+        "error"
+      );
+    }
+  };
+
   // Fatura arama işlemi
   const handleSearch = (searchTerm) => {
     if (searchTerm.trim() === "") {
@@ -124,7 +149,9 @@ const Faturalar = () => {
     } else {
       const filtered = faturalar.filter(
         (fatura) =>
-          fatura.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          fatura.invoiceNumber
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
           fatura.customer.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredFaturalar(filtered);
@@ -135,7 +162,6 @@ const Faturalar = () => {
   // Özel butonlar
   const customButtons = (
     <>
-      
       {selectedItems.length > 0 && (
         <button
           onClick={() => handleDeleteFatura(selectedItems)}
@@ -154,13 +180,13 @@ const Faturalar = () => {
     currentPage * itemsPerPage
   );
 
-  if (isLoading) {
-    return (
-      <div className="p-6">
-        <LoadingOverlay />
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="p-6">
+  //       <LoadingOverlay />
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -188,6 +214,7 @@ const Faturalar = () => {
       <InvoiceModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+        onAddInvoice={handleInvoiceSubmit}
       />
       <InvoiceModal
         isOpen={isEditModalOpen}
@@ -197,6 +224,7 @@ const Faturalar = () => {
         }}
         isEditMode={true}
         invoice={selectedFatura}
+        onEditInvoice={handleEditSubmit}
       />
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
@@ -206,8 +234,8 @@ const Faturalar = () => {
         }}
         onConfirm={confirmDelete}
         title="Fatura Silme"
-        message={`${faturaToDelete?.name || ''} ${
-          faturaToDelete?.ids?.length > 1 ? 'faturalarını' : 'faturasını'
+        message={`${faturaToDelete?.name || ""} ${
+          faturaToDelete?.ids?.length > 1 ? "faturalarını" : "faturasını"
         } silmek istediğinizden emin misiniz?`}
       />
     </>

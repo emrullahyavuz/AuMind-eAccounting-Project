@@ -1,50 +1,48 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
-function CompanyModal({ isOpen, onClose, isEditMode, onAddCompany, company }) {
+function CompanyModal({ isOpen, onClose, isEditMode, onSubmit, company }) {
   const [formData, setFormData] = useState({
-    companyName: "",
-    address: "",
-    taxOffice: "",
+    name: "",
+    fullAdress: "",
+    taxDepartment: "",
     taxNumber: "",
-    server: "",
-    databaseName: "",
-    adminName: "",
-    password: "",
+    database: {
+      server: "",
+      databaseName: "",
+      userId: "",
+      password: "",
+    },
   });
 
-  // company prop'u değiştiğinde form verilerini güncelle
-  useEffect(() => {
-    if (company) {
-      setFormData({
-        companyName: company.name || "",
-        address: company.address || "",
-        taxOffice: company.taxOffice || "",
-        taxNumber: company.taxNumber || "",
-        server: company.server || "",
-        databaseName: company.databaseName || "",
-        adminName: company.adminName || "",
-        password: "",
-      });
-    }
-  }, [company]);
-
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+
+    // If the name contains dots, it's a nested property
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setFormData((prev) => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onAddCompany(formData);
+    onSubmit({
+      ...formData,
+    });
     onClose();
   };
-  
-
 
   if (!isOpen) return null;
 
@@ -68,8 +66,8 @@ function CompanyModal({ isOpen, onClose, isEditMode, onAddCompany, company }) {
               <label className="block text-gray-700 mb-1">Şirket Adı</label>
               <input
                 type="text"
-                name="companyName"
-                value={formData.companyName}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
                 required
@@ -80,8 +78,8 @@ function CompanyModal({ isOpen, onClose, isEditMode, onAddCompany, company }) {
               <label className="block text-gray-700 mb-1">Adres</label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
+                name="fullAdress"
+                value={formData.fullAdress}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
                 required
@@ -116,8 +114,8 @@ function CompanyModal({ isOpen, onClose, isEditMode, onAddCompany, company }) {
               <label className="block text-gray-700 mb-1">Server</label>
               <input
                 type="text"
-                name="server"
-                value={formData.server}
+                name="database.server"
+                value={formData.database.server}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
                 required
@@ -128,8 +126,8 @@ function CompanyModal({ isOpen, onClose, isEditMode, onAddCompany, company }) {
               <label className="block text-gray-700 mb-1">Database Adı</label>
               <input
                 type="text"
-                name="databaseName"
-                value={formData.databaseName}
+                name="database.databaseName"
+                value={formData.database.databaseName}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
                 required
@@ -140,11 +138,10 @@ function CompanyModal({ isOpen, onClose, isEditMode, onAddCompany, company }) {
               <label className="block text-gray-700 mb-1">Yönetici Adı</label>
               <input
                 type="text"
-                name="adminName"
-                value={formData.adminName}
+                name="database.userId"
+                value={formData.database.userId}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
-                required
               />
             </div>
 
@@ -156,7 +153,6 @@ function CompanyModal({ isOpen, onClose, isEditMode, onAddCompany, company }) {
                 value={formData.password}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
-                required
               />
             </div>
           </div>

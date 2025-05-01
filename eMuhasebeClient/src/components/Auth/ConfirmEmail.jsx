@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useConfirmEmailMutation } from "../../store/api";
+import { useConfirmEmailMutation } from "../../store/api/authApi";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../hooks/useToast";
 

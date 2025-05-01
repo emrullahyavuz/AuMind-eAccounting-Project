@@ -5,14 +5,17 @@ import { registerSchema } from "../../schemas/auth.schema";
 import { User, Mail, Lock, Eye, EyeOff, UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import "./Auth.css";
-import { useCreateUserMutation, useConfirmEmailMutation } from "../../store/api";
+import {
+  useConfirmEmailMutation,
+  useRegisterMutation,
+} from "../../store/api/authApi";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../hooks/useToast";
 
 function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [createUser] = useCreateUserMutation();
+  const [userRegister] = useRegisterMutation();
   const [sendConfirmEmail] = useConfirmEmailMutation();
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -37,19 +40,22 @@ function RegisterForm() {
   const onSubmit = async (data) => {
     try {
       console.log("Register data:", data);
-      const result = await createUser(data).unwrap();
-      console.log(result)
-      if (result?.success) {
+      const result = await userRegister(data).unwrap();
+      console.log(result);
+      if (result?.isSuccessful) {
         // Send confirm email
         await sendConfirmEmail(data.email).unwrap();
         showToast("Kayıt başarılı! Lütfen e-postanızı kontrol edin", "success");
         navigate("/auth/confirm-email", {
-          state: { email: data.email }
+          state: { email: data.email },
         });
       }
     } catch (error) {
       console.error("Register error:", error);
-      showToast(error.data?.errorMessages?.[0] || "Kayıt sırasında bir hata oluştu", "error");
+      showToast(
+        error.data?.errorMessages?.[0] || "Kayıt sırasında bir hata oluştu",
+        "error"
+      );
     }
   };
 
