@@ -5,6 +5,14 @@ import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay";
 import CompanyModal from "../../components/UI/Modals/CompanyModal";
 import DeleteConfirmationModal from "../../components/UI/Modals/DeleteConfirmationModal";
 import { Trash2 } from "lucide-react";
+import {
+  useGetAllCompaniesQuery,
+  useCreateCompanyMutation,
+  useUpdateCompanyMutation,
+  useDeleteCompanyMutation,
+  useMigrateAllCompaniesMutation,
+} from "../../store/api";
+import { useToast } from "../../hooks/useToast";
 
 function Companies() {
   const [companies, setCompanies] = useState([]);
@@ -17,6 +25,14 @@ function Companies() {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [companyToDelete, setCompanyToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
+  const { showToast } = useToast();
+
+  // API hooks
+  const getAllCompanies = useGetAllCompaniesQuery();
+  const [createCompany] = useCreateCompanyMutation();
+  const [updateCompany] = useUpdateCompanyMutation();
+  const [deleteCompany] = useDeleteCompanyMutation();
+  const [migrateAllCompanies] = useMigrateAllCompaniesMutation();
 
   const itemsPerPage = 50;
 
@@ -28,34 +44,24 @@ function Companies() {
       className: "w-24 font-bold text-yellow-500",
     },
     { header: "Şirket Adı", accessor: "name" },
-    { header: "Adres", accessor: "address" },
-    { header: "Vergi Dairesi", accessor: "taxOffice" },
+    { header: "Adres", accessor: "fullAdress" },
+    { header: "Vergi Dairesi", accessor: "taxDepartment" },
     { header: "Vergi Numarası", accessor: "taxNumber" },
     { header: "Server", accessor: "server" },
     { header: "Veritabanı Adı", accessor: "databaseName" },
     { header: "Yönetici Adı", accessor: "adminName" },
   ];
 
-  // Örnek veri yükleme - gerçek uygulamada API'den gelecek
+  // Şirketler için useEffect
   useEffect(() => {
-    // API çağrısı simülasyonu
-    setTimeout(() => {
-      const mockCompanies = Array.from({ length: 50 }, (_, index) => ({
-        id: index + 1,
-        name: `Şirket ${index + 1}`,
-        address: `Adres ${index + 1}`,
-        taxOffice: `Vergi Dairesi ${index + 1}`,
-        taxNumber: `${1000000000 + index}`,
-        server: `Server ${(index % 5) + 1}`,
-        databaseName: `DB_${index + 1}`,
-        adminName: `Admin ${index + 1}`,
-      }));
-
-      setCompanies(mockCompanies);
-      setFilteredCompanies(mockCompanies);
+    if (getAllCompanies.data) {
+      const data = getAllCompanies.data.data || getAllCompanies.data;
+      console.log('Received company data:', data);
+      setCompanies(data);
+      setFilteredCompanies(data);
       setIsLoading(false);
-    }, 1000);
-  }, []);
+    }
+  }, [getAllCompanies]);
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
@@ -94,9 +100,14 @@ function Companies() {
   };
 
   // Database güncelleme işlemi
-  const handleUpdateDatabase = () => {
+  const handleUpdateDatabase = async () => {
     console.log("Database güncelleniyor...");
-    // Burada database güncelleme işlemi yapılacak
+    try {
+      const result = await migrateAllCompanies().unwrap();
+      showToast(`${result.data}`, "success");
+    } catch (error) {
+      console.error("Database güncelleme hatası:", error);
+    }
   };
 
   // Şirket düzenleme işlemi
@@ -110,7 +121,10 @@ function Companies() {
   const handleDeleteCompany = (companyId) => {
     if (Array.isArray(companyId)) {
       // Toplu silme
-      setCompanyToDelete({ ids: companyId, name: `${companyId.length} şirket` });
+      setCompanyToDelete({
+        ids: companyId,
+        name: `${companyId.length} şirket`,
+      });
     } else {
       // Tekli silme
       const company = companies.find((c) => c.id === companyId);
@@ -133,8 +147,43 @@ function Companies() {
     }
   };
 
+  const handleCompanySubmit = async (companyData) => {
+    try {
+      debugger
+      await createCompany(companyData).unwrap();
+      showToast("Şirket başarıyla oluşturuldu", "success");
+      setIsAddModalOpen(false);
+      
+    } catch (err) {
+      console.error("Error creating company:", err);
+      showToast(
+        err.data?.errorMessages?.[0] || "Şirket oluşturulurken bir hata oluştu",
+        "error"
+      );
+    }
+  };
+
+  const handleEditSubmit = async (companyData) => {
+    try {
+      debugger
+      await updateCompany({ id: selectedCompany.id, ...companyData }).unwrap();
+      showToast("Şirket başarıyla güncellendi", "success");
+      setIsEditModalOpen(false);
+      setSelectedCompany(null);
+    } catch (err) {
+      console.error("Error updating company:", err);
+      showToast(
+        err.data?.errorMessages?.[0] || "Şirket güncellenirken bir hata oluştu",
+        "error"
+      );
+    }
+  };
+
   // Geçerli sayfadaki şirketleri hesapla
-  const currentCompanies = filteredCompanies.slice(
+  const currentCompanies = filteredCompanies.map(company => ({
+    ...company,
+    database: company.database || {}
+  })).slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -161,7 +210,7 @@ function Companies() {
     </div>
   );
 
-  if (isLoading) {
+  if (getAllCompanies.isLoading) {
     return (
       <div className="p-6">
         <LoadingOverlay />
@@ -195,6 +244,7 @@ function Companies() {
       <CompanyModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleCompanySubmit}
       />
       <CompanyModal
         isOpen={isEditModalOpen}
@@ -204,6 +254,7 @@ function Companies() {
         }}
         isEditMode={true} // Düzenleme modunda aç
         company={selectedCompany} // Düzenlenecek şirket bilgileri
+        onSubmit={handleEditSubmit}
       />
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
@@ -213,7 +264,9 @@ function Companies() {
         }}
         onConfirm={confirmDelete}
         title="Şirket Silme"
-        message={`${companyToDelete?.name || ''} ${companyToDelete?.ids?.length > 1 ? 'şirketlerini' : 'şirketini'} silmek istediğinizden emin misiniz?`}
+        message={`${companyToDelete?.name || ""} ${
+          companyToDelete?.ids?.length > 1 ? "şirketlerini" : "şirketini"
+        } silmek istediğinizden emin misiniz?`}
       />
     </>
   );
