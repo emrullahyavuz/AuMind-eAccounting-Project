@@ -84,6 +84,63 @@ export const api = createApi({
       }),
     }),
 
+    // Companies endpoints
+    getAllCompanies: builder.query({
+      query: () => ({
+        url: "/Companies/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }),
+      providesTags: ["Companies"],
+    }),
+    createCompany: builder.mutation({
+      query: (company) => ({
+        url: "/Companies/Create",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: company,
+      }),
+      invalidatesTags: ["Companies"],
+    }),
+    updateCompany: builder.mutation({
+      query: (company) => ({
+        url: "/Companies/Update",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: company,
+      }),
+      invalidatesTags: ["Companies"],
+    }),
+    deleteCompany: builder.mutation({
+      query: (companyId) => ({
+        url: "/Companies/DeleteById",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: { id: companyId },
+      }),
+      invalidatesTags: ["Companies"],
+    }),
+    migrateAllCompanies: builder.mutation({
+      query: () => ({
+        url: "/Companies/MigrateAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }),
+      invalidatesTags: ["Companies"],
+    }),
+
     // Users endpoints
     getAllUsers: builder.mutation({
       query: () => ({
@@ -138,4 +195,9 @@ export const {
   useUpdateUserMutation,
   useDeleteUserMutation,
   useConfirmEmailMutation,
+  useGetAllCompaniesQuery,
+  useCreateCompanyMutation,
+  useUpdateCompanyMutation,
+  useDeleteCompanyMutation,
+  useMigrateAllCompaniesMutation,
 } = api;
