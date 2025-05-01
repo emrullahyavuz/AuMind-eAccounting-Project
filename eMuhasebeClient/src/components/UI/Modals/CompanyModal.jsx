@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
 function CompanyModal({ isOpen, onClose, isEditMode, onSubmit, company }) {
-  const [formData, setFormData] = useState({
+  const defaultFormData = {
     name: "",
     fullAdress: "",
     taxDepartment: "",
@@ -13,7 +13,30 @@ function CompanyModal({ isOpen, onClose, isEditMode, onSubmit, company }) {
       userId: "",
       password: "",
     },
-  });
+  };
+
+  const [formData, setFormData] = useState(defaultFormData);
+
+  const normalizeCompanyData = (company) => {
+    if (!company) return defaultFormData;
+
+    return {
+      name: company.name || "",
+      fullAdress: company.fullAdress || "",
+      taxDepartment: company.taxDepartment || "",
+      taxNumber: company.taxNumber || "",
+      database: {
+        server: company.database?.server || "",
+        databaseName: company.database?.databaseName || "",
+        userId: company.database?.userId || "",
+        password: company.database?.password || "",
+      },
+    };
+  };
+
+  useEffect(() => {
+    setFormData(normalizeCompanyData(company));
+  }, [company]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,8 +113,8 @@ function CompanyModal({ isOpen, onClose, isEditMode, onSubmit, company }) {
               <label className="block text-gray-700 mb-1">Vergi Dairesi</label>
               <input
                 type="text"
-                name="taxOffice"
-                value={formData.taxOffice}
+                name="taxDepartment"
+                value={formData.taxDepartment}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
                 required
