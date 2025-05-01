@@ -66,6 +66,8 @@ function UsersPage() {
     { header: "Kullanıcı Soyadı", accessor: "lastName" },
     { header: "E-Mail Adresi", accessor: "email" },
     { header: "Bağlı Olduğu Şirketler", accessor: "companies" },
+    { header: "Username", accessor: "userName" },
+
   ];
 
   // Sayfalama işlemleri
@@ -112,7 +114,6 @@ function UsersPage() {
   const handleUserSubmit = async (userData) => {
     try {
       await createUser(userData).unwrap();
-      await getAllUsers().unwrap();
       showToast("Kullanıcı başarıyla oluşturuldu", "success");
       setIsAddModalOpen(false);
       // Kullanıcı listesini yenile
@@ -126,16 +127,19 @@ function UsersPage() {
       );
     }
   };
-  const handleEditSubmit = async (userData) => {
+  const handleEditSubmit = async (userData, userId) => {
     try {
-      console.log(userData)
+      console.log('Editing user:', { userData, userId })
       
-      await updateUser({id:userData.id, ...userData}).unwrap();
-      await getAllUsers().unwrap();
+      // Update user with the provided ID
+      await updateUser({
+        id: userId,
+        ...userData
+      }).unwrap();
+
       showToast("Kullanıcı başarıyla güncellendi", "success");
       setIsEditModalOpen(false);
-      // Kullanıcı listesini yenile
-      await getAllUsers().unwrap();
+      setSelectedUser(null);
     } catch (err) {
       console.error("Error updating user:", err);
       showToast(
