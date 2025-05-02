@@ -6,7 +6,7 @@ import CompanyModal from "../../components/UI/Modals/CompanyModal";
 import DeleteConfirmationModal from "../../components/UI/Modals/DeleteConfirmationModal";
 import { Trash2 } from "lucide-react";
 import {
-  useGetAllCompaniesQuery,
+  useGetAllCompaniesMutation,
   useCreateCompanyMutation,
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
@@ -38,7 +38,7 @@ function Companies() {
     (state) => state.modal
   );
 
-  const getAllCompanies = useGetAllCompaniesQuery();
+  const [getAllCompanies] = useGetAllCompaniesMutation();
   const [createCompany] = useCreateCompanyMutation();
   const [updateCompany] = useUpdateCompanyMutation();
   const [deleteCompany] = useDeleteCompanyMutation();
@@ -62,15 +62,26 @@ function Companies() {
     { header: "Yönetici Adı", accessor: "adminName" },
   ];
 
+
   // Şirketler için useEffect
   useEffect(() => {
-    if (getAllCompanies.data) {
-      const data = getAllCompanies.data.data || getAllCompanies.data;
-      console.log("Received company data:", data);
-      setCompanies(data);
-      setFilteredCompanies(data);
-      setIsLoading(false);
-    }
+    const fetchData = async () => {
+      try {
+       
+        const result = await getAllCompanies().unwrap();
+        if (result?.isSuccessful) {
+          const formattedData = Array.isArray(result.data) ? result.data : [];
+          setCompanies(formattedData);
+          setFilteredCompanies(formattedData);
+        } else {
+          console.error("Error fetching users:", result?.errorMessages);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      }
+    };
+
+    fetchData();
   }, [getAllCompanies]);
 
   // Sayfalama işlemleri
@@ -144,17 +155,38 @@ function Companies() {
     dispatch(openDeleteModal());
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (companyToDelete) {
-      // API silme işlemi burada yapılacak
-      const updatedCompanies = companies.filter(
-        (company) => !companyToDelete.ids.includes(company.id)
-      );
-      setCompanies(updatedCompanies);
-      setFilteredCompanies(updatedCompanies);
-      setSelectedItems([]); // Seçili öğeleri temizle
-      dispatch(closeDeleteModal());
-      setCompanyToDelete(null);
+      try {
+        // Toplu silme işlemi
+        for (const id of companyToDelete.ids) {
+          await deleteCompany(id).unwrap();
+        }
+
+        showToast("Şirketler başarıyla silindi", "success");
+        
+        // Şirket listesini yenile
+        const result = await getAllCompanies().unwrap();
+        
+        if (result?.isSuccessful) {
+          
+          const formattedData = Array.isArray(result.data) ? result.data : [];
+          console.log(formattedData)
+          setCompanies(formattedData);
+          setFilteredCompanies(formattedData);
+        }
+
+        setSelectedItems([]); // Seçili öğeleri temizle
+        dispatch(closeDeleteModal());
+        setCompanyToDelete(null);
+      } catch (err) {
+        console.error("Error deleting company:", err);
+        showToast(
+          err.data?.errorMessages?.[0] ||
+            "Şirket silinirken bir hata oluştu",
+          "error"
+        );
+      }
     }
   };
 

@@ -7,6 +7,7 @@ import {
   useGetAllUsersMutation,
   useCreateUserMutation,
   useUpdateUserMutation,
+  useDeleteUserMutation,
 } from "../../store/api/usersApi";
 import { useToast } from "../../hooks/useToast";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,6 +33,7 @@ function UsersPage() {
     useGetAllUsersMutation();
   const [createUser, { isLoading: isCreatingUser }] = useCreateUserMutation();
   const [updateUser, { isLoading: isUpdatingUser }] = useUpdateUserMutation();
+  const [deleteUser, { isLoading: isDeletingUser }] = useDeleteUserMutation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -165,6 +167,7 @@ function UsersPage() {
     if (Array.isArray(userId)) {
       // Toplu silme
       setUserToDelete({ ids: userId, name: `${userId.length} kullanıcı` });
+
     } else {
       // Tekli silme
       const user = users.find((u) => u.id === userId);
@@ -174,17 +177,37 @@ function UsersPage() {
   };
 
   // Silme onaylama işlemi
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (userToDelete) {
-      // API silme işlemi burada yapılacak
-      const updatedUsers = users.filter(
-        (user) => !userToDelete.ids.includes(user.id)
-      );
-      setUsers(updatedUsers);
-      setFilteredUsers(updatedUsers);
-      setSelectedItems([]); // Seçili öğeleri temizle
-      dispatch(closeDeleteModal());
-      setUserToDelete(null);
+      try {
+        // Toplu silme işlemi
+        for (const id of userToDelete.ids) {
+          await deleteUser(id).unwrap();
+        }
+
+        showToast("Kullanıcılar başarıyla silindi", "success");
+        
+        // Kullanıcı listesini yenile
+        const result = await getAllUsers().unwrap();
+        
+        if (result?.isSuccessful) {
+          console.log("sffss")
+          const formattedData = Array.isArray(result.data) ? result.data : [];
+          setUsers(formattedData);
+          setFilteredUsers(formattedData);
+        }
+
+        setSelectedItems([]); // Seçili öğeleri temizle
+        dispatch(closeDeleteModal());
+        setUserToDelete(null);
+      } catch (err) {
+        console.error("Error deleting user:", err);
+        showToast(
+          err.data?.errorMessages?.[0] ||
+            "Kullanıcı silinirken bir hata oluştu",
+          "error"
+        );
+      }
     }
   };
 
