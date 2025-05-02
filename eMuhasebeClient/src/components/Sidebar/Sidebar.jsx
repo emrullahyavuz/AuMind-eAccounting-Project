@@ -114,7 +114,7 @@ function Sidebar({ toggleSidebar }) {
             <SidebarItem
               to="/reports"
               icon={<FaChartBar size={collapsed ? 24 : 20} />}
-              text="Satış Raporu"
+              text="Raporlar"
               active={activeItem === "reports"}
               collapsed={collapsed}
             />

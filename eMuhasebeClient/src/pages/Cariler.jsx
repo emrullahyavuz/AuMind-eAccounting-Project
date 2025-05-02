@@ -5,19 +5,41 @@ import { Info, Trash2 } from "lucide-react";
 import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay";
 import CariModal from "../components/UI/Modals/CariModal";
 import DeleteConfirmationModal from "../components/UI/Modals/DeleteConfirmationModal";
+import {
+  useGetAllCustomersMutation,
+  useCreateCustomerMutation,
+  useUpdateCustomerMutation,
+  useDeleteCustomerMutation,
+} from "../store/api";
 
 const Cariler = () => {
   const navigate = useNavigate();
   const [currents, setCurrents] = useState([]);
   const [filteredCurrents, setFilteredCurrents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCari, setSelectedCari] = useState(null);
   const [cariToDelete, setCariToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
+
+  // Redux hooks
+  // const dispatch = useDispatch();
+  // const { isAddModalOpen, isEditModalOpen, isDeleteModalOpen } = useSelector(
+  //   (state) => state.modal
+  // );
+
+  // RTK Query hooks
+  const [getAllCustomers, { data, isLoading, error }] =
+    useGetAllCustomersMutation();
+  const [createCustomer, { isLoading: isCreatingCustomer }] =
+    useCreateCustomerMutation();
+  const [updateCustomer, { isLoading: isUpdatingCustomer }] =
+    useUpdateCustomerMutation();
+  const [deleteCustomer, { isLoading: isDeletingCustomer }] =
+    useDeleteCustomerMutation();
 
   // Sayfa başına gösterilecek cari hesap sayısı
   const itemsPerPage = 50;
@@ -49,35 +71,32 @@ const Cariler = () => {
     { header: "Giriş", accessor: "inflow" },
     { header: "Çıkış", accessor: "checkout" },
     { header: "Bakiye", accessor: "balance" },
-    { 
-      header: "İşlemler", 
+    {
+      header: "İşlemler",
       accessor: "transactions",
-      render: renderDetailButton
+      render: renderDetailButton,
     },
   ];
 
-  // Örnek veri yükleme - gerçek uygulamada API'den gelecek
+  // Müşterileri yükle
   useEffect(() => {
-    // API çağrısı simülasyonu
-    setTimeout(() => {
-      const mockCurrents = Array.from({ length: 80 }, (_, index) => ({
-        id: index + 1,
-        name: `Şirket ${index + 1}`,
-        type: `Tip ${index + 1}`,
-        city: `İstanbul`,
-        address: `Adres ${index + 1}`,
-        taxOffice: `Vergi Dairesi ${index + 1}`,
-        taxNumber: `${1000000000 + index}`,
-        inflow: `${(Math.random() * 10000).toFixed(2)} ₺`,
-        checkout: `${(Math.random() * 8000).toFixed(2)} ₺`,
-        balance: `${(Math.random() * 20000).toFixed(2)} ₺`,
-      }));
+    const fetchData = async () => {
+      try {
+        const result = await getAllCustomers().unwrap();
+        if (result?.isSuccessful) {
+          const formattedData = Array.isArray(result.data) ? result.data : [];
+          setCurrents(formattedData);
+          setFilteredCurrents(formattedData);
+        } else {
+          console.error(result?.errorMessages?.[0] || "Müşteriler yüklenirken bir hata oluştu");
+        }
+      } catch (error) {
+        console.error("API hatası:", error);
+      }
+    };
 
-      setCurrents(mockCurrents);
-      setFilteredCurrents(mockCurrents);
-      setIsLoading(false);
-    }, 1000);
-  }, []);
+    fetchData();
+  }, [getAllCustomers]);
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
@@ -223,7 +242,9 @@ const Cariler = () => {
         }}
         onConfirm={confirmDelete}
         title="Cari Hesap Silme"
-        message={`${cariToDelete?.name || ''} ${cariToDelete?.ids?.length > 1 ? 'cari hesaplarını' : 'cari hesabını'} silmek istediğinizden emin misiniz?`}
+        message={`${cariToDelete?.name || ""} ${
+          cariToDelete?.ids?.length > 1 ? "cari hesaplarını" : "cari hesabını"
+        } silmek istediğinizden emin misiniz?`}
       />
     </>
   );

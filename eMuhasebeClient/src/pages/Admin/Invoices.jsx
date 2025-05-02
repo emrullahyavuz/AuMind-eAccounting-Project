@@ -25,6 +25,8 @@ const Faturalar = () => {
   const [selectedItems, setSelectedItems] = useState([]);
 
   const { showToast } = useToast();
+
+  // RTK Query hooks
   const getAllInvoices = useGetAllInvoicesQuery();
   const [createInvoice] = useCreateInvoiceMutation();
   const [updateInvoice] = useUpdateInvoiceMutation();

@@ -1,9 +1,11 @@
 import { Info, Plus } from "lucide-react";
 import { useState } from "react";
 import BankAddModal from "../components/UI/Modals/BankModal";
+import { useNavigate } from "react-router-dom";
 
 function Banks() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Örnek banka verileri
   const banks = [
@@ -72,7 +74,11 @@ function Banks() {
               </div>
             </div>
 
-            <button className="w-full bg-white text-gray-800 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors">
+            <button 
+            onClick={() => {
+              navigate(`/bank-transactions/${bank.name}`);
+            }}
+            className="w-full bg-white text-gray-800 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors">
               Detaylar
             </button>
           </div>
