@@ -1,201 +1,372 @@
-import { useEffect, useState } from "react"
-import { Download } from "lucide-react"
-import DownloadModal from "../components/Reports/DownloadModal"
-import DownloadMessage from "../components/Reports/DownloadMessage"
-import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay"
+import {
+  MoneyBagIcon,
+  Group327Icon,
+  TransactionIcon,
+  SplitMoneyIcon,
+  taxIcon,
+  moneyIcon,
+  timeIcon,
+  hourglassIcon,
+  requestMoneyIcon,
+  totalSalesIcon,
+  profitIcon,
+  fundIcon,
+} from "../assets/icons/index";
 
-function SalesReport() {
-  const [reportType, setReportType] = useState("daily")
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isMessageVisible, setIsMessageVisible] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+function Reports() {
+  // Çizgi grafik için örnek veri noktaları
+  const chartData = [
+    { date: "05.01.24", value: 120000 },
+    { date: "08.02.24", value: 150000 },
+    { date: "12.03.24", value: 180000 },
+    { date: "09.04.24", value: 140000 },
+    { date: "11.05.24", value: 200000 },
+    { date: "14.06.24", value: 170000 },
+    { date: "06.07.24", value: 190000 },
+    { date: "08.08.24", value: 210000 },
+    { date: "10.09.24", value: 230000 },
+    { date: "14.10.24", value: 220000 },
+    { date: "16.11.24", value: 240000 },
+    { date: "02.12.24", value: 250000 },
+  ];
 
+  // Pasta grafik verileri
+  const pieData = {
+    monthly: { completed: 75, pending: 25 },
+    yearly: { completed: 70, pending: 30 },
+  };
 
-  // Örnek veri yükleme - daha sonra gerçek uygulamada API'den gelecek
-  useEffect(() => {
-    // API çağrısı simülasyonu
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
-  }, [])
-
-  // Grafik için tarih etiketleri
-  const dateLabels = [
-    "05.01.24",
-    "08.02.24",
-    "12.03.24",
-    "09.04.24",
-    "11.05.24",
-    "14.06.24",
-    "06.07.24",
-    "08.08.24",
-    "10.09.24",
-    "14.10.24",
-    "16.11.24",
-    "02.12.24",
-  ]
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true)
-  }
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false)
-  }
-
-  const handleDownload = (format) => {
-    console.log(`Rapor ${format} formatında indiriliyor...`)
-
-    // Gerçek uygulamada burada API çağrısı yapılacak
-    // Simüle edilmiş indirme işlemi örneği
-    setTimeout(() => {
-      setIsMessageVisible(true)
-    }, 1000)
-  }
-
-  const handleCloseMessage = () => {
-    setIsMessageVisible(false)
-  }
-
-  if(isLoading) {
-    return <div className="p-6"><LoadingOverlay /></div>
-  }
+  // Para birimini formatlama
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat("tr-TR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  };
 
   return (
-    <div className="p-6 pt-0 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-6">SATIŞ RAPORU</h1>
+    <div className="min-h-screen bg-gray-100 p-4">
+      {/* Başlık */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-700">Raporlar</h1>
+        <h2 className="text-xl font-bold text-gray-700">
+          HOŞ GELDİNİZ, ŞEREF CAN AVLAK
+        </h2>
+      </div>
 
-      <div className="bg-gray-200 rounded-lg p-6">
-        <div className="grid grid-cols-1 gap-8">
-          <div className="bg-gray-100 p-6 rounded-lg shadow-sm">
-            {/* Rapor Filtreleri */}
-            <div className="flex flex-wrap gap-4 mb-6">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="reportType"
-                  value="daily"
-                  checked={reportType === "daily"}
-                  onChange={() => setReportType("daily")}
-                  className="sr-only"
-                />
-                <span
-                  className={`px-4 py-2 rounded-md cursor-pointer ${
-                    reportType === "daily" ? "bg-cyan-500 text-white" : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-                  }`}
-                >
-                  GÜNLÜK RAPOR
-                </span>
-              </label>
+      {/* Çizgi Grafik */}
+      <div className="bg-gray-700 rounded-lg p-4 mb-6">
+        <div className="h-64 relative">
+          {/* Y ekseni değerleri */}
+          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-white text-xs">
+            <div>250.000</div>
+            <div>200.000</div>
+            <div>150.000</div>
+            <div>100.000</div>
+            <div>50.000</div>
+            <div>0</div>
+          </div>
 
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="reportType"
-                  value="weekly"
-                  checked={reportType === "weekly"}
-                  onChange={() => setReportType("weekly")}
-                  className="sr-only"
-                />
-                <span
-                  className={`px-4 py-2 rounded-md cursor-pointer ${
-                    reportType === "weekly" ? "bg-green-500 text-white" : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-                  }`}
-                >
-                  HAFTALIK RAPOR
-                </span>
-              </label>
+          {/* Izgara çizgileri */}
+          <div className="absolute left-12 right-0 top-0 bottom-0 grid grid-cols-12 grid-rows-5">
+            {Array.from({ length: 72 }).map((_, index) => (
+              <div key={index} className="border border-gray-600"></div>
+            ))}
+          </div>
 
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="reportType"
-                  value="monthly"
-                  checked={reportType === "monthly"}
-                  onChange={() => setReportType("monthly")}
-                  className="sr-only"
-                />
-                <span
-                  className={`px-4 py-2 rounded-md cursor-pointer ${
-                    reportType === "monthly" ? "bg-red-500 text-white" : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-                  }`}
-                >
-                  AYLIK RAPOR
-                </span>
-              </label>
-
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="reportType"
-                  value="yearly"
-                  checked={reportType === "yearly"}
-                  onChange={() => setReportType("yearly")}
-                  className="sr-only"
-                />
-                <span
-                  className={`px-4 py-2 rounded-md cursor-pointer ${
-                    reportType === "yearly" ? "bg-purple-500 text-white" : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-                  }`}
-                >
-                  YILLIK RAPOR
-                </span>
-              </label>
-            </div>
-
-            {/* Grafik */}
-            <div className="relative h-80 border border-gray-300 bg-white">
-              {/* Y ekseni etiketleri */}
-              <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-right pr-2 text-gray-600">
-                <div>250.000</div>
-                <div>200.000</div>
-                <div>150.000</div>
-                <div>100.000</div>
-                <div>50.000</div>
-                <div>0</div>
-              </div>
-
-              {/* Grafik ızgarası */}
-              <div className="absolute left-16 right-0 top-0 bottom-0">
-                <div className="grid grid-cols-12 grid-rows-5 h-full w-full">
-                  {Array.from({ length: 72 }).map((_, index) => (
-                    <div key={index} className="border border-gray-200"></div>
-                  ))}
-                </div>
-
-                {/* X ekseni etiketleri */}
-                <div className="absolute bottom-0 left-0 right-0 flex justify-between transform translate-y-full mt-1">
-                  {dateLabels.map((date, index) => (
-                    <div key={index} className="text-xs text-gray-600 -rotate-45 origin-top-left ml-2">
-                      {date}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* İndir Butonu */}
-            <div className="flex justify-end mt-8">
-              <button
-                onClick={handleOpenModal}
-                className="bg-yellow-400 hover:bg-cyan-600 text-white px-4 py-2 rounded-md flex items-center"
+          {/* X ekseni değerleri */}
+          <div className="absolute bottom-0 left-12 right-0 flex justify-between transform translate-y-6">
+            {chartData.map((point, index) => (
+              <div
+                key={index}
+                className="text-white text-xs -rotate-45 origin-top-left"
               >
-                <Download size={18} className="mr-2" />
-                RAPORU İNDİR
-              </button>
+                {point.date}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="text-center text-white text-sm mt-8">
+          Son ay günlük raporu görüntülüyorsunuz
+        </div>
+      </div>
+
+      {/* Pasta Grafikler */}
+      <div className="bg-gray-700 rounded-lg p-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Aylık Ürün Satışı */}
+          <div>
+            <h3 className="text-white text-center mb-2">AYLIK ÜRÜN SATIŞI</h3>
+            <div className="flex justify-center">
+              <div className="relative w-40 h-40">
+                {/* Pasta grafik (CSS ile) */}
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    background: `conic-gradient(#00ff00 0% ${pieData.monthly.completed}%, #ffcc00 ${pieData.monthly.completed}% 100%)`,
+                  }}
+                ></div>
+                <div className="absolute inset-3 bg-gray-700 rounded-full"></div>
+              </div>
+            </div>
+            <div className="flex justify-center mt-4 space-x-6">
+              <div className="flex items-center">
+                <div className="w-4 h-4 bg-green-500 mr-1"></div>
+                <span className="text-white text-xs">TAMAMLANAN</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-4 h-4 bg-yellow-400 mr-1"></div>
+                <span className="text-white text-xs">BEKLEYEN</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Yıllık Ürün Satışı */}
+          <div>
+            <h3 className="text-white text-center mb-2">YILLIK ÜRÜN SATIŞI</h3>
+            <div className="flex justify-center">
+              <div className="relative w-40 h-40">
+                {/* Pasta grafik (CSS ile) */}
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    background: `conic-gradient(#00ff00 0% ${pieData.yearly.completed}%, #ffcc00 ${pieData.yearly.completed}% 100%)`,
+                  }}
+                ></div>
+                <div className="absolute inset-3 bg-gray-700 rounded-full"></div>
+              </div>
+            </div>
+            <div className="flex justify-center mt-4 space-x-6">
+              <div className="flex items-center">
+                <div className="w-4 h-4 bg-green-500 mr-1"></div>
+                <span className="text-white text-xs">TAMAMLANAN</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-4 h-4 bg-yellow-400 mr-1"></div>
+                <span className="text-white text-xs">BEKLEYEN</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* İndirme Modalı */}
-      <DownloadModal isOpen={isModalOpen} onClose={handleCloseModal} onDownload={handleDownload} />
+      {/* Gelir Kartları */}
+      <div className="bg-gray-700 rounded-lg p-4 mb-6">
+        <h3 className="text-white text-lg font-bold mb-4">GELİR</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Toplam Gelir */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-green-100 rounded-full p-3 mr-3">
+              <img src={MoneyBagIcon} className="h-16 w-16" alt="Money Bag" />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Toplam Gelir</div>
+              <div className="text-lg font-bold">2.500.450,00</div>
+              <div className="text-xs text-green-600">
+                Önceki aya göre %5,5 daha fazla
+              </div>
+            </div>
+          </div>
 
-      {/* Başarı Mesajı */}
-      <DownloadMessage isVisible={isMessageVisible} onClose={handleCloseMessage} />
+          {/* Aylık Gelir */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-green-100 rounded-full p-3 mr-3">
+              <img src={Group327Icon} className="h-16 w-16" alt="Group 327" />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Aylık Gelir</div>
+              <div className="text-lg font-bold">1.250.150,00</div>
+              <div className="text-xs text-green-600">
+                Önceki aya göre %4,5 daha fazla
+              </div>
+            </div>
+          </div>
+
+          {/* Beklenen Gelir */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-green-100 rounded-full p-3 mr-3">
+              <img
+                src={TransactionIcon}
+                className="h-16 w-16"
+                alt="Transaction"
+              />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Beklenen Gelir</div>
+              <div className="text-lg font-bold">0.150.040,00</div>
+              <div className="text-xs text-green-600">
+                Önceki aya göre %3,5 daha fazla
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Gider Kartları */}
+      <div className="bg-gray-700 rounded-lg p-4 mb-6">
+        <h3 className="text-white text-lg font-bold mb-4">GİDER</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Toplam Gider */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-red-100 rounded-full p-3 mr-3">
+              <img
+                src={SplitMoneyIcon}
+                className="h-16 w-16"
+                alt="Split Money"
+              />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Toplam Gider</div>
+              <div className="text-lg font-bold">1.090.000,00</div>
+              <div className="text-xs text-red-600">
+                Önceki aya göre %2,5 daha fazla
+              </div>
+            </div>
+          </div>
+
+          {/* Aylık Gider */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-red-100 rounded-full p-3 mr-3">
+              <img src={taxIcon} className="h-16 w-16" alt="tax" />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Aylık Gider</div>
+              <div className="text-lg font-bold">1.250.150,00</div>
+              <div className="text-xs text-red-600">
+                Önceki aya göre %3,5 daha fazla
+              </div>
+            </div>
+          </div>
+
+          {/* Beklenen Gider */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-red-100 rounded-full p-3 mr-3">
+              <img
+                src={requestMoneyIcon}
+                className="h-16 w-16"
+                alt="requestMoney"
+              />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Beklenen Gider</div>
+              <div className="text-lg font-bold">0.150.040,00</div>
+              <div className="text-xs text-red-600">
+                Önceki aya göre %1,5 daha fazla
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bekleyen Kartları */}
+      <div className="bg-gray-700 rounded-lg p-4 mb-6">
+        <h3 className="text-white text-lg font-bold mb-4">BEKLEYEN</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Toplam Bekleyen */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-yellow-100 rounded-full p-3 mr-3">
+              <img src={moneyIcon} className="h-16 w-16" alt="money" />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Toplam Bekleyen</div>
+              <div className="text-lg font-bold">0.040.500,00</div>
+              <div className="text-xs text-yellow-600">
+                Önceki aya göre %1,5 daha fazla
+              </div>
+            </div>
+          </div>
+
+          {/* Aylık Bekleyen */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-yellow-100 rounded-full p-3 mr-3">
+              <img src={timeIcon} className="h-16 w-16" alt="time" />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Aylık Bekleyen</div>
+              <div className="text-lg font-bold">0.000.200,00</div>
+              <div className="text-xs text-yellow-600">
+                Önceki aya göre %3,5 daha fazla
+              </div>
+            </div>
+          </div>
+
+          {/* Net Bekleyen */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-yellow-100 rounded-full p-3 mr-3">
+              <img src={hourglassIcon} className="h-16 w-16" alt="hourglass" />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Net Bekleyen</div>
+              <div className="text-lg font-bold">0.040.700,00</div>
+              <div className="text-xs text-yellow-600">
+                Önceki aya göre %0,5 daha fazla
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Ürün Satışı Kartları */}
+      <div className="bg-gray-700 rounded-lg p-4 mb-6">
+        <h3 className="text-white text-lg font-bold mb-4">ÜRÜN SATIŞI</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Toplam Satış */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-blue-100 rounded-full p-3 mr-3">
+              <img
+                src={totalSalesIcon}
+                className="h-16 w-16"
+                alt="Transaction"
+              />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Toplam Satış</div>
+              <div className="text-lg font-bold">1.110.000</div>
+              <div className="text-xs text-blue-600">
+                Önceki aya göre %2,5 daha fazla
+              </div>
+            </div>
+          </div>
+
+          {/* Aylık Satış */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-blue-100 rounded-full p-3 mr-3">
+              <img
+                src={profitIcon}
+                className="h-16 w-16"
+                alt="Transaction"
+              />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Aylık Satış</div>
+              <div className="text-lg font-bold">140.000</div>
+              <div className="text-xs text-blue-600">
+                Önceki aya göre %4,5 daha fazla
+              </div>
+            </div>
+          </div>
+
+          {/* Beklenen Satış */}
+          <div className="bg-white rounded-lg p-4 flex">
+            <div className="bg-blue-100 rounded-full p-3 mr-3">
+              <img
+                src={fundIcon}
+                className="h-16 w-16"
+                alt="Transaction"
+              />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Beklenen Satış</div>
+              <div className="text-lg font-bold">15.000</div>
+              <div className="text-xs text-blue-600">
+                Önceki aya göre %2,5 daha fazla
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default SalesReport
-
+export default Reports;

@@ -27,10 +27,10 @@ function DataTable({
   onPageChange,
   customButtons = null, // Özel butonlar için prop
   detailButton = null, // Detay butonu için prop
-  headerColor = "gray-700", 
-  headerTextColor = "white", 
-  isCari=false, // Cari hesaplar için özel stil
-  isStock=false, // Stok hesaplar için özel stil
+  headerColor = "gray-700",
+  headerTextColor = "white",
+  isCari = false, // Cari hesaplar için özel stil
+  isStock = false, // Stok hesaplar için özel stil
   selectedItems = [],
   onSelectedItemsChange = () => {},
 }) {
@@ -61,7 +61,7 @@ function DataTable({
     if (selectedItems.length === data.length) {
       onSelectedItemsChange([]);
     } else {
-      onSelectedItemsChange(data.map(item => item.id));
+      onSelectedItemsChange(data.map((item) => item.id));
     }
   };
 
@@ -86,17 +86,17 @@ function DataTable({
       {/* Üst Araç Çubuğu */}
       <div className="flex flex-wrap justify-between items-center mb-6">
         <div className="flex items-center mb-4 sm:mb-0">
-          {
-            isCari || isStock ? "" : (
-              <button
-                onClick={onAdd}
-                className={`flex items-center font-semibold px-4 py-2 rounded-md ${buttonColorClass}`}
-              >
-                <Plus size={18} className="mr-2" />
-                {addButtonText}
-              </button>
-            )
-          }
+          {isCari || isStock ? (
+            ""
+          ) : (
+            <button
+              onClick={onAdd}
+              className={`flex items-center font-semibold px-4 py-2 rounded-md ${buttonColorClass}`}
+            >
+              <Plus size={18} className="mr-2" />
+              {addButtonText}
+            </button>
+          )}
 
           {/* Özel butonlar varsa göster */}
           <div className="custom-button ml-5">{customButtons}</div>
@@ -117,7 +117,7 @@ function DataTable({
       </div>
 
       {/* Tablo */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-lg">
         <table className="min-w-full bg-white">
           {/* Tablo Başlığı */}
           <thead>
@@ -132,16 +132,18 @@ function DataTable({
                   key={index}
                   className={`p-3 ${
                     column.header === "İşlemler" ? "text-right px-[60px]" : ""
-                  } text-left ${column.className || ""}`}
+                  } text-left text-yellow-500 ${column.className || ""}`}
                 >
                   {column.header}
                 </th>
               ))}
-              {!isCari && !isStock &&  (
+              {!isCari && !isStock && (
                 <th className="w-12 p-3 text-center">
                   <input
                     type="checkbox"
-                    checked={data.length > 0 && selectedItems.length === data.length}
+                    checked={
+                      data.length > 0 && selectedItems.length === data.length
+                    }
                     onChange={handleSelectAll}
                     className="h-5 w-5 text-red-500 border-gray-300 rounded focus:ring-red-500"
                   />
@@ -174,7 +176,8 @@ function DataTable({
                         key={colIndex}
                         className={`p-3 ${column.className || ""}`}
                       >
-                        {item[column.accessor] || (item[column.accessor] === "" && <div className="flex justify-end">{detailButton}</div>)}
+                        
+                        {item[column.accessor] || (column.accessor.includes('.') ? item[column.accessor.split('.')[0]][column.accessor.split('.')[1]] : '')}
                       </td>
                     ))}
 

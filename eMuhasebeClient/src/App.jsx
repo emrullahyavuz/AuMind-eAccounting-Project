@@ -21,6 +21,7 @@ import StockProfitability from "./pages/StockProfitability";
 import Reports from "./pages/Reports";
 import Banks from "./pages/Banks";
 import Products from "./pages/Products";
+import BankTransactions from "./pages/BankTransactions";
 function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -52,6 +53,7 @@ function App() {
               <Route path="/admin/users" element={<UsersPage />} />
               <Route path="/reports" element={<SalesReportPage />} />
               <Route path="/banks" element={<Banks />} />
+              <Route path="/bank-transactions/:bankName" element={<BankTransactions />} />
               <Route path="/cariler" element={<Cariler />} />
               <Route path="/cari-hareketleri" element={<CariHareketleri />} />
               <Route path="/products" element={<Products />} />

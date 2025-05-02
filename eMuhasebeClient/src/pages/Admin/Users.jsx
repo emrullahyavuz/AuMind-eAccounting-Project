@@ -23,12 +23,15 @@ function UsersPage() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { showToast } = useToast();
+
+  // Redux hooks
   const dispatch = useDispatch();
   const { isAddModalOpen, isEditModalOpen, isDeleteModalOpen } = useSelector(
     (state) => state.modal
   );
 
 
+  // RTK Query hooks
   const [getAllUsers, { data, isUsersLoading, error }] =
     useGetAllUsersMutation();
   const [createUser, { isLoading: isCreatingUser }] = useCreateUserMutation();
@@ -142,6 +145,7 @@ function UsersPage() {
         id: userId,
         ...userData
       }).unwrap();
+      await getAllUsers().unwrap();
 
       showToast("Kullanıcı başarıyla güncellendi", "success");
       dispatch(closeEditModal());
@@ -188,7 +192,7 @@ function UsersPage() {
         showToast("Kullanıcılar başarıyla silindi", "success");
         
         // Kullanıcı listesini yenile
-        const result = await getAllUsers().unwrap();
+        const result = await getAllUsers().unwrap();  
         
         if (result?.isSuccessful) {
           console.log("sffss")

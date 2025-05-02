@@ -193,6 +193,54 @@ export const api = createApi({
       }),
       invalidatesTags: ["Users"],
     }),
+
+    // Customers endpoints
+    getAllCustomers: builder.mutation({
+      query: () => ({
+        url: '/Customers/GetAll',
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }),
+      providesTags: ["Customers"],
+    }),
+    createCustomer: builder.mutation({
+      query: (customerData) => ({
+        url: '/Customers/Create',
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: customerData,
+      }),
+      invalidatesTags: ["Customers"],
+    }),
+    updateCustomer: builder.mutation({
+      query: (customerData) => ({
+        url: '/Customers/Update',
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: customerData,
+      }),
+      invalidatesTags: ["Customers"],
+    }),
+    deleteCustomer: builder.mutation({
+      query: (customerId) => ({
+        url: '/Customers/DeleteById',
+        method: 'POST',
+          headers: {
+          "Content-Type": "application/json",
+        },
+        body: { id: customerId },
+      }),
+      invalidatesTags: ["Customers"],
+    }),
+
+    
   }),
 });
 // Export hooks for usage in components
@@ -200,12 +248,6 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useChangeCompanyMutation,
-  useGetCustomersQuery,
-  useAddCustomerMutation,
-  useGetProductsQuery,
-  useAddProductMutation,
-  useGetCashRegistersQuery,
-  useAddCashRegisterMutation,
   useGetAllUsersMutation,
   useCreateUserMutation,
   useUpdateUserMutation,
@@ -220,4 +262,8 @@ export const {
   useCreateInvoiceMutation,
   useUpdateInvoiceMutation,
   useDeleteInvoiceMutation,
+  useGetAllCustomersMutation,
+  useCreateCustomerMutation,
+  useUpdateCustomerMutation,
+  useDeleteCustomerMutation,
 } = api;

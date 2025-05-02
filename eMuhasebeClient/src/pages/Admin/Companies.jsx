@@ -32,13 +32,15 @@ function Companies() {
   const [companyToDelete, setCompanyToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
   const { showToast } = useToast();
-  const dispatch = useDispatch();
 
+  // Redux hooks
+  const dispatch = useDispatch();
   const { isAddModalOpen, isEditModalOpen, isDeleteModalOpen } = useSelector(
     (state) => state.modal
   );
 
-  const [getAllCompanies] = useGetAllCompaniesMutation();
+  // RTK Query hooks
+  const [getAllCompanies,{isLoading:isCompaniesLoading}] = useGetAllCompaniesMutation();
   const [createCompany] = useCreateCompanyMutation();
   const [updateCompany] = useUpdateCompanyMutation();
   const [deleteCompany] = useDeleteCompanyMutation();
@@ -57,18 +59,21 @@ function Companies() {
     { header: "Adres", accessor: "fullAdress" },
     { header: "Vergi Dairesi", accessor: "taxDepartment" },
     { header: "Vergi Numarası", accessor: "taxNumber" },
-    { header: "Server", accessor: "server" },
-    { header: "Veritabanı Adı", accessor: "databaseName" },
-    { header: "Yönetici Adı", accessor: "adminName" },
+    { header: "Server", accessor: "database.server" },
+    { header: "Veritabanı Adı", accessor: "database.databaseName" },
+    { header: "Yönetici Adı", accessor: "database.adminName" },
   ];
+
 
 
   // Şirketler için useEffect
   useEffect(() => {
+    
     const fetchData = async () => {
       try {
        
         const result = await getAllCompanies().unwrap();
+        console.log(result)
         if (result?.isSuccessful) {
           const formattedData = Array.isArray(result.data) ? result.data : [];
           setCompanies(formattedData);
@@ -82,7 +87,10 @@ function Companies() {
     };
 
     fetchData();
+   
   }, [getAllCompanies]);
+
+ 
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
@@ -136,8 +144,10 @@ function Companies() {
     console.log("Düzenlenecek şirket:", company);
     dispatch(openEditModal());
     setSelectedCompany(company); // Düzenlenecek şirket bilgilerini ayarla
-    console.log(selectedCompany)
+    
   };
+
+  
 
   // Şirket silme işlemi
   const handleDeleteCompany = (companyId) => {
@@ -175,6 +185,7 @@ function Companies() {
           setCompanies(formattedData);
           setFilteredCompanies(formattedData);
         }
+        await getAllCompanies().unwrap();
 
         setSelectedItems([]); // Seçili öğeleri temizle
         dispatch(closeDeleteModal());
@@ -251,7 +262,7 @@ function Companies() {
     </div>
   );
 
-  if (getAllCompanies.isLoading) {
+  if (isCompaniesLoading) {
     return (
       <div className="p-6">
         <LoadingOverlay />
@@ -281,6 +292,7 @@ function Companies() {
         headerTextColor="white"
         selectedItems={selectedItems}
         onSelectedItemsChange={setSelectedItems}
+        
       />
       <CompanyModal
         isOpen={isAddModalOpen}

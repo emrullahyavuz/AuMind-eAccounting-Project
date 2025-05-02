@@ -7,11 +7,10 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 import { useLoginMutation } from "../../store/api/authApi";
 import { useToast } from "../../hooks/useToast";
+import AuMindLogo from "../../assets/AuMindLogo.png";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-
-
 
   const [loginMutation, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
@@ -36,14 +35,13 @@ function LoginForm() {
         localStorage.setItem("token", result.data.token);
         // Token'ı store'a da kaydet
         showToast("Giriş yapıldı", "success");
-        navigate("/dashboard");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1000);
       }
     } catch (error) {
-      console.error("Failed to login:", error)
-      showToast(
-        `${error.data.errorMessages[0]}`,
-        "error"
-      )
+      console.error("Failed to login:", error);
+      showToast(`${error.data.errorMessages[0]}`, "error");
     }
   };
 
@@ -61,7 +59,13 @@ function LoginForm() {
         </h1>
 
         {/* Logo */}
-        <div className="w-24 h-24 bg-black mb-8"></div>
+        <div className="w-24 h-24 bg-black mb-8">
+          <img
+            src={AuMindLogo}
+            className="w-full h-full object-contain"
+            alt="AuMind Logo"
+          />
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6">
           {/* Kullanıcı Adı */}
