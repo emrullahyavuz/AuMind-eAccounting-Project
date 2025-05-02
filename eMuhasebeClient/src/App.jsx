@@ -18,7 +18,9 @@ import ChatPage from "./pages/Chat";
 import CashPage from "./pages/Cash";
 import CashTransactionPage from "./pages/CashTransaction";
 import StockProfitability from "./pages/StockProfitability";
-
+import Reports from "./pages/Reports";
+import Banks from "./pages/Banks";
+import Products from "./pages/Products";
 function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -49,14 +51,17 @@ function App() {
               <Route path="/admin/companies" element={<CompaniesPage />} />
               <Route path="/admin/users" element={<UsersPage />} />
               <Route path="/reports" element={<SalesReportPage />} />
+              <Route path="/banks" element={<Banks />} />
               <Route path="/cariler" element={<Cariler />} />
               <Route path="/cari-hareketleri" element={<CariHareketleri />} />
+              <Route path="/products" element={<Products />} />
               <Route path="/invoices" element={<InvoicesPage />} />
               <Route path="/settings/bot" element={<BotSettingsPage />} />
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/safes" element={<CashPage />} />
               <Route path="/kasa-hareketleri" element={<CashTransactionPage />} />
               <Route path="/stok-karlilik" element={<StockProfitability />} />
+              <Route path="/raporlar" element={<Reports />} />
               <Route path="*" element={<Navigate to="/auth/login" replace />} />
             </Routes>
           </main>

@@ -162,7 +162,7 @@ function DataTable({
                       <td className="p-3">
                         <button
                           onClick={() => onEdit(item)}
-                          className="text-blue-500 hover:text-blue-700 bg-blue-100 p-1 rounded"
+                          className="bg-blue-500 text-white hover:text-yellow-400  p-1 rounded"
                         >
                           <Edit size={18} />
                         </button>

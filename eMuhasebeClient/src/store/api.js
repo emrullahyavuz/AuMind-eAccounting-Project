@@ -94,7 +94,7 @@ export const api = createApi({
     }),
 
     // Companies endpoints
-    getAllCompanies: builder.query({
+    getAllCompanies: builder.mutation({
       query: () => ({
         url: "/Companies/GetAll",
         method: "POST",
@@ -103,7 +103,7 @@ export const api = createApi({
         },
         body: JSON.stringify({}),
       }),
-      providesTags: ["Companies"],
+      invalidatesTags: ["Companies"],
     }),
 
     createCompany: builder.mutation({
@@ -211,7 +211,7 @@ export const {
   useUpdateUserMutation,
   useDeleteUserMutation,
   useConfirmEmailMutation,
-  useGetAllCompaniesQuery,
+  useGetAllCompaniesMutation,
   useCreateCompanyMutation,
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,

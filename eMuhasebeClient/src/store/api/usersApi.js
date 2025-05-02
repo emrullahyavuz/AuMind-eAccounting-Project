@@ -31,6 +31,7 @@ export const userApi = baseApi.injectEndpoints({
       query: (userId) => ({
         url: '/Users/DeleteById',
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: { id: userId },
       }),
       invalidatesTags: ['Users'],
