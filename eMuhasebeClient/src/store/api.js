@@ -184,7 +184,7 @@ export const api = createApi({
       }),
       invalidatesTags: ["Users"],
     }),
-    
+
     deleteUser: builder.mutation({
       query: (userId) => ({
         url: "/Users/DeleteById",
@@ -194,11 +194,51 @@ export const api = createApi({
       invalidatesTags: ["Users"],
     }),
 
+    // Products endpoints
+    getAllProducts: builder.mutation({
+      query: () => ({
+        url: "/Products/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }),
+      providesTags: ["Products"],
+    }),
+
+    createProduct: builder.mutation({
+      query: (productData) => ({
+        url: "/Products/Create",
+        method: "POST",
+        body: productData,
+      }),
+      invalidatesTags: ["Products"],
+    }),
+
+    updateProduct: builder.mutation({
+      query: (productData) => ({
+        url: "/Products/Update",
+        method: "POST",
+        body: {id:productData.id,...productData},
+      }),
+      invalidatesTags: ["Products"],
+    }),
+
+    deleteProduct: builder.mutation({
+      query: (productId) => ({
+        url: "/Products/DeleteById",
+        method: "POST",
+        body: { id: productId },
+      }),
+      invalidatesTags: ["Products"],
+    }),
+
     // Customers endpoints
     getAllCustomers: builder.mutation({
       query: () => ({
-        url: '/Customers/GetAll',
-        method: 'POST',
+        url: "/Customers/GetAll",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -208,8 +248,8 @@ export const api = createApi({
     }),
     createCustomer: builder.mutation({
       query: (customerData) => ({
-        url: '/Customers/Create',
-        method: 'POST',
+        url: "/Customers/Create",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -219,28 +259,69 @@ export const api = createApi({
     }),
     updateCustomer: builder.mutation({
       query: (customerData) => ({
-        url: '/Customers/Update',
-        method: 'POST',
+        url: "/Customers/Update",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: customerData,
       }),
-      invalidatesTags: ["Customers"],
     }),
     deleteCustomer: builder.mutation({
       query: (customerId) => ({
-        url: '/Customers/DeleteById',
-        method: 'POST',
-          headers: {
+        url: "/Customers/DeleteById",
+        method: "POST",
+        headers: {
           "Content-Type": "application/json",
         },
         body: { id: customerId },
       }),
-      invalidatesTags: ["Customers"],
     }),
 
-    
+    // CashRegisters endpoints
+    getAllCashRegisters: builder.mutation({
+      query: () => ({
+        url: "/CashRegisters/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }),
+     
+    }),
+    createCashRegister: builder.mutation({
+      query: (cashRegisterData) => ({
+        url: "/CashRegisters/Create",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: cashRegisterData,
+      }),
+    }),
+    updateCashRegister: builder.mutation({
+      query: (cashRegisterData) => ({
+        url: "/CashRegisters/Update",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: cashRegisterData,
+      }),
+      
+    }),
+    deleteCashRegister: builder.mutation({
+      query: (cashRegisterId) => ({
+        url: "/CashRegisters/DeleteById",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: { id: cashRegisterId },
+      }),
+      
+    }),
   }),
 });
 // Export hooks for usage in components
@@ -266,4 +347,12 @@ export const {
   useCreateCustomerMutation,
   useUpdateCustomerMutation,
   useDeleteCustomerMutation,
+  useGetAllCashRegistersMutation,
+  useCreateCashRegisterMutation,
+  useUpdateCashRegisterMutation,
+  useDeleteCashRegisterMutation,
+  useGetAllProductsMutation,
+  useCreateProductMutation,
+  useUpdateProductMutation,
+  useDeleteProductMutation,
 } = api;

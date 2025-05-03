@@ -5,7 +5,13 @@ import { Info, Trash2 } from "lucide-react";
 import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay";
 import CashModal from "../components/UI/Modals/CashModal";
 import DeleteConfirmationModal from "../components/UI/Modals/DeleteConfirmationModal";
-
+import {
+  useGetAllCashRegistersMutation,
+  useCreateCashRegisterMutation,
+  useUpdateCashRegisterMutation,
+  useDeleteCashRegisterMutation,
+} from "../store/api";
+import { useToast } from "../hooks/useToast";
 const Cash = () => {
   const navigate = useNavigate();
   const [currents, setCurrents] = useState([]);
@@ -18,6 +24,17 @@ const Cash = () => {
   const [selectedCash, setSelectedCash] = useState(null);
   const [cashToDelete, setCashToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
+  const { showToast } = useToast();
+
+  // RTK Query Hooks
+  const [getAllCashRegisters, { isLoading: isLoadingCashRegisters }] =
+    useGetAllCashRegistersMutation();
+  const [createCashRegister, { isLoading: isCreatingCashRegister }] =
+    useCreateCashRegisterMutation();
+  const [updateCashRegister, { isLoading: isUpdatingCashRegister }] =
+    useUpdateCashRegisterMutation();
+  const [deleteCashRegister, { isLoading: isDeletingCashRegister }] =
+    useDeleteCashRegisterMutation();
 
   // Sayfa başına gösterilecek kasa sayısı
   const itemsPerPage = 50;
@@ -41,34 +58,43 @@ const Cash = () => {
       className: "w-24 font-bold text-yellow-500",
     },
     { header: "Kasa Adı", accessor: "name" },
-    { header: "Döviz Tipi", accessor: "type" },
-    { header: "Giriş", accessor: "inflow", className: "text-right text-green-600" },
-    { header: "Çıkış", accessor: "checkout", className: "text-right text-red-600" },
-    { header: "Bakiye", accessor: "balance", className: "text-right font-bold" },
-    { 
-      header: "İşlemler", 
+    { header: "Döviz Tipi", accessor: "currencyType.name" },
+    {
+      header: "Giriş",
+      accessor: "inflow",
+      className: "text-right text-green-600",
+    },
+    {
+      header: "Çıkış",
+      accessor: "checkout",
+      className: "text-right text-red-600",
+    },
+    {
+      header: "Bakiye",
+      accessor: "balance",
+      className: "text-right font-bold",
+    },
+    {
+      header: "İşlemler",
       accessor: "transactions",
-      render: renderDetailButton
+      render: renderDetailButton,
     },
   ];
 
-  // Örnek veri yükleme - gerçek uygulamada API'den gelecek
   useEffect(() => {
-    // API çağrısı simülasyonu
-    setTimeout(() => {
-      const mockCurrents = Array.from({ length: 80 }, (_, index) => ({
-        id: index + 1,
-        name: `Kasa ${index + 1}`,
-        type: `${index % 3 === 0 ? 'TRY' : index % 3 === 1 ? 'USD' : 'EUR'}`,
-        inflow: `${(Math.random() * 10000).toFixed(2)} ${index % 3 === 0 ? '₺' : index % 3 === 1 ? '$' : '€'}`,
-        checkout: `${(Math.random() * 8000).toFixed(2)} ${index % 3 === 0 ? '₺' : index % 3 === 1 ? '$' : '€'}`,
-        balance: `${(Math.random() * 20000).toFixed(2)} ${index % 3 === 0 ? '₺' : index % 3 === 1 ? '$' : '€'}`,
-      }));
-
-      setCurrents(mockCurrents);
-      setFilteredCurrents(mockCurrents);
-      setIsLoading(false);
-    }, 1000);
+    const fetchData = async () => {
+      try {
+        const result = await getAllCashRegisters().unwrap();
+        const cashArray = Array.isArray(result.data) ? result.data : [];
+        setCurrents(cashArray);
+        setFilteredCurrents(cashArray);
+      } catch (error) {
+        console.error("Error fetching cash registers:", error);
+        setCurrents([]);
+        setFilteredCurrents([]);
+      }
+    };
+    fetchData();
   }, []);
 
   // Sayfalama işlemleri
@@ -100,11 +126,64 @@ const Cash = () => {
   // Kasa düzenleme işlemi
   const handleEditCash = (cash) => {
     setSelectedCash(cash);
+    console.log(cash);
     setIsEditModalOpen(true);
   };
 
+  const handleAddSubmit = async (cash) => {
+    debugger;
+    const currencyType =
+      cash.currencyTypeValue === "TL"
+        ? 1
+        : cash.currencyTypeValue === "USD"
+        ? 2
+        : cash.currencyTypeValue === "EUR"
+        ? 3
+        : 1;
+    try {
+      const result = await createCashRegister({
+        ...cash,
+        currencyTypeValue: currencyType,
+      });
+      showToast("Kasa başarıyla eklendi", "success");
+
+      setIsAddModalOpen(false);
+      setSelectedCash(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleEditSubmit = async (cash) => {
+    debugger;
+    const currencyType =
+      cash.currencyTypeValue === "TL"
+        ? 1
+        : cash.currencyTypeValue === "USD"
+        ? 2
+        : cash.currencyTypeValue === "EUR"
+        ? 3
+        : 1;
+    try {
+      const result = await updateCashRegister({
+        id: selectedCash.id,
+        ...cash,
+        currencyTypeValue: currencyType,
+      });
+      console.log(result);
+
+      showToast(`${result.data.data}`, "success");
+      setIsEditModalOpen(false);
+      setSelectedCash(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log(currents);
+
   // Kasa silme işlemi
   const handleDeleteCash = (cashId) => {
+    console.log(cashId);
     if (Array.isArray(cashId)) {
       // Toplu silme
       setCashToDelete({ ids: cashId, name: `${cashId.length} kasa` });
@@ -116,16 +195,30 @@ const Cash = () => {
     setIsDeleteModalOpen(true);
   };
 
-  // Silme onaylama işlemi
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (cashToDelete) {
-      // API silme işlemi burada yapılacak
-      const updatedCurrents = currents.filter(
-        (cash) => !cashToDelete.ids.includes(cash.id)
-      );
-      setCurrents(updatedCurrents);
-      setFilteredCurrents(updatedCurrents);
-      setSelectedItems([]); // Seçili öğeleri temizle
+      try {
+        if (Array.isArray(cashToDelete.ids)) {
+          // Toplu silme
+          for (const id of cashToDelete.ids) {
+            await deleteCashRegister(id);
+          }
+          showToast(`${cashToDelete.ids.length} kasa başarıyla silindi`, "success");
+        } else {
+          // Tekli silme
+          await deleteCashRegister(cashToDelete.ids);
+          showToast(`${cashToDelete.name} kasa başarıyla silindi`, "success");
+        }
+        // Update the currents state to remove deleted items
+        const updatedCurrents = currents.filter(
+          (cash) => !cashToDelete.ids.includes(cash.id)
+        );
+        setCurrents(updatedCurrents);
+        setFilteredCurrents(updatedCurrents);
+      } catch (error) {
+        console.error("Error deleting cash register:", error);
+        showToast("Kasa silinirken bir hata oluştu", "error");
+      }
       setIsDeleteModalOpen(false);
       setCashToDelete(null);
     }
@@ -158,18 +251,20 @@ const Cash = () => {
   );
 
   // Sayfa başına listeleme işlemi
-  const currentCash = filteredCurrents.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const currentCash = Array.isArray(currents)
+    ? currents.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      )
+    : [];
 
-  if (isLoading) {
-    return (
-      <div className="p-6">
-        <LoadingOverlay />
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="p-6">
+  //       <LoadingOverlay />
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
@@ -178,7 +273,7 @@ const Cash = () => {
         addButtonText="Kasa Ekle"
         addButtonColor="yellow"
         columns={columns}
-        data={currentCash}
+        data={currents}
         searchPlaceholder="Kasa Adı Giriniz..."
         onAdd={handleAddCash}
         onEdit={handleEditCash}
@@ -197,6 +292,7 @@ const Cash = () => {
       <CashModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+        onAddCash={handleAddSubmit}
       />
       <CashModal
         isOpen={isEditModalOpen}
@@ -205,6 +301,7 @@ const Cash = () => {
           setSelectedCash(null);
         }}
         isEditMode={true}
+        onEditCash={handleEditSubmit}
         cash={selectedCash}
       />
       <DeleteConfirmationModal
@@ -215,7 +312,9 @@ const Cash = () => {
         }}
         onConfirm={confirmDelete}
         title="Kasa Silme"
-        message={`${cashToDelete?.name || ''} ${cashToDelete?.ids?.length > 1 ? 'kasalarını' : 'kasasını'} silmek istediğinizden emin misiniz?`}
+        message={`${cashToDelete?.name || ""} ${
+          cashToDelete?.ids?.length > 1 ? "kasalarını" : "kasasını"
+        } silmek istediğinizden emin misiniz?`}
       />
     </>
   );
