@@ -1,6 +1,7 @@
 using DefaultCorsPolicyNugetPackage;
 using eMuhasebeServer.Application;
 using eMuhasebeServer.Application.Hubs;
+using eMuhasebeServer.Application.Options;
 using eMuhasebeServer.Infrastructure;
 using eMuhasebeServer.WebAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,6 +43,11 @@ builder.Services.AddSwaggerGen(setup =>
                     { jwtSecuritySheme, Array.Empty<string>() }
                 });
 });
+
+builder.Services.AddHttpClient();
+
+builder.Services.Configure<OpenAIOptions>(
+    builder.Configuration.GetSection(OpenAIOptions.SectionName));
 
 var app = builder.Build();
 
