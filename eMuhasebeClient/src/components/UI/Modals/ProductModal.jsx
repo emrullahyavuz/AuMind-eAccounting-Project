@@ -3,22 +3,27 @@ import { X } from "lucide-react";
 
 const initialFormData = {
   name: "",
-  currencyTypeValue: "",
 };
 
-function CashModal({ isOpen, isEditMode, cash, onClose, onAddCash, onEditCash }) {
+function ProductModal({
+  isOpen,
+  isEditMode,
+  product,
+  onClose,
+  onAddProduct,
+  onEditProduct,
+}) {
   const [formData, setFormData] = useState(initialFormData);
 
   useEffect(() => {
-    if (isEditMode && cash) {
+    if (isEditMode && product) {
       setFormData({
-        name: cash.name || "",
-        currencyTypeValue: cash.currencyTypeValue || "",
+        name: product.name || "",
       });
     } else {
       setFormData(initialFormData);
     }
-  }, [isEditMode, cash]);
+  }, [isEditMode, product]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,13 +33,12 @@ function CashModal({ isOpen, isEditMode, cash, onClose, onAddCash, onEditCash })
     });
   };
 
-  
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isEditMode) {
-      onEditCash(formData);
+      onEditProduct(formData);
     } else {
-      onAddCash(formData);
+      onAddProduct(formData);
     }
     onClose();
   };
@@ -52,12 +56,12 @@ function CashModal({ isOpen, isEditMode, cash, onClose, onAddCash, onEditCash })
         </button>
 
         <h2 className="text-center text-xl font-medium mb-4 underline">
-          {isEditMode ? "Kasa Düzenle" : "Kasa Ekle"}
+          {isEditMode ? "Ürün Düzenle" : "Ürün Ekle"}
         </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-1">Kasa Adı</label>
+            <label className="block text-gray-700 mb-1">Ürün Adı</label>
             <input
               type="text"
               name="name"
@@ -66,23 +70,6 @@ function CashModal({ isOpen, isEditMode, cash, onClose, onAddCash, onEditCash })
               className="w-full border border-gray-300 rounded-md p-2 bg-white"
               required
             />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-1">Döviz Tipi</label>
-            <select
-              name="currencyTypeValue"
-              className="flex w-full"
-              value={formData.currencyTypeValue}
-              onChange={handleChange}
-            >
-              <option value="" disabled>
-                Seçiniz
-              </option>
-              <option value="TL">TL</option>
-              <option value="USD">USD</option>
-              <option value="EUR">EURO</option>
-            </select>
           </div>
 
           <div className="flex justify-center">
@@ -99,4 +86,4 @@ function CashModal({ isOpen, isEditMode, cash, onClose, onAddCash, onEditCash })
   );
 }
 
-export default CashModal;
+export default ProductModal;

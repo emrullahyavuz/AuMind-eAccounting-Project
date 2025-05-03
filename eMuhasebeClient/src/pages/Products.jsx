@@ -1,160 +1,282 @@
-import { useState } from "react"
-import { Search, Edit, Trash2, ChevronLeft, ChevronRight, Plus } from "lucide-react"
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import DataTable from "../components/Admin/data-table";
+import { Info, Trash2 } from "lucide-react";
+import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay";
+import ProductModal from "../components/UI/Modals/ProductModal";
+import DeleteConfirmationModal from "../components/UI/Modals/DeleteConfirmationModal";
+import {
+  useGetAllProductsMutation,
+  useCreateProductMutation,
+  useUpdateProductMutation,
+  useDeleteProductMutation,
+} from "../store/api";
+import { useToast } from "../hooks/useToast";
 
-function Products() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedItems, setSelectedItems] = useState([])
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
+const Products = () => {
+  const navigate = useNavigate();
+  const [currents, setCurrents] = useState([]);
+  const [filteredCurrents, setFilteredCurrents] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const { showToast } = useToast();
 
-  
-  const products = [
-    // apiden gelecek ürün verileri
-  ]
+  // RTK Query Hooks
+  const [getAllProducts, { isLoading: isLoadingProducts }] =
+    useGetAllProductsMutation();
+  const [createProduct, { isLoading: isCreatingProduct }] =
+    useCreateProductMutation();
+  const [updateProduct, { isLoading: isUpdatingProduct }] =
+    useUpdateProductMutation();
+  const [deleteProduct, { isLoading: isDeletingProduct }] =
+    useDeleteProductMutation();
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value)
-  }
+  // Sayfa başına gösterilecek kasa sayısı
+  const itemsPerPage = 50;
 
-  const handleSelectItem = (id) => {
-    if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter((item) => item !== id))
-    } else {
-      setSelectedItems([...selectedItems, id])
+  // Detay butonu render fonksiyonu
+  const renderDetailButton = (product) => (
+    <button
+      onClick={() => navigate(`/product/${product.id}`)}
+      className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-1 px-3 rounded-md flex items-center"
+    >
+      <Info size={16} className="mr-1" />
+      Detay Gör
+    </button>
+  );
+
+  // Ürünler tablosu sütun tanımları
+  const columns = [
+    {
+      header: "# Numara",
+      accessor: "id",
+      className: "w-24 font-bold text-yellow-500",
+    },
+    { header: "Ürün Adı", accessor: "name" },
+    { header: "Giriş", accessor: "stock" },
+    { header: "Çıkış", accessor: "withdrawal" },
+    { header: "Bakiye", accessor: "deposit" },
+    {
+      header: "İşlemler",
+      accessor: "actions",
+      render: renderDetailButton,
+    },
+  ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getAllProducts().unwrap();
+        const productArray = Array.isArray(result.data) ? result.data : [];
+        setCurrents(productArray);
+        setFilteredCurrents(productArray);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        setCurrents([]);
+        setFilteredCurrents([]);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // Sayfalama işlemleri
+  const handlePageChange = (newPage) => {
+    if (
+      newPage >= 1 &&
+      newPage <= Math.ceil(filteredCurrents.length / itemsPerPage)
+    ) {
+      setCurrentPage(newPage);
     }
-  }
+  };
 
-  const handleAddProduct = (productData) => {
-    console.log("Yeni ürün eklendi:", productData)
-   
-  }
+  // Kasalar sayfasına özel Detay Gör butonu
+  const detailButton = (
+    <button
+      onClick={() => console.log("Detay Gör butonuna tıklandı")}
+      className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-2 px-4 rounded-md flex items-center mr-4"
+    >
+      <Info size={18} className="mr-2" />
+      Detay Gör
+    </button>
+  );
 
-  // Örnek görünüm için
-  const emptyRows = Array.from({ length: 6 }).map((_, index) => ({
-    id: `empty-${index}`,
-    name: "",
-    input: "",
-    output: "",
-    balance: "",
-  }))
+  // Kasa ekleme işlemi
+  const handleAddProduct = () => {
+    setIsAddModalOpen(true);
+  };
+
+  // Kasa düzenleme işlemi
+  const handleEditProduct = (product) => {
+    setSelectedProduct(product);
+    console.log(product);
+    setIsEditModalOpen(true);
+  };
+
+  const handleAddSubmit = async (product) => {
+    debugger;
+    const result = await createProduct(product).unwrap();
+    console.log(result);
+    setIsAddModalOpen(false);
+    setSelectedProduct(null);
+    showToast("Ürün başarıyla eklendi", "success");
+  };
+
+  const handleEditSubmit = async (product) => {
+    debugger;
+    console.log(selectedProduct);
+    const result = await updateProduct({id:selectedProduct.id,...product}).unwrap();
+    console.log(result);
+    setIsEditModalOpen(false);
+    setSelectedProduct(null);
+    showToast("Ürün başarıyla güncellendi", "success");
+  };
+  console.log(currents);
+
+  // Kasa silme işlemi
+  const handleDeleteProduct = (productId) => {
+    console.log(productId);
+    if (Array.isArray(productId)) {
+      // Toplu silme
+      setProductToDelete({ ids: productId, name: `${productId.length} ürün` });
+    } else {
+      // Tekli silme
+      const product = currents.find((c) => c.id === productId);
+      setProductToDelete({ ids: [productId], name: product.name });
+    }
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (productToDelete) {
+      try {
+        if (Array.isArray(productToDelete.ids)) {
+          // Toplu silme
+          for (const id of productToDelete.ids) {
+            await deleteProduct(id);
+          }
+          showToast(`${productToDelete.ids.length} ürün başarıyla silindi`, "success");
+        } else {
+          // Tekli silme
+          await deleteProduct(productToDelete.ids);
+          showToast(`${productToDelete.name} ürün başarıyla silindi`, "success");
+        }
+        // Update the currents state to remove deleted items
+        const updatedCurrents = currents.filter(
+          (product) => !productToDelete.ids.includes(product.id)
+        );
+        setCurrents(updatedCurrents);
+        setFilteredCurrents(updatedCurrents);
+        // Clear selected items after deletion
+        setSelectedItems([]);
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        showToast("Ürün silinirken bir hata oluştu", "error");
+      }
+      setIsDeleteModalOpen(false);
+      setProductToDelete(null);
+    }
+  };
+
+  // Kasa arama işlemi
+  const handleSearch = (searchTerm) => {
+    setFilteredCurrents(
+      currents.filter((cash) =>
+        cash.name.toLowerCase().trim().includes(searchTerm.toLowerCase().trim())
+      )
+    );
+    setCurrentPage(1);
+  };
+
+  // Özel butonlar
+  const customButtons = (
+    <>
+      {detailButton}
+      {selectedItems.length > 0 && (
+        <button
+          onClick={() => handleDeleteProduct(selectedItems)}
+          className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md flex items-center"
+        >
+          <Trash2 size={18} className="mr-2" />
+          Seçilenleri Sil ({selectedItems.length})
+        </button>
+      )}
+    </>
+  );
+
+  // Sayfa başına listeleme işlemi
+  const currentProducts = Array.isArray(currents)
+    ? currents.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      )
+    : [];
+
+  // if (isLoading) {
+  //   return (
+  //     <div className="p-6">
+  //       <LoadingOverlay />
+  //     </div>
+  //   );
+  // }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      {/* Başlık */}
-      <h1 className="text-2xl font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-6">Ürünler</h1>
+    <>
+      <DataTable
+        title="Ürünler"
+        addButtonText="Ürün Ekle"
+        addButtonColor="yellow"
+        columns={columns}
+        data={currentProducts}
+        searchPlaceholder="Ürün Adı Giriniz..."
+        onAdd={handleAddProduct}
+        onEdit={handleEditProduct}
+        onDelete={handleDeleteProduct}
+        onSearch={handleSearch}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        totalItems={filteredCurrents.length}
+        onPageChange={handlePageChange}
+        customButtons={customButtons}
+        headerColor="gray-800"
+        headerTextColor="white"
+        selectedItems={selectedItems}
+        onSelectedItemsChange={setSelectedItems}
+      />
+      <ProductModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAddProduct={handleAddSubmit}
+      />
+      <ProductModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedProduct(null);
+        }}
+        isEditMode={true}
+        onEditProduct={handleEditSubmit}
+        product={selectedProduct}
+      />
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setProductToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+        title="Ürün Silme"
+        message={`${productToDelete?.name || ""} ${
+          productToDelete?.ids?.length > 1 ? "ürünlerini" : "ürünü"
+        } silmek istediğinizden emin misiniz?`}
+      />
+    </>
+  );
+};
 
-      {/* Üst Araç Çubuğu */}
-      <div className="flex flex-wrap justify-between items-center mb-6">
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium py-2 px-4 rounded-md flex items-center"
-        >
-          <Plus size={18} className="mr-1" />
-          Ürün Ekle
-        </button>
-
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Ürün Adı Giriniz..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 w-64"
-          />
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <Search size={18} className="text-gray-500" />
-          </div>
-        </div>
-      </div>
-
-      {/* Ürünler Tablosu */}
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            {/* Tablo Başlığı */}
-            <thead>
-              <tr className="bg-gray-700 text-white">
-                <th className="w-12 p-3 text-left">
-                  <Edit size={18} />
-                </th>
-                <th className="p-3 text-left">
-                  <span className="text-yellow-400"># Numara</span>
-                </th>
-                <th className="p-3 text-left">
-                  <span className="text-yellow-400">Ürün Adı</span>
-                </th>
-                <th className="p-3 text-left">
-                  <span className="text-yellow-400">Giriş</span>
-                </th>
-                <th className="p-3 text-left">
-                  <span className="text-yellow-400">Çıkış</span>
-                </th>
-                <th className="p-3 text-left">
-                  <span className="text-yellow-400">Bakiye</span>
-                </th>
-                <th className="p-3 text-center">
-                  <span className="text-yellow-400">İşlemler</span>
-                </th>
-                <th className="w-12 p-3 text-center">
-                  <Trash2 size={18} className="text-red-500 mx-auto" />
-                </th>
-              </tr>
-            </thead>
-
-            {/* Tablo Gövdesi */}
-            <tbody>
-              {emptyRows.map((item, index) => (
-                <tr key={item.id} className="border-b border-gray-300">
-                  <td className="p-3">
-                    <button className="bg-blue-500 text-white p-1 rounded">
-                      <Edit size={18} />
-                    </button>
-                  </td>
-                  <td className="p-3"></td>
-                  <td className="p-3"></td>
-                  <td className="p-3"></td>
-                  <td className="p-3"></td>
-                  <td className="p-3"></td>
-                  <td className="p-3 text-center">
-                    <button className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-3 py-1 rounded-md text-sm">
-                      Detay Gör
-                    </button>
-                  </td>
-                  <td className="p-3 text-center">
-                    <div className="flex justify-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedItems.includes(item.id)}
-                        onChange={() => handleSelectItem(item.id)}
-                        className="h-5 w-5 border-2 border-red-500 rounded focus:ring-red-500"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Sayfalama */}
-      <div className="flex justify-end items-center mt-4 text-sm text-gray-600">
-        <button className="p-1 mr-2">
-          <ChevronLeft size={18} />
-        </button>
-
-        <span>1-50 arası gösteriliyor.</span>
-
-        <button className="p-1 ml-2 flex items-center">
-          <span>Devam et</span>
-          <ChevronRight size={18} className="ml-1" />
-        </button>
-      </div>
-
-      {/* Ürün Ekleme Modalı */}
-      {/* <UrunEkleModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onAddProduct={handleAddProduct} /> */}
-    </div>
-  )
-}
-
-export default Products
+export default Products;
