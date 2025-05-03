@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X, Calendar, ChevronDown, Plus } from "lucide-react";
 
-function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice }) {
+function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEditInvoice }) {
   const [formData, setFormData] = useState({
     invoiceType: invoice?.invoiceType || "satis",
     date: invoice?.date || new Date().toISOString().split("T")[0],
@@ -63,6 +63,7 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    debugger
     onAddInvoice(formData);
     onClose();
   };
