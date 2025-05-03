@@ -6,29 +6,41 @@ import CompanyModal from "../../components/UI/Modals/CompanyModal";
 import DeleteConfirmationModal from "../../components/UI/Modals/DeleteConfirmationModal";
 import { Trash2 } from "lucide-react";
 import {
-  useGetAllCompaniesQuery,
+  useGetAllCompaniesMutation,
   useCreateCompanyMutation,
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
   useMigrateAllCompaniesMutation,
 } from "../../store/api/companiesApi";
 import { useToast } from "../../hooks/useToast";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  openAddModal,
+  closeAddModal,
+  openEditModal,
+  closeEditModal,
+  openDeleteModal,
+  closeDeleteModal,
+} from "../../store/slices/modalSlice";
 
 function Companies() {
   const [companies, setCompanies] = useState([]);
   const [filteredCompanies, setFilteredCompanies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [companyToDelete, setCompanyToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
   const { showToast } = useToast();
 
-  // API hooks
-  const getAllCompanies = useGetAllCompaniesQuery();
+  // Redux hooks
+  const dispatch = useDispatch();
+  const { isAddModalOpen, isEditModalOpen, isDeleteModalOpen } = useSelector(
+    (state) => state.modal
+  );
+
+  // RTK Query hooks
+  const [getAllCompanies,{isLoading:isCompaniesLoading}] = useGetAllCompaniesMutation();
   const [createCompany] = useCreateCompanyMutation();
   const [updateCompany] = useUpdateCompanyMutation();
   const [deleteCompany] = useDeleteCompanyMutation();
@@ -47,21 +59,38 @@ function Companies() {
     { header: "Adres", accessor: "fullAdress" },
     { header: "Vergi Dairesi", accessor: "taxDepartment" },
     { header: "Vergi Numarası", accessor: "taxNumber" },
-    { header: "Server", accessor: "server" },
-    { header: "Veritabanı Adı", accessor: "databaseName" },
-    { header: "Yönetici Adı", accessor: "adminName" },
+    { header: "Server", accessor: "database.server" },
+    { header: "Veritabanı Adı", accessor: "database.databaseName" },
+    { header: "Yönetici Adı", accessor: "database.adminName" },
   ];
+
+
 
   // Şirketler için useEffect
   useEffect(() => {
-    if (getAllCompanies.data) {
-      const data = getAllCompanies.data.data || getAllCompanies.data;
-      console.log('Received company data:', data);
-      setCompanies(data);
-      setFilteredCompanies(data);
-      setIsLoading(false);
-    }
+    
+    const fetchData = async () => {
+      try {
+       
+        const result = await getAllCompanies().unwrap();
+        console.log(result)
+        if (result?.isSuccessful) {
+          const formattedData = Array.isArray(result.data) ? result.data : [];
+          setCompanies(formattedData);
+          setFilteredCompanies(formattedData);
+        } else {
+          console.error("Error fetching users:", result?.errorMessages);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+      }
+    };
+
+    fetchData();
+   
   }, [getAllCompanies]);
+
+ 
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
@@ -96,7 +125,7 @@ function Companies() {
 
   // Şirket ekleme işlemi
   const handleAddCompany = () => {
-    setIsAddModalOpen(true);
+    dispatch(openAddModal());
   };
 
   // Database güncelleme işlemi
@@ -113,9 +142,12 @@ function Companies() {
   // Şirket düzenleme işlemi
   const handleEditCompany = (company) => {
     console.log("Düzenlenecek şirket:", company);
-    setIsEditModalOpen(true);
+    dispatch(openEditModal());
     setSelectedCompany(company); // Düzenlenecek şirket bilgilerini ayarla
+    
   };
+
+  
 
   // Şirket silme işlemi
   const handleDeleteCompany = (companyId) => {
@@ -130,30 +162,51 @@ function Companies() {
       const company = companies.find((c) => c.id === companyId);
       setCompanyToDelete({ ids: [companyId], name: company.name });
     }
-    setIsDeleteModalOpen(true);
+    dispatch(openDeleteModal());
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (companyToDelete) {
-      // API silme işlemi burada yapılacak
-      const updatedCompanies = companies.filter(
-        (company) => !companyToDelete.ids.includes(company.id)
-      );
-      setCompanies(updatedCompanies);
-      setFilteredCompanies(updatedCompanies);
-      setSelectedItems([]); // Seçili öğeleri temizle
-      setIsDeleteModalOpen(false);
-      setCompanyToDelete(null);
+      try {
+        // Toplu silme işlemi
+        for (const id of companyToDelete.ids) {
+          await deleteCompany(id).unwrap();
+        }
+
+        showToast("Şirketler başarıyla silindi", "success");
+        
+        // Şirket listesini yenile
+        const result = await getAllCompanies().unwrap();
+        
+        if (result?.isSuccessful) {
+          
+          const formattedData = Array.isArray(result.data) ? result.data : [];
+          console.log(formattedData)
+          setCompanies(formattedData);
+          setFilteredCompanies(formattedData);
+        }
+        await getAllCompanies().unwrap();
+
+        setSelectedItems([]); // Seçili öğeleri temizle
+        dispatch(closeDeleteModal());
+        setCompanyToDelete(null);
+      } catch (err) {
+        console.error("Error deleting company:", err);
+        showToast(
+          err.data?.errorMessages?.[0] ||
+            "Şirket silinirken bir hata oluştu",
+          "error"
+        );
+      }
     }
   };
 
   const handleCompanySubmit = async (companyData) => {
     try {
-      debugger
+      debugger;
       await createCompany(companyData).unwrap();
       showToast("Şirket başarıyla oluşturuldu", "success");
-      setIsAddModalOpen(false);
-      
+      dispatch(closeAddModal());
     } catch (err) {
       console.error("Error creating company:", err);
       showToast(
@@ -165,10 +218,10 @@ function Companies() {
 
   const handleEditSubmit = async (companyData) => {
     try {
-      debugger
+      debugger;
       await updateCompany({ id: selectedCompany.id, ...companyData }).unwrap();
       showToast("Şirket başarıyla güncellendi", "success");
-      setIsEditModalOpen(false);
+      dispatch(closeEditModal());
       setSelectedCompany(null);
     } catch (err) {
       console.error("Error updating company:", err);
@@ -180,13 +233,12 @@ function Companies() {
   };
 
   // Geçerli sayfadaki şirketleri hesapla
-  const currentCompanies = filteredCompanies.map(company => ({
-    ...company,
-    database: company.database || {}
-  })).slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const currentCompanies = filteredCompanies
+    .map((company) => ({
+      ...company,
+      database: company.database || {},
+    }))
+    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   // Özel butonlar
   const customButtons = (
@@ -210,7 +262,7 @@ function Companies() {
     </div>
   );
 
-  if (getAllCompanies.isLoading) {
+  if (isCompaniesLoading) {
     return (
       <div className="p-6">
         <LoadingOverlay />
@@ -240,16 +292,17 @@ function Companies() {
         headerTextColor="white"
         selectedItems={selectedItems}
         onSelectedItemsChange={setSelectedItems}
+        
       />
       <CompanyModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => dispatch(closeAddModal())}
         onSubmit={handleCompanySubmit}
       />
       <CompanyModal
         isOpen={isEditModalOpen}
         onClose={() => {
-          setIsEditModalOpen(false);
+          dispatch(closeEditModal());
           setSelectedCompany(null); // Modal kapandığında seçili şirketi sıfırla
         }}
         isEditMode={true} // Düzenleme modunda aç
@@ -259,7 +312,7 @@ function Companies() {
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => {
-          setIsDeleteModalOpen(false);
+          dispatch(closeDeleteModal());
           setCompanyToDelete(null);
         }}
         onConfirm={confirmDelete}

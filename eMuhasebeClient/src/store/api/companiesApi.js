@@ -2,7 +2,7 @@ import { baseApi } from './baseApi';
 
 export const companyApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllCompanies: builder.query({
+    getAllCompanies: builder.mutation({
       query: () => ({
         url: '/Companies/GetAll',
         method: 'POST',
@@ -52,7 +52,7 @@ export const companyApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetAllCompaniesQuery,
+  useGetAllCompaniesMutation,
   useCreateCompanyMutation,
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,

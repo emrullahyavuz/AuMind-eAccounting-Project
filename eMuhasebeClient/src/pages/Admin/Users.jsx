@@ -7,27 +7,36 @@ import {
   useGetAllUsersMutation,
   useCreateUserMutation,
   useUpdateUserMutation,
+  useDeleteUserMutation,
 } from "../../store/api/usersApi";
 import { useToast } from "../../hooks/useToast";
+import { useDispatch, useSelector } from "react-redux";
+import { openAddModal, closeAddModal, openEditModal, closeEditModal, openDeleteModal, closeDeleteModal } from "../../store/slices/modalSlice";
+import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay";
 
 function UsersPage() {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  // const [isLoading, setIsLoading] = useState(true)
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { showToast } = useToast();
 
+  // Redux hooks
+  const dispatch = useDispatch();
+  const { isAddModalOpen, isEditModalOpen, isDeleteModalOpen } = useSelector(
+    (state) => state.modal
+  );
+
+
+  // RTK Query hooks
   const [getAllUsers, { data, isUsersLoading, error }] =
     useGetAllUsersMutation();
   const [createUser, { isLoading: isCreatingUser }] = useCreateUserMutation();
   const [updateUser, { isLoading: isUpdatingUser }] = useUpdateUserMutation();
+  const [deleteUser, { isLoading: isDeletingUser }] = useDeleteUserMutation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,7 +116,7 @@ function UsersPage() {
 
   // Kullanıcı ekleme modalını aç
   const handleAddUser = () => {
-    setIsAddModalOpen(true);
+    dispatch(openAddModal());
   };
 
   // Kullanıcı oluşturma işlemi
@@ -115,7 +124,7 @@ function UsersPage() {
     try {
       await createUser(userData).unwrap();
       showToast("Kullanıcı başarıyla oluşturuldu", "success");
-      setIsAddModalOpen(false);
+      dispatch(closeAddModal());
       // Kullanıcı listesini yenile
       await getAllUsers().unwrap();
     } catch (err) {
@@ -136,9 +145,10 @@ function UsersPage() {
         id: userId,
         ...userData
       }).unwrap();
+      await getAllUsers().unwrap();
 
       showToast("Kullanıcı başarıyla güncellendi", "success");
-      setIsEditModalOpen(false);
+      dispatch(closeEditModal());
       setSelectedUser(null);
     } catch (err) {
       console.error("Error updating user:", err);
@@ -153,7 +163,7 @@ function UsersPage() {
   // Kullanıcı düzenleme işlemi
   const handleEditUser = (user) => {
     setSelectedUser(user);
-    setIsEditModalOpen(true);
+    dispatch(openEditModal());
   };
 
   // Kullanıcı silme işlemi
@@ -161,26 +171,47 @@ function UsersPage() {
     if (Array.isArray(userId)) {
       // Toplu silme
       setUserToDelete({ ids: userId, name: `${userId.length} kullanıcı` });
+
     } else {
       // Tekli silme
       const user = users.find((u) => u.id === userId);
       setUserToDelete({ ids: [userId], name: user.firstName });
     }
-    setIsDeleteModalOpen(true);
+    dispatch(openDeleteModal());
   };
 
   // Silme onaylama işlemi
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (userToDelete) {
-      // API silme işlemi burada yapılacak
-      const updatedUsers = users.filter(
-        (user) => !userToDelete.ids.includes(user.id)
-      );
-      setUsers(updatedUsers);
-      setFilteredUsers(updatedUsers);
-      setSelectedItems([]); // Seçili öğeleri temizle
-      setIsDeleteModalOpen(false);
-      setUserToDelete(null);
+      try {
+        // Toplu silme işlemi
+        for (const id of userToDelete.ids) {
+          await deleteUser(id).unwrap();
+        }
+
+        showToast("Kullanıcılar başarıyla silindi", "success");
+        
+        // Kullanıcı listesini yenile
+        const result = await getAllUsers().unwrap();  
+        
+        if (result?.isSuccessful) {
+          console.log("sffss")
+          const formattedData = Array.isArray(result.data) ? result.data : [];
+          setUsers(formattedData);
+          setFilteredUsers(formattedData);
+        }
+
+        setSelectedItems([]); // Seçili öğeleri temizle
+        dispatch(closeDeleteModal());
+        setUserToDelete(null);
+      } catch (err) {
+        console.error("Error deleting user:", err);
+        showToast(
+          err.data?.errorMessages?.[0] ||
+            "Kullanıcı silinirken bir hata oluştu",
+          "error"
+        );
+      }
     }
   };
 
@@ -201,7 +232,7 @@ function UsersPage() {
     </button>
   );
 
-  if (isUsersLoading) {
+  if (isUsersLoading || isCreatingUser || isUpdatingUser) {
     return (
       <div className="p-6">
         <LoadingOverlay />
@@ -234,13 +265,13 @@ function UsersPage() {
       />
       <UserModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => dispatch(closeAddModal())}
         onSubmit={handleUserSubmit}
       />
       <UserModal
         isOpen={isEditModalOpen}
         onClose={() => {
-          setIsEditModalOpen(false);
+          dispatch(closeEditModal());
           setSelectedUser(null);
         }}
         isEditMode={true}
@@ -250,7 +281,7 @@ function UsersPage() {
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => {
-          setIsDeleteModalOpen(false);
+          dispatch(closeDeleteModal());
           setUserToDelete(null);
         }}
         onConfirm={confirmDelete}

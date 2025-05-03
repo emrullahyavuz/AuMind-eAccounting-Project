@@ -11,6 +11,7 @@ import {
 } from "../../store/api/authApi";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../hooks/useToast";
+import AuMindLogo from "../../assets/AuMindLogo.png"
 
 function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -75,7 +76,9 @@ function RegisterForm() {
         </h1>
 
         {/* Logo */}
-        <div className="w-24 h-24 bg-black mb-2"></div>
+        <div className="w-24 h-24 bg-black mb-2">
+          <img src={AuMindLogo} className="w-full h-full object-contain" alt="AuMind Logo" />
+        </div>
 
         <h2 className="text-xl font-semibold text-gray-800 mb-2">
           Yeni Hesap Oluştur
