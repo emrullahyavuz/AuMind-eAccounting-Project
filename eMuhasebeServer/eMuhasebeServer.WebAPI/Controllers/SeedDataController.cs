@@ -2,14 +2,14 @@
 using eMuhasebeServer.Application.Features.Customers.CreateCustomer;
 using eMuhasebeServer.Application.Features.Customers.GetAllCustomers;
 using eMuhasebeServer.Application.Features.Invoices.CreateInvoice;
+using eMuhasebeServer.Application.Features.Invoices.GetAllInvoices;
 using eMuhasebeServer.Application.Features.Products.CreateProduct;
 using eMuhasebeServer.Application.Features.Products.GetAllProducts;
 using eMuhasebeServer.Domain.Dtos;
-using eMuhasebeServer.Domain.Enum;
+using eMuhasebeServer.Domain.Entities;
 using eMuhasebeServer.WebAPI.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TS.Result;
 
 namespace eMuhasebeServer.WebAPI.Controllers;
 
@@ -20,79 +20,113 @@ public sealed class SeedDataController : ApiController
     }
 
     [HttpGet]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> SeedProductsAndInvoices()
     {
-        Random random = new Random();
+        // Fetch existing customers and products
+        var customerResult = await _mediator.Send(new GetAllCustomersQuery());
+        var productResult = await _mediator.Send(new GetAllProductsQuery());
 
+        var customers = customerResult.Data ?? new List<Customer>();
+        var products = productResult.Data ?? new List<Product>();
 
-        //Customers
-        for (int i = 0; i < 1000; i++)
+        // Create new customers if none exist
+        if (customers.Count < 50)
         {
-            Faker faker = new();
-            int customerTypeValue = random.Next(1, 5);
-            CreateCustomerCommand customer = new(
-            faker.Company.CompanyName(),
-            CustomerTypeEnum.FromValue(customerTypeValue),
-            faker.Address.City(),
-            faker.Address.State(),
-            faker.Address.FullAddress(),
-            faker.Company.Random.String2(random.Next(10, 25)),
-            faker.Company.Random.ULong(1111111111, 99999999999).ToString());
+            var faker = new Bogus.Faker("tr");
+            for (int i = 0; i < 50; i++)
+            {
+                var createCustomerCommand = new CreateCustomerCommand(
+                    Name: faker.Company.CompanyName(),
+                    TypeValue: faker.Random.Int(1, 2), // Assuming 1 = Individual, 2 = Corporate
+                    City: faker.Address.City(),
+                    Town: faker.Address.State(),
+                    FullAdress: faker.Address.StreetAddress(),
+                    TaxNumber: faker.Random.Replace("##########"),
+                    TaxDepartment: faker.Address.City()
+                );
+                await _mediator.Send(createCustomerCommand);
+            }
 
-
-            await _mediator.Send(customer);
+            // Re-fetch customers after creation
+            customerResult = await _mediator.Send(new GetAllCustomersQuery());
+            customers = customerResult.Data ?? new List<Customer>();
         }
 
-        //Products
-        for (int i = 0; i < 10000; i++)
+        // Create new products if none exist
+        if (products.Count < 50)
         {
-            Faker faker = new();
-            CreateProductCommand product = new(faker.Commerce.ProductName());
+            var faker = new Bogus.Faker("tr");
+            for (int i = 0; i < 50; i++)
+            {
+                var createProductCommand = new CreateProductCommand(
+                    Name: faker.Commerce.ProductName()
+                );
+                await _mediator.Send(createProductCommand);
+            }
 
-            await _mediator.Send(product);
+            // Re-fetch products after creation
+            productResult = await _mediator.Send(new GetAllProductsQuery());
+            products = productResult.Data ?? new List<Product>();
         }
 
-        //Invoices
-        var customersResult = await _mediator.Send(new GetAllCustomersQuery());
-        var customers = customersResult.Data;
-
-        var productsResult = await _mediator.Send(new GetAllProductsQuery());
-        var products = productsResult.Data!.Where(p =>p.Withdrawal > 0).ToList();
+        // Generate fake invoices
+        var fakerInvoice = new Bogus.Faker("tr");
+        var invoices = new List<CreateInvoiceCommand>();
 
         for (int i = 0; i < 100; i++)
         {
-            Faker faker = new();
+            var selectedCustomer = fakerInvoice.PickRandom(customers);
+            var maxPickCount = Math.Min(products.Count, 5);
+            var selectedProducts = fakerInvoice.PickRandom(products, fakerInvoice.Random.Int(1, maxPickCount)).ToList();
 
-
-            if (products is null) continue;
-            if (customers is null) continue;
-  
-
-            List<InvoiceDetailDto> invoiceDetails = new();
-            for (int j = 0; j < random.Next(1,11) ; j++)
+            var details = selectedProducts.Select(product => new InvoiceDetailDto
             {
-                InvoiceDetailDto invoiceDetailDto = new()
-                {
-                    ProductId = products[random.Next(1, products.Count)].Id,
-                    Price = random.Next(1,1000),
-                    Quantity = random.Next(1, 100)
-                };
+                ProductId = product.Id,
+                Quantity = fakerInvoice.Random.Int(1, 10),
+                Price = fakerInvoice.Random.Int(10, 1000) // Random price since Product has no Price property
+            }).ToList();
 
-                invoiceDetails.Add(invoiceDetailDto);
-            }
+            var invoice = new CreateInvoiceCommand(
+                TypeValue: fakerInvoice.PickRandom(new[] { 1, 2 }),
+                Date: DateOnly.FromDateTime(fakerInvoice.Date.Recent(30)),
+                InvoiceNumber: fakerInvoice.Random.Replace("INV#####"),
+                CustomerId: selectedCustomer.Id,
+                Details: details
+            );
 
-            CreateInvoiceCommand invoice = new(
-                1,
-                new DateOnly(2024,random.Next(1,13),random.Next(1,29)),
-                faker.Random.ULong(3,16).ToString(),
-                customers[random.Next(1, customers.Count)].Id,
-                invoiceDetails
-                );
-
-            await _mediator.Send(invoice);
+            invoices.Add(invoice);
         }
 
-        return Ok(Result<string>.Succeed("Seed data başarıyla oluşturuldu"));
+        var allInvoicesResult = await _mediator.Send(new GetAllInvoicesQuery());
+        var allInvoices = allInvoicesResult.Data ?? new List<Invoice>();
 
+        // Yeni fatura işlemi yapılacaksa, her bir detayla döngüye giriyoruz
+        foreach (var invoice in invoices)
+        {
+            bool isDuplicate = false;
+
+            // Yeni faturadaki her bir ürünü kontrol ediyoruz
+            foreach (var invoiceDetail in invoice.Details)
+            {
+                // Mevcut faturaların her birini kontrol et
+                var duplicateInvoice = allInvoices.FirstOrDefault(existingInvoice =>
+        existingInvoice.Details != null && existingInvoice.Details.Any(d => d.ProductId == invoiceDetail.ProductId));
+
+                // Eğer mevcut faturada aynı ürün var ise, duplicate olarak işaretle
+                if (duplicateInvoice != null)
+                {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+
+            // Eğer duplicate değilse, faturayı ekle
+            if (!isDuplicate)
+            {
+                await _mediator.Send(invoice);
+            }
+        }
+
+        return Ok($"{invoices.Count} fake invoices successfully created.");
     }
 }
