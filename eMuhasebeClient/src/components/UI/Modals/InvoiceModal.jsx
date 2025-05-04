@@ -1,19 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, Calendar, ChevronDown, Plus } from "lucide-react";
+import { useGetAllCustomersQuery, useGetAllProductsMutation} from "../../../store/api";
 
 function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEditInvoice }) {
+  const { data: customers } = useGetAllCustomersQuery();
+  const [products] = useGetAllProductsMutation();
+  const [productsData, setProductsData] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const result = await products().unwrap();
+        setProductsData(result.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, [products]);
+
   const [formData, setFormData] = useState({
-    invoiceType: invoice?.invoiceType || "satis",
+    typeValue: invoice?.typeValue || "satis",
     date: invoice?.date || new Date().toISOString().split("T")[0],
-    customer: invoice?.customer || "",
+    customerId: invoice?.customerId || "",
     invoiceNumber: invoice?.invoiceNumber || "",
-    items: [],
+    details: [],
   });
 
   const [newItem, setNewItem] = useState({
-    product: "",
+    productId: "",
     quantity: "",
-    unitPrice: "",
+    price: "",
     total: "",
   });
 
@@ -24,38 +42,40 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
       [name]: value,
     });
   };
-
+  
   const handleItemChange = (e) => {
     const { name, value } = e.target;
 
     // Eğer adet veya birim fiyat değişirse, toplamı otomatik hesapla
     const updatedItem = { ...newItem, [name]: value };
 
-    if (name === "quantity" || name === "unitPrice") {
+    if (name === "quantity" || name === "price") {
       const quantity =
         name === "quantity"
           ? Number.parseFloat(value) || 0
           : Number.parseFloat(newItem.quantity) || 0;
-      const unitPrice =
-        name === "unitPrice"
+      const price =
+        name === "price"
           ? Number.parseFloat(value) || 0
-          : Number.parseFloat(newItem.unitPrice) || 0;
-      updatedItem.total = (quantity * unitPrice).toFixed(2);
+          : Number.parseFloat(newItem.price) || 0;
+      updatedItem.total = (quantity * price).toFixed(2);
     }
 
     setNewItem(updatedItem);
   };
 
+  
+
   const addItem = () => {
-    if (newItem.product && newItem.quantity && newItem.unitPrice) {
+    if (newItem.productId && newItem.quantity && newItem.price) {
       setFormData({
         ...formData,
-        items: [...formData.items, { ...newItem, id: Date.now() }],
+        details: [...formData.details, { ...newItem }],
       });
       setNewItem({
-        product: "",
+        productId: "",
         quantity: "",
-        unitPrice: "",
+        price: "",
         total: "",
       });
     }
@@ -63,8 +83,28 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    debugger
-    onAddInvoice(formData);
+    const updatedFormData = {
+      ...formData,
+      typeValue: formData.typeValue === "satis" ? 2 : 1,
+    };
+
+    // Get customer and product data
+    const customer = customers?.data.find((c) => c.name === formData.customerId);
+    const productIds = updatedFormData.details.map((item) => item.productId);
+    const relevantProducts = productsData.filter((p) => productIds.includes(p.name));
+
+    console.log("Customer:", customer);
+    console.log("Products:", productsData);
+    const filteredUpdateFormData = {
+      ...updatedFormData,
+      customerId: customer.id,
+      details: updatedFormData.details.map((item) => ({
+        ...item,
+        productId: relevantProducts[0].id
+      })),
+    };
+    debugger;
+    onAddInvoice(filteredUpdateFormData);
     onClose();
   };
 
@@ -90,8 +130,8 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
               <label className="block text-gray-700 mb-1">Fatura Tipi</label>
               <div className="relative">
                 <select
-                  name="invoiceType"
-                  value={formData.invoiceType}
+                  name="typeValue"
+                  value={formData.typeValue}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2 bg-white appearance-none pr-10"
                   required
@@ -129,15 +169,15 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
               <label className="block text-gray-700 mb-1">Müşteri</label>
               <div className="relative">
                 <select
-                  name="customer"
-                  value={formData.customer}
+                  name="customerId"
+                  value={formData.customerId}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2 bg-white appearance-none pr-10"
                   required
                 >
                   <option value="">Seçiniz...</option>
-                  <option value="musteri1">Müşteri 1</option>
-                  <option value="musteri2">Müşteri 2</option>
+                  <option value="Hegmann Group">Müşteri 1</option>
+                  <option value="Hegmann Group">Müşteri 2</option>
                 </select>
                 <ChevronDown
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
@@ -167,8 +207,8 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
               <label className="block text-gray-700 mb-1">Ürün</label>
               <input
                 type="text"
-                name="product"
-                value={newItem.product}
+                name="productId"
+                value={newItem.productId}
                 onChange={handleItemChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
               />
@@ -187,8 +227,8 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
               <label className="block text-gray-700 mb-1">Birim Fiyat</label>
               <input
                 type="number"
-                name="unitPrice"
-                value={newItem.unitPrice}
+                name="price"
+                value={newItem.price}
                 onChange={handleItemChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
               />
@@ -230,12 +270,12 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
                 </tr>
               </thead>
               <tbody>
-                {formData.items.map((item, index) => (
-                  <tr key={item.id} className="border-b border-gray-300">
+                {formData.details && formData.details.map((item, index) => (
+                  <tr key={index} className="border-b border-gray-300">
                     <td className="py-2">{index + 1}</td>
-                    <td className="py-2">{item.product}</td>
+                    <td className="py-2">{item.productId}</td>
                     <td className="py-2">{item.quantity}</td>
-                    <td className="py-2">{item.unitPrice}</td>
+                    <td className="py-2">{item.price}</td>
                     <td className="py-2">{item.total}</td>
                     <td className="py-2">
                       <button
@@ -243,8 +283,8 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
                         onClick={() => {
                           setFormData({
                             ...formData,
-                            items: formData.items.filter(
-                              (i) => i.id !== item.id
+                            details: formData.details.filter(
+                              (i) => i.productId !== item.productId
                             ),
                           });
                         }}
@@ -255,7 +295,7 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
                     </td>
                   </tr>
                 ))}
-                {formData.items.length === 0 && (
+                {formData.details && formData.details.length === 0 && (
                   <tr>
                     <td colSpan="6" className="py-4 text-center text-gray-500">
                       Henüz ürün eklenmedi

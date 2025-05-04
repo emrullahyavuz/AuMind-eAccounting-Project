@@ -11,6 +11,7 @@ import {
   useUpdateInvoiceMutation,
   useDeleteInvoiceMutation,
 } from "../../store/api/invoicesApi";
+import { useGetAllCustomersQuery } from "../../store/api";
 
 const Faturalar = () => {
   const [faturalar, setFaturalar] = useState([]);
@@ -32,6 +33,8 @@ const Faturalar = () => {
   const [updateInvoice] = useUpdateInvoiceMutation();
   const [deleteInvoice] = useDeleteInvoiceMutation();
 
+  const { data } = useGetAllCustomersQuery();
+
   const itemsPerPage = 50;
 
   // Faturalar tablosu sütun tanımları
@@ -41,21 +44,59 @@ const Faturalar = () => {
       accessor: "id",
       className: "w-24 font-bold text-yellow-500",
     },
-    { header: "Fatura Tipi", accessor: "invoiceType" },
-    { header: "Fatura No", accessor: "invoiceNumber" },
-    { header: "Tarih", accessor: "date" },
-    { header: "Müşteri", accessor: "customer" },
-    { header: "Tutar", accessor: "amount", className: "text-right" },
-    { header: "KDV", accessor: "tax", className: "text-right" },
-    { header: "Toplam", accessor: "total", className: "text-right font-bold" },
-    { header: "Durum", accessor: "status" },
+    {
+      header: "Fatura Tipi",
+      accessor: (row) => row.type?.name || "-",
+    },
+    {
+      header: "Fatura No",
+      accessor: "invoiceNumber",
+    },
+    {
+      header: "Tarih",
+      accessor: (row) => new Date(row.date).toLocaleDateString("tr-TR"),
+    },
+    {
+      header: "Müşteri",
+      accessor: (row) => row.customer?.name || row.name || "-",
+    },
+    {
+      header: "Tutar",
+      accessor: "amount",
+      className: "text-right",
+    },
+    {
+      header: "KDV",
+      accessor: (row) => {
+        // KDV hesaplaması yapılacaksa burada yapılabilir
+        const kdv = row.details?.reduce((acc, item) => {
+          return acc + item.price * item.quantity * 0.2; // %20 KDV örneği
+        }, 0);
+        return kdv?.toFixed(2) || "0.00";
+      },
+      className: "text-right",
+    },
+    {
+      header: "Toplam",
+      accessor: (row) => {
+        const total = row.details?.reduce((acc, item) => {
+          return acc + item.price * item.quantity;
+        }, 0);
+        return total?.toFixed(2) || "0.00";
+      },
+      className: "text-right font-bold",
+    },
+    {
+      header: "Durum",
+      accessor: (row) => (row.isDeleted ? "Silinmiş" : "Aktif"),
+    },
   ];
 
   // Faturalar için useEffect
   useEffect(() => {
     if (getAllInvoices.data) {
       const data = getAllInvoices.data.data || getAllInvoices.data;
-      console.log("Received company data:", data);
+
       setFaturalar(data);
       setFilteredFaturalar(data);
       setIsLoading(false);
@@ -83,10 +124,25 @@ const Faturalar = () => {
     setIsEditModalOpen(true);
   };
 
+  const handleAddInvoice = async (formData) => {
+    try {
+      await createInvoice(formData);
+      setIsAddModalOpen(false);
+      showToast("Fatura başarıyla oluşturuldu", "success");
+    } catch (error) {
+      showToast(
+        error.data?.errorMessages?.[0] ||
+          "Fatura oluşturulurken bir hata oluştu",
+        "error"
+      );
+    }
+  };
+
   // Fatura silme işlemi
   const handleDeleteFatura = (faturaId) => {
     if (Array.isArray(faturaId)) {
       // Toplu silme
+      console.log("id", faturaId);
       setFaturaToDelete({ ids: faturaId, name: `${faturaId.length} fatura` });
     } else {
       // Tekli silme
@@ -97,35 +153,59 @@ const Faturalar = () => {
   };
 
   // Silme onaylama işlemi
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (faturaToDelete) {
-      // API silme işlemi burada yapılacak
-      const updatedFaturalar = faturalar.filter(
-        (fatura) => !faturaToDelete.ids.includes(fatura.id)
-      );
-      setFaturalar(updatedFaturalar);
-      setFilteredFaturalar(updatedFaturalar);
-      setSelectedItems([]); // Seçili öğeleri temizle
+      try {
+        if (Array.isArray(faturaToDelete.ids)) {
+          // Toplu silme
+          for (const id of faturaToDelete.ids) {
+            await deleteInvoice(id);
+          }
+          showToast(
+            `${faturaToDelete.ids.length} fatura başarıyla silindi`,
+            "success"
+          );
+        } else {
+          // Tekli silme
+          await deleteInvoice(faturaToDelete.ids);
+          showToast(
+            `${faturaToDelete.name} fatura başarıyla silindi`,
+            "success"
+          );
+        }
+        // Update the faturalar state to remove deleted items
+        const updatedFaturalar = faturalar.filter(
+          (fatura) => !faturaToDelete.ids.includes(fatura.id)
+        );
+        setFaturalar(updatedFaturalar);
+        setFilteredFaturalar(updatedFaturalar);
+      } catch (error) {
+        console.error("Error deleting invoice:", error);
+        showToast(
+          error.data?.errorMessages?.[0] || "Fatura silinirken bir hata oluştu",
+          "error"
+        );
+      }
       setIsDeleteModalOpen(false);
       setFaturaToDelete(null);
     }
   };
 
   // Fatura ekleme işlemi
-  const handleInvoiceSubmit = async (invoiceData) => {
-    try {
-      debugger;
-      await createInvoice(invoiceData).unwrap();
-      showToast("Fatura başarıyla oluşturuldu", "success");
-      setIsAddModalOpen(false);
-    } catch (err) {
-      console.error("Error creating invoice:", err);
-      showToast(
-        err.data?.errorMessages?.[0] || "Fatura oluşturulurken bir hata oluştu",
-        "error"
-      );
-    }
-  };
+  // const handleInvoiceSubmit = async (invoiceData) => {
+  //   try {
+  //     debugger;
+  //     await createInvoice(invoiceData).unwrap();
+  //     showToast("Fatura başarıyla oluşturuldu", "success");
+  //     setIsAddModalOpen(false);
+  //   } catch (err) {
+  //     console.error("Error creating invoice:", err);
+  //     showToast(
+  //       err.data?.errorMessages?.[0] || "Fatura oluşturulurken bir hata oluştu",
+  //       "error"
+  //     );
+  //   }
+  // };
 
   // Fatura güncelleme işlemi
   const handleEditSubmit = async (invoiceData) => {
@@ -216,7 +296,7 @@ const Faturalar = () => {
       <InvoiceModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onAddInvoice={handleInvoiceSubmit}
+        onAddInvoice={handleAddInvoice}
       />
       <InvoiceModal
         isOpen={isEditModalOpen}
