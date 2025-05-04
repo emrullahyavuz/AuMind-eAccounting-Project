@@ -18,8 +18,6 @@ internal sealed class GetAISummaryQueryHandler(
 {
     public async Task<Result<string>> Handle(GetAISummaryQuery request, CancellationToken cancellationToken)
     {
-        var companyId = request.CompanyId;
-
         // 1. Get Invoices
         var invoiceResult = await mediator.Send(new GetAllInvoicesQuery(), cancellationToken);
         if (!invoiceResult.IsSuccessful) return Result<string>.Failure("Fatura verileri alınamadı");
@@ -48,11 +46,8 @@ internal sealed class GetAISummaryQueryHandler(
             builder.AppendLine($"Ad: {product.Name}, Fiyat: {product.Deposit}");
         }
 
-        builder.AppendLine("\nBu verilere göre:");
-        builder.AppendLine("- En çok satılan ürün hangisi?");
-        builder.AppendLine("- Toplam fatura tutarı ne?");
-        builder.AppendLine("- Dikkat çeken bir trend veya anormallik var mı?");
-        builder.AppendLine("Analizini detaylı ve maddeler halinde yap.");
+        builder.AppendLine("Kullanıcının sorusu:");
+        builder.AppendLine(request.UserPrompt); 
 
         // 4. OpenAI API çağrısı
         var httpClient = httpClientFactory.CreateClient();

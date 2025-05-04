@@ -6,6 +6,6 @@ public sealed record ProductProfitabilityReportsQueryResponse
     public string Name { get; set; } = string.Empty;
     public decimal DepositPrice { get; set; }
     public decimal WithdrawalPrice { get; set; }
-    public decimal ProfitPercent { get; set; }
+    public decimal? ProfitPercent { get; set; }
     public decimal Profit { get; set; }
 }
