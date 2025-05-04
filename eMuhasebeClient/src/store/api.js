@@ -207,6 +207,19 @@ export const api = createApi({
       providesTags: ["Products"],
     }),
 
+    // Reports endpoints
+    getProductProfitabilityReports: builder.query({
+      query: () => ({
+        url: "/Reports/ProductProfitabilityReports",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        
+      }),
+      providesTags: ["Reports"],
+    }),
+
     createProduct: builder.mutation({
       query: (productData) => ({
         url: "/Products/Create",
@@ -220,7 +233,7 @@ export const api = createApi({
       query: (productData) => ({
         url: "/Products/Update",
         method: "POST",
-        body: {id:productData.id,...productData},
+        body: {id:productData.id, ...productData},
       }),
       invalidatesTags: ["Products"],
     }),
@@ -235,7 +248,7 @@ export const api = createApi({
     }),
 
     // Customers endpoints
-    getAllCustomers: builder.mutation({
+    getAllCustomers: builder.query({
       query: () => ({
         url: "/Customers/GetAll",
         method: "POST",
@@ -343,7 +356,7 @@ export const {
   useCreateInvoiceMutation,
   useUpdateInvoiceMutation,
   useDeleteInvoiceMutation,
-  useGetAllCustomersMutation,
+  useGetAllCustomersQuery,
   useCreateCustomerMutation,
   useUpdateCustomerMutation,
   useDeleteCustomerMutation,
@@ -355,4 +368,5 @@ export const {
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  useGetProductProfitabilityReportsQuery,
 } = api;

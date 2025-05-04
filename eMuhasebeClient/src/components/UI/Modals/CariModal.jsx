@@ -2,32 +2,28 @@ import { use, useEffect, useState } from "react"
 import { X, ChevronDown } from "lucide-react"
 
 const initialState = {
-  cariName: "",
-  type: "",
-  province: "",
-  address: "",
-  taxOffice: "",
+  name: "",
+  typeValue: "",
+  city: "",
+  town: "",
+  fullAdress: "",
+  taxDepartment: "",
   taxNumber: "",
-  input: "0",
-  output: "0",
-  balance: "0",
 }
 
-function CariModal({ isOpen,isEditMode,cari, onClose, onAddCari }) {
+function CariModal({ isOpen,isEditMode,cari, onClose, onSubmit }) {
   const [formData, setFormData] = useState(initialState)
 
   useEffect(() => {
     if (isEditMode && cari) {
       setFormData({
-        cariName: cari.name || "",
-        type: cari.type || "",
-        province: cari.city || "",
-        address: cari.address || "",
-        taxOffice: cari.taxOffice || "",
+        name: cari.name || "",
+        typeValue: cari.typeValue || "",
+        city: cari.city || "",
+        town: cari.town || "",
+        fullAdress: cari.fullAdress || "",
+        taxDepartment: cari.taxDepartment || "",
         taxNumber: cari.taxNumber || "",
-        inflow: String(cari.inflow || 0).replace(/[^\d.-]/g, ''),
-        checkout: String(cari.checkout || 0).replace(/[^\d.-]/g, ''),
-        balance: String(cari.balance || 0).replace(/[^\d.-]/g, '')
       })
     } else {
       setFormData(initialState)
@@ -54,8 +50,9 @@ function CariModal({ isOpen,isEditMode,cari, onClose, onAddCari }) {
   }
 
   const handleSubmit = (e) => {
+    debugger
     e.preventDefault()
-    onAddCari(formData)
+    onSubmit(formData,isEditMode)
     onClose()
   }
 
@@ -78,8 +75,8 @@ function CariModal({ isOpen,isEditMode,cari, onClose, onAddCari }) {
               <label className="block text-gray-700 mb-1">Cari Adı</label>
               <input
                 type="text"
-                name="cariName"
-                value={formData.cariName}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
                 required
@@ -90,8 +87,8 @@ function CariModal({ isOpen,isEditMode,cari, onClose, onAddCari }) {
               <label className="block text-gray-700 mb-1">Tipi</label>
               <input
                 type="text"
-                name="type"
-                value={formData.type}
+                name="typeValue"
+                value={formData.typeValue}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
                 required
@@ -99,30 +96,30 @@ function CariModal({ isOpen,isEditMode,cari, onClose, onAddCari }) {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 mb-1">İl/İlçe</label>
+              <label className="block text-gray-700 mb-1">İl</label>
               <div className="relative">
                 <select
-                  name="province"
-                  value={formData.province}
+                  name="city"
+                  value={formData.city}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2 bg-white appearance-none pr-10"
                   required
                 >
                   <option value="">Seçiniz...</option>
-                  <option value="istanbul">İstanbul</option>
-                  <option value="ankara">Ankara</option>
-                  <option value="izmir">İzmir</option>
+                  <option value="İstanbul">İstanbul</option>
+                  <option value="Ankara">Ankara</option>
+                  <option value="İzmir">İzmir</option>
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
               </div>
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 mb-1">Adres</label>
+              <label className="block text-gray-700 mb-1">İlçe</label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
+                name="town"
+                value={formData.town}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
                 required
@@ -133,8 +130,8 @@ function CariModal({ isOpen,isEditMode,cari, onClose, onAddCari }) {
               <label className="block text-gray-700 mb-1">Vergi Dairesi</label>
               <input
                 type="text"
-                name="taxOffice"
-                value={formData.taxOffice}
+                name="taxDepartment"
+                value={formData.taxDepartment}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
                 required
@@ -153,34 +150,15 @@ function CariModal({ isOpen,isEditMode,cari, onClose, onAddCari }) {
               />
             </div>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-1">Giriş</label>
-              <input
-                type="number"
-                name="input"
-                value={formData.inflow}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md p-2 bg-white"
-              />
-            </div>
+           
 
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-1">Çıkış</label>
-              <input
-                type="number"
-                name="output"
-                value={formData.checkout}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md p-2 bg-white"
-              />
-            </div>
 
             <div className="mb-4 col-span-2">
-              <label className="block text-gray-700 mb-1">Bakiye</label>
+              <label className="block text-gray-700 mb-1">Adres</label>
               <input
-                type="number"
-                name="balance"
-                value={formData.balance}
+                type="text"
+                name="fullAdress"
+                value={formData.fullAdress}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
               />

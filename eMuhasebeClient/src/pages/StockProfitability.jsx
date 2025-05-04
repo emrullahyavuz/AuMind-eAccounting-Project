@@ -1,35 +1,27 @@
 import DataTable from "../components/Admin/data-table";
+import { useGetProductProfitabilityReportsQuery } from "../store/api";
 
 export default function StockProfitability() {
+
+  // Get product profitability reports
+  const { data, isLoading } = useGetProductProfitabilityReportsQuery();
+  
+ 
   return (
     <DataTable
       title="Stok Kârlılık Raporu"
       columns={[
-        { header: "Cari Hesap No", accessor: "cariAccount" },
-        { header: "Ürün Adı", accessor: "productName" },
-        { header: "Alış Birim Fiyat", accessor: "purchaseUnitPrice" },
-        { header: "Satış Birim Fiyat", accessor: "saleUnitPrice" },
+        { header: "Ürün Numarası", 
+          accessor: "id", 
+          className: "w-24 font-bold text-yellow-500",
+        },
+        { header: "Ürün Adı", accessor: "name" },
+        { header: "Alış Birim Fiyat", accessor: "depositPrice" },
+        { header: "Satış Birim Fiyat", accessor: "withdrawalPrice" },
         { header: "Kârlılık", accessor: "profit" },
-        { header: "Kârlılık Yüzdesi", accessor: "profitPercentage" },
-      ]}
-      data={[
-        {
-          cariAccount: "Şirket A",
-          productName: "2023-10-01",
-          purchaseUnitPrice: "Alış",
-          saleUnitPrice: "Malzeme alımı",
-          profit: 1000,
-          profitPercentage: 0,
-        },
-        {
-          cariAccount: "Şirket B",
-          productName: "2023-10-01",
-          purchaseUnitPrice: "Alış",
-          saleUnitPrice: "Malzeme alımı",
-          profit: 1000,
-          profitPercentage: 0,
-        },
-      ]}
+        { header: "Kârlılık Yüzdesi", accessor: "profitPercent" },
+      ]}  
+      data={data?.data || []} 
       isStock={true}
     />
   );
