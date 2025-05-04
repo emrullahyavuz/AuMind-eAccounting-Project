@@ -44,7 +44,7 @@ function DataTable({
       onSearch(value);
     }
   };
-
+  
   // Checkbox işlemleri
   const handleSelectItem = (id) => {
     let newSelectedItems;
@@ -171,15 +171,16 @@ function DataTable({
                       </td>
                     )}
 
-                    {columns.map((column, colIndex) => (
-                      <td
-                        key={colIndex}
-                        className={`p-3 ${column.className || ""}`}
-                      >
-                        
-                        {item[column.accessor] || (column.accessor.includes('.') ? item[column.accessor.split('.')[0]][column.accessor.split('.')[1]] : '')}
-                      </td>
-                    ))}
+{columns.map((column, colIndex) => (
+  <td key={colIndex} className={`p-3 ${column.className || ""}`}>
+    {column.render
+      ? column.render(item) // render fonksiyonu varsa kullan
+      : column.accessor.includes(".")
+      ? item[column.accessor.split(".")[0]]?.[column.accessor.split(".")[1]]
+      : item[column.accessor]}
+  </td>
+))}
+
 
                     {!isCari && !isStock && (
                       <td className="p-3 text-center">

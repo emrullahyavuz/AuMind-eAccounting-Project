@@ -6,11 +6,12 @@ import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay";
 import CariModal from "../components/UI/Modals/CariModal";
 import DeleteConfirmationModal from "../components/UI/Modals/DeleteConfirmationModal";
 import {
-  useGetAllCustomersMutation,
+  useGetAllCustomersQuery,
   useCreateCustomerMutation,
   useUpdateCustomerMutation,
   useDeleteCustomerMutation,
 } from "../store/api";
+import {useToast} from "../hooks/useToast";
 
 const Cariler = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const Cariler = () => {
   const [selectedCari, setSelectedCari] = useState(null);
   const [cariToDelete, setCariToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
+  const { showToast } = useToast();
 
   // Redux hooks
   // const dispatch = useDispatch();
@@ -32,8 +34,7 @@ const Cariler = () => {
   // );
 
   // RTK Query hooks
-  const [getAllCustomers, { data, isLoading, error }] =
-    useGetAllCustomersMutation();
+  const { data, isLoading, error } = useGetAllCustomersQuery();
   const [createCustomer, { isLoading: isCreatingCustomer }] =
     useCreateCustomerMutation();
   const [updateCustomer, { isLoading: isUpdatingCustomer }] =
@@ -63,13 +64,16 @@ const Cariler = () => {
       className: "w-24 font-bold text-yellow-500",
     },
     { header: "Cari Adı", accessor: "name" },
-    { header: "Tipi", accessor: "type" },
+    { header: "Tipi", 
+      accessor: "type",
+      render: (row) => row.type?.name || "-", 
+    },
     { header: "İl/İlçe", accessor: "city" },
-    { header: "Adres", accessor: "address" },
-    { header: "Vergi Dairesi", accessor: "taxOffice" },
+    { header: "Adres", accessor: "fullAddress" },
+    { header: "Vergi Dairesi", accessor: "taxDepartment" },
     { header: "Vergi Numarası", accessor: "taxNumber" },
-    { header: "Giriş", accessor: "inflow" },
-    { header: "Çıkış", accessor: "checkout" },
+    { header: "Giriş", accessor: "depositAmount" },
+    { header: "Çıkış", accessor: "withdrawalAmount" },
     { header: "Bakiye", accessor: "balance" },
     {
       header: "İşlemler",
@@ -77,26 +81,17 @@ const Cariler = () => {
       render: renderDetailButton,
     },
   ];
-
-  // Müşterileri yükle
+  
+  
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getAllCustomers().unwrap();
-        if (result?.isSuccessful) {
-          const formattedData = Array.isArray(result.data) ? result.data : [];
-          setCurrents(formattedData);
-          setFilteredCurrents(formattedData);
-        } else {
-          console.error(result?.errorMessages?.[0] || "Müşteriler yüklenirken bir hata oluştu");
-        }
-      } catch (error) {
-        console.error("API hatası:", error);
-      }
-    };
-
-    fetchData();
-  }, [getAllCustomers]);
+    if (data?.isSuccessful) {
+      const formattedData = Array.isArray(data.data) ? data.data : [];
+      setCurrents(formattedData);
+      setFilteredCurrents(formattedData);
+    } else if (error) {
+      console.error(error?.errorMessages?.[0] || "Müşteriler yüklenirken bir hata oluştu");
+    }
+  }, [data]);
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
@@ -130,6 +125,23 @@ const Cariler = () => {
     setIsEditModalOpen(true);
   };
 
+  const handleSubmitCari = async (formData,isEditMode) => {
+    debugger
+    if (isEditMode) {
+      await updateCustomer(formData)
+    } else {
+      await createCustomer(formData)
+    }
+    setIsAddModalOpen(false);
+    setIsEditModalOpen(false);
+    setSelectedCari(null);
+  };
+
+  const handleEditCariSubmit = async (formData) => {
+    debugger
+    await handleSubmitCari({id:selectedCari.id,...formData}, true);
+  };
+
   // Cari hesap silme işlemi
   const handleDeleteCari = (cariId) => {
     if (Array.isArray(cariId)) {
@@ -144,17 +156,36 @@ const Cariler = () => {
   };
 
   // Silme onaylama işlemi
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (cariToDelete) {
-      // API silme işlemi burada yapılacak
-      const updatedCurrents = currents.filter(
-        (cari) => !cariToDelete.ids.includes(cari.id)
-      );
-      setCurrents(updatedCurrents);
-      setFilteredCurrents(updatedCurrents);
-      setSelectedItems([]); // Seçili öğeleri temizle
-      setIsDeleteModalOpen(false);
-      setCariToDelete(null);
+      if (cariToDelete) {
+        try {
+          if (Array.isArray(cariToDelete.ids)) {
+            // Toplu silme
+            for (const id of cariToDelete.ids) {
+              await deleteCustomer(id);
+            }
+            showToast(`${cariToDelete.ids.length} cari hesap başarıyla silindi`, "success");
+          } else {
+            // Tekli silme
+            await deleteCustomer(cariToDelete.ids);
+            showToast(`${cariToDelete.name} cari hesap başarıyla silindi`, "success");
+          }
+          // Update the currents state to remove deleted items
+          const updatedCurrents = currents.filter(
+            (cash) => !cariToDelete.ids.includes(cash.id)
+          );
+          setCurrents(updatedCurrents);
+          setFilteredCurrents(updatedCurrents);
+        } catch (error) {
+          console.error("Error deleting cash register:", error);
+          showToast("Kasa silinirken bir hata oluştu", "error");
+        }
+        setIsDeleteModalOpen(false);
+        setCariToDelete(null);
+      }
+
+
     }
   };
 
@@ -171,7 +202,7 @@ const Cariler = () => {
   // Özel butonlar
   const customButtons = (
     <>
-      {detailButton}
+      
       {selectedItems.length > 0 && (
         <button
           onClick={() => handleDeleteCari(selectedItems)}
@@ -190,13 +221,7 @@ const Cariler = () => {
     currentPage * itemsPerPage
   );
 
-  if (isLoading) {
-    return (
-      <div className="p-6">
-        <LoadingOverlay />
-      </div>
-    );
-  }
+  
 
   return (
     <>
@@ -220,10 +245,12 @@ const Cariler = () => {
         headerTextColor="white"
         selectedItems={selectedItems}
         onSelectedItemsChange={setSelectedItems}
+        
       />
       <CariModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+        onSubmit={handleSubmitCari}
       />
       <CariModal
         isOpen={isEditModalOpen}
@@ -233,6 +260,7 @@ const Cariler = () => {
         }}
         isEditMode={true}
         cari={selectedCari}
+        onSubmit={handleEditCariSubmit}
       />
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
