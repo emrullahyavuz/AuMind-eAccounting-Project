@@ -74,7 +74,7 @@ export const api = createApi({
     updateInvoice: builder.mutation({
       query: (invoiceData) => ({
         url: "/Invoices/Update",
-        method: "PUT",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -84,12 +84,12 @@ export const api = createApi({
 
     deleteInvoice: builder.mutation({
       query: (invoiceIds) => ({
-        url: "/Invoices/Delete",
-        method: "DELETE",
+        url: "/Invoices/DeleteById",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ids: invoiceIds }),
+        body: JSON.stringify({ id: invoiceIds }),
       }),
     }),
 
