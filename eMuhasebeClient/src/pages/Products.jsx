@@ -196,7 +196,7 @@ const Products = () => {
   // Özel butonlar
   const customButtons = (
     <>
-      {detailButton}
+    
       {selectedItems.length > 0 && (
         <button
           onClick={() => handleDeleteProduct(selectedItems)}

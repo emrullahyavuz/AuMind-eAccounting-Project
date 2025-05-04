@@ -237,7 +237,7 @@ const Cash = () => {
   // Özel butonlar
   const customButtons = (
     <>
-      {detailButton}
+      
       {selectedItems.length > 0 && (
         <button
           onClick={() => handleDeleteCash(selectedItems)}
