@@ -2,14 +2,21 @@ import { useState, useEffect } from "react";
 import { Input } from "../components/UI/Input";
 import { Button } from "../components/UI/Button";
 import DataTable from "../components/Admin/cash-data-table";
-import CashTransactionModal from "../components/UI/Modals/CashTransactionModal";
+import BankTransactionsModal from "../components/UI/Modals/BankTransactionsModal";
 import DeleteConfirmationModal from "../components/UI/Modals/DeleteConfirmationModal";
 import { Trash2 } from "lucide-react";
 import { useParams } from "react-router-dom";
+import {
+  useGetAllBankDetailsMutation,
+  useCreateBankDetailMutation,
+  useUpdateBankDetailMutation,
+  useDeleteBankDetailMutation,
+} from "../store/api";
 
 function BankTransactions() {
   const [transactions, setTransactions] = useState([]);
   const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [bankData, setBankData] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [startDate, setStartDate] = useState("");
@@ -20,8 +27,13 @@ function BankTransactions() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [bankName, setBankName] = useState(useParams().bankName);
 
-  const bankName = useParams().bankName;
+  // RTK Query hooks
+  const [getAllBankDetails] = useGetAllBankDetailsMutation();
+  const [createBankDetail] = useCreateBankDetailMutation();
+  const [updateBankDetail] = useUpdateBankDetailMutation();
+  const [deleteBankDetail] = useDeleteBankDetailMutation();
 
   const itemsPerPage = 50;
 
@@ -36,43 +48,38 @@ function BankTransactions() {
     { header: "Açıklama", accessor: "description" },
     {
       header: "Giriş",
-      accessor: "input",
+      accessor: "depositAmount",
       className: "text-right text-green-600 font-medium",
     },
     {
       header: "Çıkış",
-      accessor: "output",
+      accessor: "withdrawalAmount",
       className: "text-right text-red-600 font-medium",
     },
   ];
 
   // Örnek veri yükleme - gerçek uygulamada API'den gelecek
   useEffect(() => {
-    // API çağrısı simülasyonu
-    const loadData = async () => {
-      setIsLoading(true);
+    const fetchData = async () => {
+      try {
+        const response = await getAllBankDetails({
+          bankId: bankName,
+        }).unwrap();
+        console.log(response);
+        setBankData(response.data);
+        setTransactions([{ ...response.data }]);
+        setFilteredTransactions([{ ...response.data }]);
+        setBankName(response.data.name);
 
-      // Gerçek bir API çağrısını simüle etmek için gecikme ekliyoruz
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Örnek veri
-      const mockTransactions = Array.from({ length: 1 }, (_, index) => ({
-        id: index + 1,
-        date: `${Math.floor(Math.random() * 28) + 1}.${
-          Math.floor(Math.random() * 12) + 1
-        }.2024`,
-        description: "xxx",
-        input: index % 2 === 0 ? `${(Math.random() * 1000).toFixed(2)} ₺` : "",
-        output: index % 2 === 1 ? `${(Math.random() * 1000).toFixed(2)} ₺` : "",
-      }));
-
-      setTransactions(mockTransactions);
-      setFilteredTransactions(mockTransactions);
-      setIsLoading(false);
+        setIsLoading(false);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-
-    loadData();
-  }, []);
+    fetchData();
+  }, [getAllBankDetails]);
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
@@ -115,39 +122,50 @@ function BankTransactions() {
     setIsAddModalOpen(true);
   };
 
-  const handleAddTransactionSubmit = (transactionData) => {
-    console.log("Yeni işlem eklendi:", transactionData);
-    // Gerçek uygulamada API çağrısı yapılacak
-
-    // Örnek işlem verisi ekleme
-    const newTransaction = {
-      id: transactions.length + 1,
-      date: transactionData.date,
-      description: transactionData.description,
-      input: transactionData.input ? `${transactionData.input} ₺` : "",
-      output: transactionData.output ? `${transactionData.output} ₺` : "",
-    };
-
-    setTransactions([...transactions, newTransaction]);
-    setFilteredTransactions([...filteredTransactions, newTransaction]);
-    setIsAddModalOpen(false);
-  };
-
   // İşlem düzenleme işlemi
   const handleEditTransaction = (transaction) => {
     setSelectedTransaction(transaction);
     setIsEditModalOpen(true);
   };
 
+  const handleAddBankTransaction = async (transactionData) => {
+    try {
+      setIsLoading(true);
+      debugger;
+      // Prepare the data with proper null handling for opposite IDs
+      const transactionPayload = {
+        ...transactionData,
+        oppositeBankId: transactionData.oppositeBankId || null,
+        oppositeCashRegisterId: transactionData.oppositeCashRegisterId || null,
+        oppositeCustomerId: transactionData.oppositeCustomerId || null,
+      };
+
+      const response = await createBankDetail(transactionPayload).unwrap();
+      console.log("Yeni işlem eklendi:", response);
+      setIsAddModalOpen(false);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("İşlem ekleme hatası:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // İşlem silme işlemi
   const handleDeleteTransaction = (transactionId) => {
     if (Array.isArray(transactionId)) {
       // Toplu silme
-      setTransactionToDelete({ ids: transactionId, name: `${transactionId.length} işlem` });
+      setTransactionToDelete({
+        ids: transactionId,
+        name: `${transactionId.length} işlem`,
+      });
     } else {
       // Tekli silme
       const transaction = transactions.find((t) => t.id === transactionId);
-      setTransactionToDelete({ ids: [transactionId], name: `#${transaction.id} numaralı işlem` });
+      setTransactionToDelete({
+        ids: [transactionId],
+        name: `#${transaction.id} numaralı işlem`,
+      });
     }
     setIsDeleteModalOpen(true);
   };
@@ -168,10 +186,12 @@ function BankTransactions() {
   };
 
   // Geçerli sayfadaki işlemleri hesapla
-  const currentTransactions = filteredTransactions.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const currentTransactions = Array.isArray(filteredTransactions)
+    ? filteredTransactions.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      )
+    : [];
 
   // Özel filtre bileşeni
   const customFilters = (
@@ -209,7 +229,7 @@ function BankTransactions() {
   const customHeader = (
     <div className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-bold border-b-2 border-gray-300 text-gray-800">
-      (<span className="text-yellow-500">{bankName}</span>) Banka Hareketleri
+        <span className="text-yellow-500">{bankName}</span> Banka Hareketleri
       </h1>
     </div>
   );
@@ -257,12 +277,13 @@ function BankTransactions() {
         />
       </div>
 
-      <CashTransactionModal
+      <BankTransactionsModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onAddTransaction={handleAddTransactionSubmit}
+        onAddTransaction={handleAddBankTransaction}
+        bankData={bankData}
       />
-      <CashTransactionModal
+      <BankTransactionsModal
         isOpen={isEditModalOpen}
         onClose={() => {
           setIsEditModalOpen(false);
@@ -284,7 +305,9 @@ function BankTransactions() {
         }}
         onConfirm={confirmDelete}
         title="İşlem Silme"
-        message={`${transactionToDelete?.name || ''} ${transactionToDelete?.ids?.length > 1 ? 'işlemlerini' : 'işlemini'} silmek istediğinizden emin misiniz?`}
+        message={`${transactionToDelete?.name || ""} ${
+          transactionToDelete?.ids?.length > 1 ? "işlemlerini" : "işlemini"
+        } silmek istediğinizden emin misiniz?`}
       />
     </>
   );

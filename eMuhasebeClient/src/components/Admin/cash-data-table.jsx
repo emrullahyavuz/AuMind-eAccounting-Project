@@ -1,6 +1,13 @@
-import { useState } from "react"
-import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react"
-import LoadingOverlay from "../UI/Spinner/LoadingOverlay"
+import { useState } from "react";
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import LoadingOverlay from "../UI/Spinner/LoadingOverlay";
 
 // CashDataTable bileşeni
 function DataTable({
@@ -25,42 +32,46 @@ function DataTable({
   isLoading = false, // Yükleme durumu
   hideTitle = false, // Başlığı gizleme seçeneği
 }) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedItems, setSelectedItems] = useState([])
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedItems, setSelectedItems] = useState([]);
 
   // Arama işlemi
   const handleSearch = (e) => {
-    const value = e.target.value
-    setSearchTerm(value)
+    const value = e.target.value;
+    setSearchTerm(value);
     if (onSearch) {
-      onSearch(value)
+      onSearch(value);
     }
-  }
+  };
 
   // Checkbox işlemleri
   const handleSelectItem = (id) => {
     if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter((item) => item !== id))
+      setSelectedItems(selectedItems.filter((item) => item !== id));
     } else {
-      setSelectedItems([...selectedItems, id])
+      setSelectedItems([...selectedItems, id]);
     }
-  }
+  };
 
   // Sayfalama hesaplamaları
-  const totalPages = Math.ceil(totalItems / itemsPerPage)
-  const startItem = (currentPage - 1) * itemsPerPage + 1
-  const endItem = Math.min(currentPage * itemsPerPage, totalItems)
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   // Buton rengi belirleme
   const buttonColorClass =
     addButtonColor === "yellow"
       ? "bg-yellow-400 hover:bg-yellow-500 text-gray-800"
-      : "bg-blue-600 hover:bg-blue-700 text-white"
+      : "bg-blue-600 hover:bg-blue-700 text-white";
 
   return (
     <div className="bg-gray-100">
       {/* Başlık */}
-      {!hideTitle && <h1 className="text-3xl font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-6">{title}</h1>}
+      {!hideTitle && (
+        <h1 className="text-3xl font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-6">
+          {title}
+        </h1>
+      )}
 
       {/* Üst Araç Çubuğu */}
       <div className="flex flex-wrap justify-between items-center mb-6">
@@ -112,7 +123,10 @@ function DataTable({
                     <Edit size={18} />
                   </th>
                   {columns.map((column, index) => (
-                    <th key={index} className={`p-3 text-left ${column.className || ""}`}>
+                    <th
+                      key={index}
+                      className={`p-3 text-left ${column.className || ""}`}
+                    >
                       {column.header}
                     </th>
                   ))}
@@ -126,7 +140,10 @@ function DataTable({
               <tbody>
                 {data.length > 0
                   ? data.map((item, rowIndex) => (
-                      <tr key={item.id || rowIndex} className="border-b border-gray-300 hover:bg-gray-200">
+                      <tr
+                        key={item.id || rowIndex}
+                        className="border-b border-gray-300 hover:bg-gray-200"
+                      >
                         <td className="p-3">
                           <button
                             onClick={() => onEdit(item)}
@@ -137,7 +154,10 @@ function DataTable({
                         </td>
 
                         {columns.map((column, colIndex) => (
-                          <td key={colIndex} className={`p-3 ${column.className || ""}`}>
+                          <td
+                            key={colIndex}
+                            className={`p-3 ${column.className || ""}`}
+                          >
                             {item[column.accessor]}
                           </td>
                         ))}
@@ -210,7 +230,7 @@ function DataTable({
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default DataTable
+export default DataTable;
