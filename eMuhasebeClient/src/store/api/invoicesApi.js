@@ -21,17 +21,17 @@ export const invoiceApi = baseApi.injectEndpoints({
     updateInvoice: builder.mutation({
       query: (data) => ({
         url: '/Invoices/Update',
-        method: 'PUT',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       }),
     }),
     deleteInvoice: builder.mutation({
-      query: (ids) => ({
-        url: '/Invoices/Delete',
-        method: 'DELETE',
+      query: (invoiceIds) => ({
+        url: '/Invoices/DeleteById',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids }),
+        body: JSON.stringify({ id : invoiceIds }),
       }),
     }),
   }),

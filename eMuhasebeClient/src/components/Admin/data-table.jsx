@@ -37,6 +37,25 @@ function DataTable({
   const [searchTerm, setSearchTerm] = useState("");
 
   // Arama işlemi
+  const renderCell = (column, row) => {
+    let value;
+    if (typeof column.accessor === 'function') {
+      value = column.accessor(row);
+    } else if (typeof column.accessor === 'string' && column.accessor.includes('.')) {
+      const [first, second] = column.accessor.split('.');
+      value = row[first]?.[second];
+    } else if (typeof column.accessor === 'string') {
+      value = row[column.accessor];
+    } else {
+      value = '';
+    }
+    if (column.render) {
+      return column.render(row);
+    }
+    return value;
+  };
+
+  // Arama işlemi
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -173,11 +192,7 @@ function DataTable({
 
 {columns.map((column, colIndex) => (
   <td key={colIndex} className={`p-3 ${column.className || ""}`}>
-    {column.render
-      ? column.render(item) // render fonksiyonu varsa kullan
-      : column.accessor.includes(".")
-      ? item[column.accessor.split(".")[0]]?.[column.accessor.split(".")[1]]
-      : item[column.accessor]}
+    {renderCell(column, item)}
   </td>
 ))}
 
