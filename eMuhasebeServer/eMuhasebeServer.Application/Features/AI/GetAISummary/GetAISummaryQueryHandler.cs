@@ -1,7 +1,5 @@
 ﻿using eMuhasebeServer.Application.Features.Invoices.GetAllInvoices;
-using eMuhasebeServer.Application.Features.Products.GetAllProducts;
 using eMuhasebeServer.Application.Options;
-using eMuhasebeServer.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
@@ -18,68 +16,89 @@ internal sealed class GetAISummaryQueryHandler(
 {
     public async Task<Result<string>> Handle(GetAISummaryQuery request, CancellationToken cancellationToken)
     {
-        // 1. Get Invoices
+
+        if (string.IsNullOrWhiteSpace(request.UserPrompt))
+            return Result<string>.Failure("Kullanıcıdan bir soru alınamadı.");
+
         var invoiceResult = await mediator.Send(new GetAllInvoicesQuery(), cancellationToken);
-        if (!invoiceResult.IsSuccessful) return Result<string>.Failure("Fatura verileri alınamadı");
+        if (!invoiceResult.IsSuccessful || invoiceResult.Data == null || invoiceResult.Data.Count == 0) 
+            return Result<string>.Failure("Fatura verileri alınamadı.");
 
-        // 2. Get Products
-        var productResult = await mediator.Send(new GetAllProductsQuery(), cancellationToken);
-        if (!productResult.IsSuccessful) return Result<string>.Failure("Ürün verileri alınamadı");
+        var invoices = invoiceResult.Data
+           .OrderByDescending(f => f.Date) 
+           .Take(15) 
+           .ToList();
 
-        var invoices = invoiceResult.Data?.Take(5).ToList() ?? new List<Invoice>();
-        var products = productResult.Data?.Take(5).ToList() ?? new List<Product>();
-
-        // 3. ChatGPT input verisi oluştur
-        var builder = new StringBuilder();
-        builder.AppendLine("Aşağıda şirketin bazı fatura ve ürün verileri yer alıyor:");
-        builder.AppendLine("\nFaturalar:");
+        var sb = new StringBuilder();
 
         foreach (var invoice in invoices)
         {
-            builder.AppendLine($"Tarih: {invoice.Date:yyyy-MM-dd}, Tutar: {invoice.Amount}, Tip: {(invoice.Type == 1 ? "Satış" : "Alış")}");
+            sb.AppendLine($"Fatura No: {invoice.InvoiceNumber}");
+            sb.AppendLine($"Tarih: {invoice.Date.ToShortDateString()}");
+            sb.AppendLine($"Fatura Türü: {invoice.Type?.Name}");
+            sb.AppendLine($"Tutar: {invoice.Amount}₺");
+
+            if (invoice.Customer is not null)
+            {
+                sb.AppendLine($"Cari Adı: {invoice.Customer.Name}");
+                sb.AppendLine($"Cari Tipi: {invoice.Customer.Type?.Name}");
+                sb.AppendLine($"Şehir/İlçe: {invoice.Customer.City}/{invoice.Customer.Town}");
+                sb.AppendLine($"Vergi Dairesi/No: {invoice.Customer.TaxDepartment} / {invoice.Customer.TaxNumber}");
+            }
+
+            if (invoice.Details is not null && invoice.Details.Any())
+            {
+                sb.AppendLine("Ürün Detayları:");
+                foreach (var d in invoice.Details)
+                {
+                    sb.AppendLine($" - Ürün: {d.Product?.Name}, Adet: {d.Quantity}, Birim Fiyat: {d.Price}₺, Toplam: {d.Quantity * d.Price}₺");
+                }
+            }
+
         }
 
-        builder.AppendLine("\nÜrünler:");
+        string prompt = $"""
+        Aşağıdaki veriler bir şirkete ait satış ve alış faturalarını temsil etmektedir. 
+        {sb}
+        Kullanıcının sorusu:
+        "{request.UserPrompt}"
+        """;
 
-        foreach (var product in products)
-        {
-            builder.AppendLine($"Ad: {product.Name}, Fiyat: {product.Deposit}");
-        }
+        var openAiKey = openAIOptions.Value.ApiKey;
+        if (string.IsNullOrWhiteSpace(openAiKey))
+            return Result<string>.Failure("OpenAI API anahtarı yapılandırılmamış.");
 
-        builder.AppendLine("Kullanıcının sorusu:");
-        builder.AppendLine(request.UserPrompt); 
-
-        // 4. OpenAI API çağrısı
         var httpClient = httpClientFactory.CreateClient();
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", openAIOptions.Value.ApiKey);
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", openAiKey);
 
         var requestBody = new
         {
-            model = "gpt-3.5-turbo",
+            model = openAIOptions.Value.Model,
             messages = new[]
             {
-                new { role = "user", content = builder.ToString() }
+                new { role = "system", content = "Sen bir muhasebe uzmanısın. Muhasebe sisteminin ismi AuMind. Cevaplarını detaylı ve resmi ver." },
+                new { role = "user", content = prompt }
             }
         };
 
         var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-        var response = await httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content, cancellationToken);
 
+        var response = await httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content, cancellationToken);
         if (!response.IsSuccessStatusCode)
         {
-            var rawResponse = await response.Content.ReadAsStringAsync(cancellationToken);
-            return Result<string>.Failure($"ChatGPT API yanıtı: {rawResponse}");
+            var errorResponse = await response.Content.ReadAsStringAsync(cancellationToken);
+            return Result<string>.Failure($"ChatGPT API hatası: {response.StatusCode} - {errorResponse}");
         }
 
         var responseString = await response.Content.ReadAsStringAsync(cancellationToken);
         using var doc = JsonDocument.Parse(responseString);
-        var summary = doc.RootElement
-                         .GetProperty("choices")[0]
-                         .GetProperty("message")
-                         .GetProperty("content")
-                         .GetString();
+        var completion = doc.RootElement
+                            .GetProperty("choices")[0]
+                            .GetProperty("message")
+                            .GetProperty("content")
+                            .GetString();
 
-        return Result<string>.Succeed(summary!);
+        return Result<string>.Succeed(completion?.Trim() ?? "Yanıt alınamadı.");
     }
 }
 

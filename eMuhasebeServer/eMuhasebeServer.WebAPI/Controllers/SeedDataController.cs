@@ -13,12 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eMuhasebeServer.WebAPI.Controllers;
 
-public sealed class SeedDataController : ApiController
+public sealed class SeedDataController(IMediator mediator) : ApiController(mediator)
 {
-    public SeedDataController(IMediator mediator) : base(mediator)
-    {
-    }
-
     [HttpGet]
     public async Task<IActionResult> SeedProductsAndInvoices()
     {
