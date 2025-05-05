@@ -1,14 +1,32 @@
 import { Info, Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BankAddModal from "../components/UI/Modals/BankModal";
 import { useNavigate } from "react-router-dom";
+import { useGetAllBanksMutation } from "../store/api";
+import { useToast } from "../hooks/useToast";
 
 function Banks() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [banks, setBanks] = useState([]);
   const navigate = useNavigate();
+  const [getAllBanks] = useGetAllBanksMutation();
+
+  const { showToast } = useToast();
+  console.log(banks);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getAllBanks();
+        setBanks(response.data.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
 
   // Örnek banka verileri
-  const banks = [
+  const bankList = [
     {
       id: 1,
       name: "GARANTİ BANKASI",
@@ -30,7 +48,15 @@ function Banks() {
   ];
 
   const handleAddBank = (bankData) => {
-    console.log("Yeni banka eklendi:", bankData);
+    createBank(bankData)
+      .unwrap()
+      .then(() => {
+        showToast("Banka başarıyla eklendi!", "success");
+        setIsAddModalOpen(false);
+      })
+      .catch((error) => {
+        showToast(error.data.message, "error");
+      });
   };
 
   return (
@@ -56,17 +82,17 @@ function Banks() {
 
             <div className="text-center mb-4">
               <p className="text-gray-300">Döviz Tipi</p>
-              <p className="font-medium">{bank.currencyType}</p>
+              <p className="font-medium">{bank.currencyType.name}</p>
             </div>
 
             <div className="flex justify-between mb-4">
               <div className="text-center">
                 <p className="text-gray-300">Giriş</p>
-                <p className="font-medium">{bank.input}</p>
+                <p className="font-medium">{bank.depositAmount}</p>
               </div>
               <div className="text-center">
                 <p className="text-gray-300">Çıkış</p>
-                <p className="font-medium">{bank.output}</p>
+                <p className="font-medium">{bank.withdrawalAmount}</p>
               </div>
               <div className="text-center">
                 <p className="text-gray-300">Bakiye</p>
@@ -74,11 +100,12 @@ function Banks() {
               </div>
             </div>
 
-            <button 
-            onClick={() => {
-              navigate(`/bank-transactions/${bank.name}`);
-            }}
-            className="w-full bg-white text-gray-800 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors">
+            <button
+              onClick={() => {
+                navigate(`/bank-transactions/${bank.id}`);
+              }}
+              className="w-full bg-white text-gray-800 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors"
+            >
               Detaylar
             </button>
           </div>

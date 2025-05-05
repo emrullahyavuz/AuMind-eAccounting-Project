@@ -13,6 +13,94 @@ export const api = createApi({
     },
   }),
   endpoints: (builder) => ({
+    // BankDetails endpoints
+    getAllBankDetails: builder.mutation({
+      query: (bankDetails) => ({
+        url: "/BankDetails/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({...bankDetails}),
+      }),
+    }),
+
+    createBankDetail: builder.mutation({
+      query: (bankDetailData) => ({
+        url: "/BankDetails/Create",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bankDetailData),
+      }),
+    }),
+
+    updateBankDetail: builder.mutation({
+      query: (bankDetailData) => ({
+        url: "/BankDetails/Update",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bankDetailData),
+      }),
+    }),
+
+    deleteBankDetail: builder.mutation({
+      query: (bankDetailId) => ({
+        url: "/BankDetails/DeleteById",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: bankDetailId }),
+      }),
+    }),
+    // Banks endpoints
+    getAllBanks: builder.mutation({
+      query: () => ({
+        url: "/Banks/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }),
+    }),
+
+    createBank: builder.mutation({
+      query: (bankData) => ({
+        url: "/Banks/Create",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bankData),
+      }),
+    }),
+
+    updateBank: builder.mutation({
+      query: (bankData) => ({
+        url: "/Banks/Update",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bankData),
+      }),
+    }),
+
+    deleteBank: builder.mutation({
+      query: (bankId) => ({
+        url: "/Banks/DeleteById",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: bankId }),
+      }),
+    }),
     // Auth endpoints
     confirmEmail: builder.mutation({
       query: (data) => ({
@@ -215,7 +303,6 @@ export const api = createApi({
         headers: {
           "Content-Type": "application/json",
         },
-        
       }),
       providesTags: ["Reports"],
     }),
@@ -233,7 +320,7 @@ export const api = createApi({
       query: (productData) => ({
         url: "/Products/Update",
         method: "POST",
-        body: {id:productData.id, ...productData},
+        body: { id: productData.id, ...productData },
       }),
       invalidatesTags: ["Products"],
     }),
@@ -301,7 +388,6 @@ export const api = createApi({
         },
         body: JSON.stringify({}),
       }),
-     
     }),
     createCashRegister: builder.mutation({
       query: (cashRegisterData) => ({
@@ -322,7 +408,6 @@ export const api = createApi({
         },
         body: cashRegisterData,
       }),
-      
     }),
     deleteCashRegister: builder.mutation({
       query: (cashRegisterId) => ({
@@ -333,7 +418,6 @@ export const api = createApi({
         },
         body: { id: cashRegisterId },
       }),
-      
     }),
   }),
 });
@@ -369,4 +453,13 @@ export const {
   useUpdateProductMutation,
   useDeleteProductMutation,
   useGetProductProfitabilityReportsQuery,
+  // BankDetails endpoints
+  useGetAllBankDetailsMutation,
+  useCreateBankDetailMutation,
+  useUpdateBankDetailMutation,
+  useDeleteBankDetailMutation,
+  useGetAllBanksMutation,
+  useCreateBankMutation,
+  useUpdateBankMutation,
+  useDeleteBankMutation,
 } = api;
