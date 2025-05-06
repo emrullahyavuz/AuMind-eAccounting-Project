@@ -18,21 +18,29 @@ internal sealed class DeleteInvoiceByIdCommandHandler(
 {
     public async Task<Result<string>> Handle(DeleteInvoiceByIdCommand request, CancellationToken cancellationToken)
     {
-        Invoice? invoice = await invoiceRepository.Where(p=> p.Id == request.Id).Include(p=> p.Details).FirstOrDefaultAsync(cancellationToken);
+        Invoice? invoice = await invoiceRepository
+       .Where(p => p.Id == request.Id && !p.IsDeleted)
+       .Include(p => p.Details)
+       .FirstOrDefaultAsync(cancellationToken);
 
         if (invoice is null)
         {
             return Result<string>.Failure("Fatura bulunamadı");
         }
 
-        CustomerDetail? customerDetail = await customerDetailRepository.Where(p=>p.InvoiceId == request.Id).FirstOrDefaultAsync(cancellationToken);
+        CustomerDetail? customerDetail = await customerDetailRepository
+            .Where(p => p.InvoiceId == request.Id && !p.IsDeleted)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (customerDetail is not null)
         {
-            customerDetailRepository.Delete(customerDetail);
+            customerDetail.IsDeleted = true;
+            customerDetailRepository.Update(customerDetail);
         }
 
-        Customer? customer = await customerRepository.Where(p => p.Id == invoice.CustomerId).FirstOrDefaultAsync(cancellationToken);
+        Customer? customer = await customerRepository
+            .Where(p => p.Id == invoice.CustomerId && !p.IsDeleted)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (customer is not null)
         {
@@ -42,12 +50,15 @@ internal sealed class DeleteInvoiceByIdCommandHandler(
             customerRepository.Update(customer);
         }
 
-        List<ProductDetail> productDetails = await productDetailRepository.Where(p=>p.InvoiceId == invoice.Id).ToListAsync(cancellationToken);
-
-        productDetailRepository.DeleteRange(productDetails);
+        List<ProductDetail> productDetails = await productDetailRepository
+            .Where(p => p.InvoiceId == invoice.Id && !p.IsDeleted)
+            .ToListAsync(cancellationToken);
 
         foreach (var detail in productDetails)
         {
+            detail.IsDeleted = true;
+            productDetailRepository.Update(detail);
+
             Product? product = await productRepository.GetByExpressionWithTrackingAsync(p => p.Id == detail.ProductId, cancellationToken);
 
             if (product is not null)
@@ -59,8 +70,17 @@ internal sealed class DeleteInvoiceByIdCommandHandler(
             }
         }
 
-        invoiceRepository.Delete(invoice);
-        productDetailRepository.DeleteRange(productDetails);
+        // InvoiceDetail'ler soft delete
+        if (invoice.Details is not null && invoice.Details.Any())
+        {
+            foreach (var detail in invoice.Details)
+            {
+                detail.IsDeleted = true;
+            }
+        }
+
+        invoice.IsDeleted = true;
+        invoiceRepository.Update(invoice);
 
         await unitOfWorkCompany.SaveChangesAsync(cancellationToken);
 

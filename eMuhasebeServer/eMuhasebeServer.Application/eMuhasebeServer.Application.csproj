@@ -29,6 +29,7 @@
     <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.1" />
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="TS.EntityFrameworkCore.GenericRepository" Version="8.0.4" />
     <PackageReference Include="TS.Result" Version="8.0.6" />
   </ItemGroup>
 
