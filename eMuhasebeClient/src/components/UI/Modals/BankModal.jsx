@@ -1,130 +1,111 @@
-import { useState } from "react"
-import { X, ChevronDown } from "lucide-react"
+import { useState } from "react";
+import { X, ChevronDown } from "lucide-react";
+import { useCreateBankMutation } from "../../../store/api";
 
-function BankModal({ isOpen, onClose, onAddBank }) {
+function BankModal({ isOpen, onClose, createBank }) {
   const [formData, setFormData] = useState({
-    bankName: "",
+    name: "",
     iban: "",
-    currencyType: "",
-    input: "",
-    output: "",
-    balance: "",
-  })
+    currencyTypeValue: "",
+  });
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
-    })
-  }
+    });
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    onAddBank(formData)
-    onClose()
-  }
+    e.preventDefault();
+    debugger;
+    const updatedFormData = {
+      name: formData.name,
+      iban: formData.iban,
+      currencyType: formData.currencyTypeValue === "TRY" ? 0 : formData.currencyTypeValue === "USD" ? 1 : formData.currencyTypeValue === "EUR" ? 2 : formData.currencyTypeValue,
+    };
+    createBank(updatedFormData);
+    onClose();
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-gray-200 rounded-lg p-6 w-full max-w-md relative">
-        <button onClick={onClose} className="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+        >
           <X size={20} />
         </button>
 
-        <h2 className="text-center text-xl font-medium mb-4 underline">Banka Ekleme</h2>
+        <h2 className="text-center text-2xl font-bold mb-6 text-gray-700">
+          Banka Ekleme
+        </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-1">Banka Adı</label>
+            <label className="block text-gray-700 mb-2 text-lg">
+              Banka Adı
+            </label>
             <input
               type="text"
-              name="bankName"
-              value={formData.bankName}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               placeholder="Banka ismi giriniz..."
-              className="w-full border border-gray-300 rounded-md p-2 bg-white"
+              className="w-full border border-gray-400 rounded-md p-3 bg-white text-gray-400"
               required
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-1">IBAN Numarası</label>
+            <label className="block text-gray-700 mb-2 text-lg">
+              IBAN Numarası
+            </label>
             <input
               type="text"
               name="iban"
               value={formData.iban}
               onChange={handleChange}
               placeholder="IBAN numarası giriniz..."
-              className="w-full border border-gray-300 rounded-md p-2 bg-white"
+              className="w-full border border-gray-400 rounded-md p-3 bg-white text-gray-400"
               required
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-1">Döviz Tipi</label>
+          <div className="mb-8">
+            <label className="block text-gray-700 mb-2 text-lg">
+              Döviz Tipi
+            </label>
             <div className="relative">
               <select
-                name="currencyType"
-                value={formData.currencyType}
+                name="currencyTypeValue"
+                value={formData.currencyTypeValue}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md p-2 bg-white appearance-none pr-10"
-                placeholder="Döviz tipi seçiniz..."
+                className="w-full border border-gray-400 rounded-md p-3 bg-white appearance-none text-gray-400"
                 required
               >
-                <option value="">Döviz tipi seçiniz...</option>
+                <option value="" disabled>
+                  Döviz tipi seçiniz...
+                </option>
                 <option value="TRY">TRY - Türk Lirası</option>
                 <option value="USD">USD - Amerikan Doları</option>
                 <option value="EUR">EUR - Euro</option>
-                <option value="GBP">GBP - İngiliz Sterlini</option>
               </select>
-              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-gray-700 mb-1">Giriş</label>
-              <input
-                type="number"
-                name="input"
-                value={formData.input}
-                onChange={handleChange}
-                placeholder="Tutar..."
-                className="w-full border border-gray-300 rounded-md p-2 bg-white"
+              <ChevronDown
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                size={20}
               />
             </div>
-
-            <div>
-              <label className="block text-gray-700 mb-1">Çıkış</label>
-              <input
-                type="number"
-                name="output"
-                value={formData.output}
-                onChange={handleChange}
-                placeholder="Tutar..."
-                className="w-full border border-gray-300 rounded-md p-2 bg-white"
-              />
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-gray-700 mb-1">Bakiye</label>
-            <input
-              type="number"
-              name="balance"
-              value={formData.balance}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md p-2 bg-white"
-            />
           </div>
 
           <div className="flex justify-center">
             <button
               type="submit"
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md"
+              className="bg-white hover:bg-gray-100 text-gray-800 font-medium py-2 px-12 border border-gray-400 rounded-md"
             >
               Banka Ekle
             </button>
@@ -132,7 +113,7 @@ function BankModal({ isOpen, onClose, onAddBank }) {
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default BankModal
+export default BankModal;

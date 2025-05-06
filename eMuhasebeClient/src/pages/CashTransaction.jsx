@@ -5,6 +5,8 @@ import DataTable from "../components/Admin/cash-data-table";
 import CashTransactionModal from "../components/UI/Modals/CashTransactionModal";
 import DeleteConfirmationModal from "../components/UI/Modals/DeleteConfirmationModal";
 import { Trash2 } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { useGetAllCashRegisterDetailsMutation } from "../store/api";
 
 function CashTransaction() {
   const [transactions, setTransactions] = useState([]);
@@ -19,8 +21,18 @@ function CashTransaction() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
-
+  const { id:cashId } = useParams();
   const itemsPerPage = 50;
+
+  const [getAllCashRegisterDetails] = useGetAllCashRegisterDetailsMutation();
+
+  useEffect(() => {
+   const fetchCashRegisterDetails = async () => {
+     const response = await getAllCashRegisterDetails();
+     console.log(response);
+   };
+   fetchCashRegisterDetails();
+  }, []);
 
   // Kasa hareketleri sütun tanımları
   const columns = [
@@ -43,33 +55,12 @@ function CashTransaction() {
     },
   ];
 
-  // Örnek veri yükleme - gerçek uygulamada API'den gelecek
-  useEffect(() => {
-    // API çağrısı simülasyonu
-    const loadData = async () => {
-      setIsLoading(true);
 
-      // Gerçek bir API çağrısını simüle etmek için gecikme ekliyoruz
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+  // useEffect(() => {
+    
 
-      // Örnek veri
-      const mockTransactions = Array.from({ length: 1 }, (_, index) => ({
-        id: index + 1,
-        date: `${Math.floor(Math.random() * 28) + 1}.${
-          Math.floor(Math.random() * 12) + 1
-        }.2024`,
-        description: "xxx",
-        input: index % 2 === 0 ? `${(Math.random() * 1000).toFixed(2)} ₺` : "",
-        output: index % 2 === 1 ? `${(Math.random() * 1000).toFixed(2)} ₺` : "",
-      }));
-
-      setTransactions(mockTransactions);
-      setFilteredTransactions(mockTransactions);
-      setIsLoading(false);
-    };
-
-    loadData();
-  }, []);
+  
+  // }, []);
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {

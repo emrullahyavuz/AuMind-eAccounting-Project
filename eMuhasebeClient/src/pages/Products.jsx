@@ -43,7 +43,7 @@ const Products = () => {
   // Detay butonu render fonksiyonu
   const renderDetailButton = (product) => (
     <button
-      onClick={() => navigate(`/product/${product.id}`)}
+      onClick={() => navigate(`/product-detail/${product.id}`)}
       className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-1 px-3 rounded-md flex items-center"
     >
       <Info size={16} className="mr-1" />

@@ -29,6 +29,7 @@ function BankTransactions() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [bankName, setBankName] = useState(useParams().bankName);
 
+  const [detailData, setDetailData] = useState([]);
   // RTK Query hooks
   const [getAllBankDetails] = useGetAllBankDetailsMutation();
   const [createBankDetail] = useCreateBankDetailMutation();
@@ -64,11 +65,13 @@ function BankTransactions() {
       try {
         const response = await getAllBankDetails({
           bankId: bankName,
+          startDate: "2025-05-05",
+          endDate: "2025-05-30"
         }).unwrap();
         console.log(response);
         setBankData(response.data);
-        setTransactions([{ ...response.data }]);
-        setFilteredTransactions([{ ...response.data }]);
+        setTransactions(response.data.details);
+        setFilteredTransactions(response.data.details);
         setBankName(response.data.name);
 
         setIsLoading(false);

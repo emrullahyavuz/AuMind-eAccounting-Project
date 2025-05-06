@@ -21,7 +21,7 @@ export const api = createApi({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({...bankDetails}),
+        body: JSON.stringify({ ...bankDetails }),
       }),
     }),
 
@@ -282,6 +282,28 @@ export const api = createApi({
       invalidatesTags: ["Users"],
     }),
 
+    // Reports endpoints
+    getProductProfitabilityReports: builder.query({
+      query: () => ({
+        url: "/Reports/ProductProfitabilityReports",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      providesTags: ["Reports"],
+    }),
+    // ProductDetails endpoints
+    getAllProductDetails: builder.mutation({
+      query: (productId) => ({
+        url: "/ProductDetails/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId }),
+      }),
+    }),
     // Products endpoints
     getAllProducts: builder.mutation({
       query: () => ({
@@ -293,18 +315,6 @@ export const api = createApi({
         body: JSON.stringify({}),
       }),
       providesTags: ["Products"],
-    }),
-
-    // Reports endpoints
-    getProductProfitabilityReports: builder.query({
-      query: () => ({
-        url: "/Reports/ProductProfitabilityReports",
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }),
-      providesTags: ["Reports"],
     }),
 
     createProduct: builder.mutation({
@@ -332,6 +342,18 @@ export const api = createApi({
         body: { id: productId },
       }),
       invalidatesTags: ["Products"],
+    }),
+
+    // CustomerDetails endpoints
+    getAllCustomerDetails: builder.mutation({
+      query: (customerId) => ({
+        url: "/CustomerDetails/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ customerId }),
+      }),
     }),
 
     // Customers endpoints
@@ -419,6 +441,58 @@ export const api = createApi({
         body: { id: cashRegisterId },
       }),
     }),
+
+     // Get all cash register details
+     getAllCashRegisterDetails: builder.mutation({
+      query: () => ({
+        url: "/CashRegistersDetails/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }),
+      providesTags: ["CashRegisterDetails"],
+    }),
+
+    // Create cash register detail
+    createCashRegisterDetail: builder.mutation({
+      query: (cashRegisterDetailData) => ({
+        url: "/CashRegistersDetails/Create",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cashRegisterDetailData),
+      }),
+      invalidatesTags: ["CashRegisterDetails"],
+    }),
+
+    // Update cash register detail
+    updateCashRegisterDetail: builder.mutation({
+      query: (cashRegisterDetailData) => ({
+        url: "/CashRegistersDetails/Update",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cashRegisterDetailData),
+      }),
+      invalidatesTags: ["CashRegisterDetails"],
+    }),
+
+    // Delete cash register detail by ID
+    deleteCashRegisterDetailById: builder.mutation({
+      query: (id) => ({
+        url: "/CashRegistersDetails/DeleteById",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      }),
+      invalidatesTags: ["CashRegisterDetails"],
+    }),
   }),
 });
 // Export hooks for usage in components
@@ -453,7 +527,7 @@ export const {
   useUpdateProductMutation,
   useDeleteProductMutation,
   useGetProductProfitabilityReportsQuery,
-  // BankDetails endpoints
+  useGetAllProductDetailsMutation,
   useGetAllBankDetailsMutation,
   useCreateBankDetailMutation,
   useUpdateBankDetailMutation,
@@ -462,4 +536,9 @@ export const {
   useCreateBankMutation,
   useUpdateBankMutation,
   useDeleteBankMutation,
+  useGetAllCustomerDetailsMutation,
+  useGetAllCashRegisterDetailsMutation,
+  useCreateCashRegisterDetailMutation,
+  useUpdateCashRegisterDetailMutation,
+  useDeleteCashRegisterDetailByIdMutation,
 } = api;

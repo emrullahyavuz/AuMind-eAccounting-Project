@@ -4,9 +4,15 @@ import {
   useGetAllBanksMutation,
   useGetAllCashRegistersMutation,
   useGetAllCustomersQuery,
+  useGetAllBankDetailsMutation,
 } from "../../../store/api";
 
-function BankTransactionsModal({ isOpen, onClose, onAddTransaction, bankData = {} }) {
+function BankTransactionsModal({
+  isOpen,
+  onClose,
+  onAddTransaction,
+  bankData = {},
+}) {
   const [formData, setFormData] = useState({
     recordType: "",
     bankId: "",
@@ -33,8 +39,6 @@ function BankTransactionsModal({ isOpen, onClose, onAddTransaction, bankData = {
     refetchOnMountOrArgChange: true,
   });
 
-  console.log('Bank Data:', bankData)
-  
   // Reset form data when modal opens
   useEffect(() => {
     if (isOpen) {
@@ -60,7 +64,7 @@ function BankTransactionsModal({ isOpen, onClose, onAddTransaction, bankData = {
         // Fetch banks
         const banksResponse = await getAllBanks().unwrap();
         const banks = banksResponse.data?.map((bank) => bank.name) || [];
-        
+
         // Fetch cash registers
         const cashRegistersResponse = await getAllCashRegisters().unwrap();
         const cashRegisters =
@@ -131,7 +135,9 @@ function BankTransactionsModal({ isOpen, onClose, onAddTransaction, bankData = {
           (bank) => bank.name === transactionData.oppositeBankId
         );
         if (selectedBank) {
-          newBankTransactionData.oppositeBankId = transactionData.oppositeBankId ? selectedBank.id : null;
+          newBankTransactionData.oppositeBankId = transactionData.oppositeBankId
+            ? selectedBank.id
+            : null;
         }
       } else if (
         recordType === "kasa" &&
@@ -142,8 +148,10 @@ function BankTransactionsModal({ isOpen, onClose, onAddTransaction, bankData = {
           (cr) => cr.name === transactionData.oppositeCashRegisterId
         );
         if (selectedCashRegister) {
-          newBankTransactionData.oppositeCashRegisterId = 
-            transactionData.oppositeCashRegisterId ? selectedCashRegister.id : null;
+          newBankTransactionData.oppositeCashRegisterId =
+            transactionData.oppositeCashRegisterId
+              ? selectedCashRegister.id
+              : null;
         }
       } else if (recordType === "cari" && transactionData.oppositeCustomerId) {
         const selectedCustomer = customersData?.data?.find(
@@ -152,15 +160,15 @@ function BankTransactionsModal({ isOpen, onClose, onAddTransaction, bankData = {
             transactionData.oppositeCustomerId
         );
         if (selectedCustomer) {
-          newBankTransactionData.oppositeCustomerId = 
+          newBankTransactionData.oppositeCustomerId =
             transactionData.oppositeCustomerId ? selectedCustomer.id : "null";
         }
       }
-      
-      newBankTransactionData.type = formData.type === "giriş" ?0 : 1;
+
+      newBankTransactionData.type = formData.type === "giriş" ? 0 : 1;
       // Call the parent component's function with the complete data
-      
-      onAddTransaction({bankId:bankData.id, ...newBankTransactionData});
+
+      onAddTransaction({ bankId: bankData.id, ...newBankTransactionData });
       onClose();
     } catch (error) {
       console.error("Error processing transaction:", error);
