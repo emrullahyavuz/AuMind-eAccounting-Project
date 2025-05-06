@@ -26,7 +26,6 @@ function DataTable({
   totalItems = 0,
   onPageChange,
   customButtons = null, // Özel butonlar için prop
-  detailButton = null, // Detay butonu için prop
   headerColor = "gray-700",
   headerTextColor = "white",
   isCari = false, // Cari hesaplar için özel stil

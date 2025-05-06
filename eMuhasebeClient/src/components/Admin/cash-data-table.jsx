@@ -25,15 +25,16 @@ function DataTable({
   currentPage = 1,
   totalItems = 0,
   onPageChange,
-  customButtons = null, // Özel butonlar için prop
+  customButtons, // Özel butonlar için prop
   customFilters = null, // Özel filtreler için prop
   headerColor = "gray-700", // Tablo başlığı arka plan rengi
   headerTextColor = "white", // Tablo başlığı metin rengi
   isLoading = false, // Yükleme durumu
   hideTitle = false, // Başlığı gizleme seçeneği
+  selectedItems,
+  onSelectedItemsChange,
 }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedItems, setSelectedItems] = useState([]);
 
   // Arama işlemi
   const handleSearch = (e) => {
@@ -47,9 +48,9 @@ function DataTable({
   // Checkbox işlemleri
   const handleSelectItem = (id) => {
     if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter((item) => item !== id));
+      onSelectedItemsChange(selectedItems.filter((item) => item !== id));
     } else {
-      setSelectedItems([...selectedItems, id]);
+      onSelectedItemsChange([...selectedItems, id]);
     }
   };
 
@@ -131,7 +132,7 @@ function DataTable({
                     </th>
                   ))}
                   <th className="w-12 p-3 text-center">
-                    <Trash2 size={18} className="text-red-500 mx-auto" />
+                    <Trash2 size={18}  className="text-red-500 mx-auto" />
                   </th>
                 </tr>
               </thead>
