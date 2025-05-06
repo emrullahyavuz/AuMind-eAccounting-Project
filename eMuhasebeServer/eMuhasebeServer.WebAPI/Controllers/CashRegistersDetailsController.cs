@@ -8,12 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eMuhasebeServer.WebAPI.Controllers;
 
-public sealed class CashRegistersDetailsController : ApiController
+public sealed class CashRegistersDetailsController(IMediator mediator) : ApiController(mediator)
 {
-    public CashRegistersDetailsController(IMediator mediator) : base(mediator)
-    {
-    }
-    
     [HttpPost]
     public async Task<IActionResult> GetAll(GetAllCashRegistersQuery request, CancellationToken cancellationToken)
     {

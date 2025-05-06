@@ -6,12 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace eMuhasebeServer.WebAPI.Controllers;
 
-public sealed class ReportsController : ApiController
+public sealed class ReportsController(IMediator mediator) : ApiController(mediator)
 {
-    public ReportsController(IMediator mediator) : base(mediator)
-    {
-    }
-
     [HttpGet]
     public async Task<IActionResult> ProductProfitabilityReports(CancellationToken cancellationToken)
     {
