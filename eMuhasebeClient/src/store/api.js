@@ -13,6 +13,94 @@ export const api = createApi({
     },
   }),
   endpoints: (builder) => ({
+    // BankDetails endpoints
+    getAllBankDetails: builder.mutation({
+      query: (bankDetails) => ({
+        url: "/BankDetails/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...bankDetails }),
+      }),
+    }),
+
+    createBankDetail: builder.mutation({
+      query: (bankDetailData) => ({
+        url: "/BankDetails/Create",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bankDetailData),
+      }),
+    }),
+
+    updateBankDetail: builder.mutation({
+      query: (bankDetailData) => ({
+        url: "/BankDetails/Update",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bankDetailData),
+      }),
+    }),
+
+    deleteBankDetail: builder.mutation({
+      query: (bankDetailId) => ({
+        url: "/BankDetails/DeleteById",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: bankDetailId }),
+      }),
+    }),
+    // Banks endpoints
+    getAllBanks: builder.mutation({
+      query: () => ({
+        url: "/Banks/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }),
+    }),
+
+    createBank: builder.mutation({
+      query: (bankData) => ({
+        url: "/Banks/Create",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bankData),
+      }),
+    }),
+
+    updateBank: builder.mutation({
+      query: (bankData) => ({
+        url: "/Banks/Update",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bankData),
+      }),
+    }),
+
+    deleteBank: builder.mutation({
+      query: (bankId) => ({
+        url: "/Banks/DeleteById",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: bankId }),
+      }),
+    }),
     // Auth endpoints
     confirmEmail: builder.mutation({
       query: (data) => ({
@@ -194,6 +282,28 @@ export const api = createApi({
       invalidatesTags: ["Users"],
     }),
 
+    // Reports endpoints
+    getProductProfitabilityReports: builder.query({
+      query: () => ({
+        url: "/Reports/ProductProfitabilityReports",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      providesTags: ["Reports"],
+    }),
+    // ProductDetails endpoints
+    getAllProductDetails: builder.mutation({
+      query: (productId) => ({
+        url: "/ProductDetails/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId }),
+      }),
+    }),
     // Products endpoints
     getAllProducts: builder.mutation({
       query: () => ({
@@ -205,19 +315,6 @@ export const api = createApi({
         body: JSON.stringify({}),
       }),
       providesTags: ["Products"],
-    }),
-
-    // Reports endpoints
-    getProductProfitabilityReports: builder.query({
-      query: () => ({
-        url: "/Reports/ProductProfitabilityReports",
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        
-      }),
-      providesTags: ["Reports"],
     }),
 
     createProduct: builder.mutation({
@@ -233,7 +330,7 @@ export const api = createApi({
       query: (productData) => ({
         url: "/Products/Update",
         method: "POST",
-        body: {id:productData.id, ...productData},
+        body: { id: productData.id, ...productData },
       }),
       invalidatesTags: ["Products"],
     }),
@@ -245,6 +342,18 @@ export const api = createApi({
         body: { id: productId },
       }),
       invalidatesTags: ["Products"],
+    }),
+
+    // CustomerDetails endpoints
+    getAllCustomerDetails: builder.mutation({
+      query: (customerId) => ({
+        url: "/CustomerDetails/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ customerId }),
+      }),
     }),
 
     // Customers endpoints
@@ -301,7 +410,6 @@ export const api = createApi({
         },
         body: JSON.stringify({}),
       }),
-     
     }),
     createCashRegister: builder.mutation({
       query: (cashRegisterData) => ({
@@ -322,7 +430,6 @@ export const api = createApi({
         },
         body: cashRegisterData,
       }),
-      
     }),
     deleteCashRegister: builder.mutation({
       query: (cashRegisterId) => ({
@@ -333,7 +440,58 @@ export const api = createApi({
         },
         body: { id: cashRegisterId },
       }),
-      
+    }),
+
+     // Get all cash register details
+     getAllCashRegisterDetails: builder.mutation({
+      query: () => ({
+        url: "/CashRegistersDetails/GetAll",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      }),
+      providesTags: ["CashRegisterDetails"],
+    }),
+
+    // Create cash register detail
+    createCashRegisterDetail: builder.mutation({
+      query: (cashRegisterDetailData) => ({
+        url: "/CashRegistersDetails/Create",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cashRegisterDetailData),
+      }),
+      invalidatesTags: ["CashRegisterDetails"],
+    }),
+
+    // Update cash register detail
+    updateCashRegisterDetail: builder.mutation({
+      query: (cashRegisterDetailData) => ({
+        url: "/CashRegistersDetails/Update",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cashRegisterDetailData),
+      }),
+      invalidatesTags: ["CashRegisterDetails"],
+    }),
+
+    // Delete cash register detail by ID
+    deleteCashRegisterDetailById: builder.mutation({
+      query: (id) => ({
+        url: "/CashRegistersDetails/DeleteById",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      }),
+      invalidatesTags: ["CashRegisterDetails"],
     }),
   }),
 });
@@ -369,4 +527,18 @@ export const {
   useUpdateProductMutation,
   useDeleteProductMutation,
   useGetProductProfitabilityReportsQuery,
+  useGetAllProductDetailsMutation,
+  useGetAllBankDetailsMutation,
+  useCreateBankDetailMutation,
+  useUpdateBankDetailMutation,
+  useDeleteBankDetailMutation,
+  useGetAllBanksMutation,
+  useCreateBankMutation,
+  useUpdateBankMutation,
+  useDeleteBankMutation,
+  useGetAllCustomerDetailsMutation,
+  useGetAllCashRegisterDetailsMutation,
+  useCreateCashRegisterDetailMutation,
+  useUpdateCashRegisterDetailMutation,
+  useDeleteCashRegisterDetailByIdMutation,
 } = api;

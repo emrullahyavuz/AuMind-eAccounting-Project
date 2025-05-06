@@ -22,6 +22,7 @@ import Reports from "./pages/Reports";
 import Banks from "./pages/Banks";
 import Products from "./pages/Products";
 import BankTransactions from "./pages/BankTransactions";
+import ProductDetailPage from "./pages/ProductDetail";
 function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -55,13 +56,14 @@ function App() {
               <Route path="/banks" element={<Banks />} />
               <Route path="/bank-transactions/:bankName" element={<BankTransactions />} />
               <Route path="/cariler" element={<Cariler />} />
-              <Route path="/cari-hareketleri" element={<CariHareketleri />} />
+              <Route path="/cari-hareketleri/:id" element={<CariHareketleri />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/product-detail/:id" element={<ProductDetailPage />} />
               <Route path="/invoices" element={<InvoicesPage />} />
               <Route path="/settings/bot" element={<BotSettingsPage />} />
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/safes" element={<CashPage />} />
-              <Route path="/kasa-hareketleri" element={<CashTransactionPage />} />
+              <Route path="/cash-transaction/:id" element={<CashTransactionPage />} />
               <Route path="/stok-karlilik" element={<StockProfitability />} />
               <Route path="/raporlar" element={<Reports />} />
               <Route path="*" element={<Navigate to="/auth/login" replace />} />

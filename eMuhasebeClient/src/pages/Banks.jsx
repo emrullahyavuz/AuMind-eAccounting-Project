@@ -1,36 +1,41 @@
 import { Info, Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BankAddModal from "../components/UI/Modals/BankModal";
 import { useNavigate } from "react-router-dom";
+import { useGetAllBanksMutation, useCreateBankMutation } from "../store/api";
+import { useToast } from "../hooks/useToast";
 
 function Banks() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [banks, setBanks] = useState([]);
   const navigate = useNavigate();
+  const [getAllBanks] = useGetAllBanksMutation();
+  const [createBank] = useCreateBankMutation();
 
-  // Örnek banka verileri
-  const banks = [
-    {
-      id: 1,
-      name: "GARANTİ BANKASI",
-      iban: "0000001234567890",
-      currencyType: "TL",
-      input: 0,
-      output: 0,
-      balance: "0,0 TL",
-    },
-    {
-      id: 2,
-      name: "ZİRAAT BANKASI",
-      iban: "0000001234567890",
-      currencyType: "TL",
-      input: 0,
-      output: 0,
-      balance: "0,0 TL",
-    },
-  ];
+  const { showToast } = useToast();
+  console.log(banks);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getAllBanks();
+        setBanks(response.data.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const handleAddBank = (bankData) => {
-    console.log("Yeni banka eklendi:", bankData);
+  const handleAddBank = async (bankData) => {
+    await createBank(bankData)
+      .unwrap()
+      .then(() => {
+        showToast("Banka başarıyla eklendi!", "success");
+        setIsAddModalOpen(false);
+      })
+      .catch((error) => {
+        showToast(error.data.message, "error");
+      });
   };
 
   return (
@@ -56,17 +61,17 @@ function Banks() {
 
             <div className="text-center mb-4">
               <p className="text-gray-300">Döviz Tipi</p>
-              <p className="font-medium">{bank.currencyType}</p>
+              <p className="font-medium">{bank.currencyType.name}</p>
             </div>
 
             <div className="flex justify-between mb-4">
               <div className="text-center">
                 <p className="text-gray-300">Giriş</p>
-                <p className="font-medium">{bank.input}</p>
+                <p className="font-medium">{bank.depositAmount}</p>
               </div>
               <div className="text-center">
                 <p className="text-gray-300">Çıkış</p>
-                <p className="font-medium">{bank.output}</p>
+                <p className="font-medium">{bank.withdrawalAmount}</p>
               </div>
               <div className="text-center">
                 <p className="text-gray-300">Bakiye</p>
@@ -74,11 +79,12 @@ function Banks() {
               </div>
             </div>
 
-            <button 
-            onClick={() => {
-              navigate(`/bank-transactions/${bank.name}`);
-            }}
-            className="w-full bg-white text-gray-800 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors">
+            <button
+              onClick={() => {
+                navigate(`/bank-transactions/${bank.id}`);
+              }}
+              className="w-full bg-white text-gray-800 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors"
+            >
               Detaylar
             </button>
           </div>
@@ -101,7 +107,7 @@ function Banks() {
       <BankAddModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onAddBank={handleAddBank}
+        createBank={handleAddBank}
       />
     </div>
   );

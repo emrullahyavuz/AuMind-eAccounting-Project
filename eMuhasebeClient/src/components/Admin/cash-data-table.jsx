@@ -1,6 +1,13 @@
-import { useState } from "react"
-import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react"
-import LoadingOverlay from "../UI/Spinner/LoadingOverlay"
+import { useState } from "react";
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import LoadingOverlay from "../UI/Spinner/LoadingOverlay";
 
 // CashDataTable bileşeni
 function DataTable({
@@ -18,49 +25,54 @@ function DataTable({
   currentPage = 1,
   totalItems = 0,
   onPageChange,
-  customButtons = null, // Özel butonlar için prop
+  customButtons, // Özel butonlar için prop
   customFilters = null, // Özel filtreler için prop
   headerColor = "gray-700", // Tablo başlığı arka plan rengi
   headerTextColor = "white", // Tablo başlığı metin rengi
   isLoading = false, // Yükleme durumu
   hideTitle = false, // Başlığı gizleme seçeneği
+  selectedItems,
+  onSelectedItemsChange,
 }) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedItems, setSelectedItems] = useState([])
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Arama işlemi
   const handleSearch = (e) => {
-    const value = e.target.value
-    setSearchTerm(value)
+    const value = e.target.value;
+    setSearchTerm(value);
     if (onSearch) {
-      onSearch(value)
+      onSearch(value);
     }
-  }
+  };
 
   // Checkbox işlemleri
   const handleSelectItem = (id) => {
     if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter((item) => item !== id))
+      onSelectedItemsChange(selectedItems.filter((item) => item !== id));
     } else {
-      setSelectedItems([...selectedItems, id])
+      onSelectedItemsChange([...selectedItems, id]);
     }
-  }
+  };
 
   // Sayfalama hesaplamaları
-  const totalPages = Math.ceil(totalItems / itemsPerPage)
-  const startItem = (currentPage - 1) * itemsPerPage + 1
-  const endItem = Math.min(currentPage * itemsPerPage, totalItems)
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   // Buton rengi belirleme
   const buttonColorClass =
     addButtonColor === "yellow"
       ? "bg-yellow-400 hover:bg-yellow-500 text-gray-800"
-      : "bg-blue-600 hover:bg-blue-700 text-white"
+      : "bg-blue-600 hover:bg-blue-700 text-white";
 
   return (
     <div className="bg-gray-100">
       {/* Başlık */}
-      {!hideTitle && <h1 className="text-3xl font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-6">{title}</h1>}
+      {!hideTitle && (
+        <h1 className="text-3xl font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-6">
+          {title}
+        </h1>
+      )}
 
       {/* Üst Araç Çubuğu */}
       <div className="flex flex-wrap justify-between items-center mb-6">
@@ -112,12 +124,15 @@ function DataTable({
                     <Edit size={18} />
                   </th>
                   {columns.map((column, index) => (
-                    <th key={index} className={`p-3 text-left ${column.className || ""}`}>
+                    <th
+                      key={index}
+                      className={`p-3 text-left ${column.className || ""}`}
+                    >
                       {column.header}
                     </th>
                   ))}
                   <th className="w-12 p-3 text-center">
-                    <Trash2 size={18} className="text-red-500 mx-auto" />
+                    <Trash2 size={18}  className="text-red-500 mx-auto" />
                   </th>
                 </tr>
               </thead>
@@ -126,7 +141,10 @@ function DataTable({
               <tbody>
                 {data.length > 0
                   ? data.map((item, rowIndex) => (
-                      <tr key={item.id || rowIndex} className="border-b border-gray-300 hover:bg-gray-200">
+                      <tr
+                        key={item.id || rowIndex}
+                        className="border-b border-gray-300 hover:bg-gray-200"
+                      >
                         <td className="p-3">
                           <button
                             onClick={() => onEdit(item)}
@@ -137,7 +155,10 @@ function DataTable({
                         </td>
 
                         {columns.map((column, colIndex) => (
-                          <td key={colIndex} className={`p-3 ${column.className || ""}`}>
+                          <td
+                            key={colIndex}
+                            className={`p-3 ${column.className || ""}`}
+                          >
                             {item[column.accessor]}
                           </td>
                         ))}
@@ -210,7 +231,7 @@ function DataTable({
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default DataTable
+export default DataTable;
