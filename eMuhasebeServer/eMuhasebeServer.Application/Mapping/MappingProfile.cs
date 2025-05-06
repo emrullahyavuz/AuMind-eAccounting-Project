@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using eMuhasebeServer.Application.Features.Auth.Register;
 using eMuhasebeServer.Application.Features.Banks.CreateBank;
 using eMuhasebeServer.Application.Features.Banks.UpdateBank;
@@ -10,6 +9,7 @@ using eMuhasebeServer.Application.Features.Companies.UpdateCompany;
 using eMuhasebeServer.Application.Features.Customers.CreateCustomer;
 using eMuhasebeServer.Application.Features.Customers.UpdateCutomer;
 using eMuhasebeServer.Application.Features.Invoices.CreateInvoice;
+using eMuhasebeServer.Application.Features.Invoices.UpdateInvoice;
 using eMuhasebeServer.Application.Features.Products.CreateProduct;
 using eMuhasebeServer.Application.Features.Products.UpdateProduct;
 using eMuhasebeServer.Application.Features.Users.CreateUser;
@@ -62,23 +62,42 @@ namespace eMuhasebeServer.Application.Mapping
             CreateMap<UpdateProductCommand, Product>();
 
             CreateMap<CreateInvoiceCommand, Invoice>()
-            .ForMember(member => member.Type, options =>
-            {
-                options.MapFrom(map => InvoiceTypeEnum.FromValue(map.TypeValue));
-            })
-            .ForMember(member => member.Details, options =>
-            {
-                options.MapFrom(map => map.Details.Select(s => new InvoiceDetail()
+           .ForMember(member => member.Type, options =>
+           {
+               options.MapFrom(map => InvoiceTypeEnum.FromValue(map.TypeValue));
+           })
+           .ForMember(member => member.Details, options =>
+           {
+               options.MapFrom(map => map.Details.Select(s => new InvoiceDetail()
+               {
+                   ProductId = s.ProductId,
+                   Quantity = s.Quantity,
+                   Price = s.Price
+               }).ToList());
+           })
+           .ForMember(member => member.Amount, options =>
+           {
+               options.MapFrom(map => map.Details.Sum(s => s.Quantity * s.Price));
+           });
+
+            CreateMap<UpdateInvoiceCommand, Invoice>()
+                .ForMember(member => member.Type, options =>
                 {
-                    ProductId = s.ProductId,
-                    Quantity = s.Quantity,
-                    Price = s.Price
-                }).ToList());
-            })
-            .ForMember(member => member.Amount, options =>
-            {
-                options.MapFrom(map => map.Details.Sum(s=>s.Quantity * s.Price));
-            });
+                    options.MapFrom(map => InvoiceTypeEnum.FromValue(map.TypeValue));
+                })
+                .ForMember(member => member.Details, options =>
+                {
+                    options.MapFrom(map => map.Details.Select(s => new InvoiceDetail()
+                    {
+                        ProductId = s.ProductId,
+                        Quantity = s.Quantity,
+                        Price = s.Price
+                    }).ToList());
+                })
+                .ForMember(member => member.Amount, options =>
+                {
+                    options.MapFrom(map => map.Details.Sum(s => s.Quantity * s.Price));
+                });
         }
     }
 }

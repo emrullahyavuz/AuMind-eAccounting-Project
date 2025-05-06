@@ -140,7 +140,6 @@ internal sealed class CompanyDbContext : DbContext, IUnitOfWorkCompany
         modelBuilder.Entity<Invoice>().Property(P => P.Amount).HasColumnType("money");
         modelBuilder.Entity<Invoice>().Property(P => P.Type).HasConversion(type => type.Value, value => InvoiceTypeEnum.FromValue(value));
         modelBuilder.Entity<Invoice>().HasQueryFilter(filter => !filter.IsDeleted);
-        modelBuilder.Entity<Invoice>().HasQueryFilter(filter => !filter.Customer!.IsDeleted);
         #endregion
 
         #region InvoiceDetail
