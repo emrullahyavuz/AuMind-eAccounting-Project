@@ -12,6 +12,8 @@ function BankTransactionsModal({
   onClose,
   onAddTransaction,
   bankData = {},
+  isEditMode,
+  onUpdateTransaction,
 }) {
   const [formData, setFormData] = useState({
     recordType: "",
@@ -55,7 +57,7 @@ function BankTransactionsModal({
         description: "",
       });
     }
-  }, [isOpen, bankData.id]);
+  }, [isOpen, bankData.id, isEditMode]);
 
   // Fetch options from API when component mounts
   useEffect(() => {
@@ -121,64 +123,148 @@ function BankTransactionsModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      let transactionData = { ...formData };
-
-      // Remove recordType from the final data
-      const { recordType, ...newBankTransactionData } = transactionData;
-
-      // Fetch full record details based on the selected record type
-      if (recordType === "banka" && transactionData.oppositeBankId) {
-        const banksResponse = await getAllBanks().unwrap();
-        const selectedBank = banksResponse.data?.find(
-          (bank) => bank.name === transactionData.oppositeBankId
-        );
-        if (selectedBank) {
-          newBankTransactionData.oppositeBankId = transactionData.oppositeBankId
-            ? selectedBank.id
-            : null;
-        }
-      } else if (
-        recordType === "kasa" &&
-        transactionData.oppositeCashRegisterId
-      ) {
-        const cashRegistersResponse = await getAllCashRegisters().unwrap();
-        const selectedCashRegister = cashRegistersResponse.data?.find(
-          (cr) => cr.name === transactionData.oppositeCashRegisterId
-        );
-        if (selectedCashRegister) {
-          newBankTransactionData.oppositeCashRegisterId =
-            transactionData.oppositeCashRegisterId
-              ? selectedCashRegister.id
-              : null;
-        }
-      } else if (recordType === "cari" && transactionData.oppositeCustomerId) {
-        const selectedCustomer = customersData?.data?.find(
-          (customer) =>
-            `${customer.name} ${customer.surname || ""}`.trim() ===
-            transactionData.oppositeCustomerId
-        );
-        if (selectedCustomer) {
-          newBankTransactionData.oppositeCustomerId =
-            transactionData.oppositeCustomerId ? selectedCustomer.id : "null";
-        }
-      }
-
-      newBankTransactionData.type = formData.type === "giriş" ? 0 : 1;
-      // Call the parent component's function with the complete data
-
-      onAddTransaction({ bankId: bankData.id, ...newBankTransactionData });
+    debugger;
+    if (isEditMode) {
+      onUpdateTransaction(formData);
       onClose();
-    } catch (error) {
-      console.error("Error processing transaction:", error);
-      // You might want to show an error message to the user here
+    } else {
+      try {
+        let transactionData = { ...formData };
+
+        // Remove recordType from the final data
+        const { recordType, ...newBankTransactionData } = transactionData;
+
+        // Fetch full record details based on the selected record type
+        if (recordType === "banka" && transactionData.oppositeBankId) {
+          const banksResponse = await getAllBanks().unwrap();
+          const selectedBank = banksResponse.data?.find(
+            (bank) => bank.name === transactionData.oppositeBankId
+          );
+          if (selectedBank) {
+            newBankTransactionData.oppositeBankId =
+              transactionData.oppositeBankId ? selectedBank.id : null;
+          }
+        } else if (
+          recordType === "kasa" &&
+          transactionData.oppositeCashRegisterId
+        ) {
+          const cashRegistersResponse = await getAllCashRegisters().unwrap();
+          const selectedCashRegister = cashRegistersResponse.data?.find(
+            (cr) => cr.name === transactionData.oppositeCashRegisterId
+          );
+          if (selectedCashRegister) {
+            newBankTransactionData.oppositeCashRegisterId =
+              transactionData.oppositeCashRegisterId
+                ? selectedCashRegister.id
+                : null;
+          }
+        } else if (
+          recordType === "cari" &&
+          transactionData.oppositeCustomerId
+        ) {
+          const selectedCustomer = customersData?.data?.find(
+            (customer) =>
+              `${customer.name} ${customer.surname || ""}`.trim() ===
+              transactionData.oppositeCustomerId
+          );
+          if (selectedCustomer) {
+            newBankTransactionData.oppositeCustomerId =
+              transactionData.oppositeCustomerId ? selectedCustomer.id : "null";
+          }
+        }
+
+        newBankTransactionData.type = formData.type === "giriş" ? 0 : 1;
+        // Call the parent component's function with the complete data
+
+        onAddTransaction({ bankId: bankData.id, ...newBankTransactionData });
+        onClose();
+      } catch (error) {
+        console.error("Error processing transaction:", error);
+        // You might want to show an error message to the user here
+      }
     }
   };
 
   if (!isOpen) return null;
 
-  return (
+  return isEditMode ? (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-gray-200 rounded-lg p-6 w-full max-w-md relative">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+        >
+          <X size={20} />
+        </button>
+
+        <h2 className="text-center text-xl font-bold mb-6">
+          Banka Hareketi Düzenle
+        </h2>
+
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-1 font-medium">
+              Tarih
+            </label>
+            <div className="relative">
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                className="w-full border border-gray-400 rounded-md p-2 bg-white pr-10"
+                required
+              />
+              <Calendar
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                size={20}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-1 font-medium">
+              Tutar
+            </label>
+            <input
+              type="number"
+              name="amount"
+              value={formData.amount}
+              onChange={handleChange}
+              placeholder="Tutar Giriniz..."
+              className="w-full border border-gray-400 rounded-md p-2 bg-white"
+              required
+              step="0.01"
+              min="0"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-1 font-medium">
+              Açıklama
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Açıklama Giriniz..."
+              className="w-full border border-gray-400 rounded-md p-2 bg-white"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="bg-yellow-500 hover:opacity-80 text-white font-medium py-2 px-4 rounded-md w-full"
+            >
+              Kaydet
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  ) : (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-gray-200 rounded-lg p-6 w-full max-w-md relative">
         <button

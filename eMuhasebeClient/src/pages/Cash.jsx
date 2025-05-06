@@ -107,17 +107,6 @@ const Cash = () => {
     }
   };
 
-  // Kasalar sayfasına özel Detay Gör butonu
-  const detailButton = (
-    <button
-      onClick={() => console.log("Detay Gör butonuna tıklandı")}
-      className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-2 px-4 rounded-md flex items-center mr-4"
-    >
-      <Info size={18} className="mr-2" />
-      Detay Gör
-    </button>
-  );
-
   // Kasa ekleme işlemi
   const handleAddCash = () => {
     setIsAddModalOpen(true);
@@ -203,7 +192,10 @@ const Cash = () => {
           for (const id of cashToDelete.ids) {
             await deleteCashRegister(id);
           }
-          showToast(`${cashToDelete.ids.length} kasa başarıyla silindi`, "success");
+          showToast(
+            `${cashToDelete.ids.length} kasa başarıyla silindi`,
+            "success"
+          );
         } else {
           // Tekli silme
           await deleteCashRegister(cashToDelete.ids);
@@ -237,7 +229,6 @@ const Cash = () => {
   // Özel butonlar
   const customButtons = (
     <>
-      
       {selectedItems.length > 0 && (
         <button
           onClick={() => handleDeleteCash(selectedItems)}
@@ -257,14 +248,6 @@ const Cash = () => {
         currentPage * itemsPerPage
       )
     : [];
-
-  // if (isLoading) {
-  //   return (
-  //     <div className="p-6">
-  //       <LoadingOverlay />
-  //     </div>
-  //   );
-  // }
 
   return (
     <>

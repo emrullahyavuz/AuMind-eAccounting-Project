@@ -12,6 +12,7 @@ import {
   useUpdateBankDetailMutation,
   useDeleteBankDetailMutation,
 } from "../store/api";
+import { useToast } from "../hooks/useToast";
 
 function BankTransactions() {
   const [transactions, setTransactions] = useState([]);
@@ -28,8 +29,9 @@ function BankTransactions() {
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
   const [bankName, setBankName] = useState(useParams().bankName);
+  const { showToast } = useToast();
 
-  const [detailData, setDetailData] = useState([]);
+
   // RTK Query hooks
   const [getAllBankDetails] = useGetAllBankDetailsMutation();
   const [createBankDetail] = useCreateBankDetailMutation();
@@ -153,9 +155,36 @@ function BankTransactions() {
       setIsLoading(false);
     }
   };
+console.log(selectedTransaction)
+  const handleUpdateBankTransaction = async (transactionData) => {
+    debugger
+    try {
+      setIsLoading(true);
+      
+      // Prepare the data with proper null handling for opposite IDs
+      const transactionPayload = {
+        ...transactionData,
+        id:selectedTransaction.id,
+        bankId:selectedTransaction.bankId,
+        type:0,
+
+      };
+     
+
+      const response = await updateBankDetail(transactionPayload).unwrap();
+      console.log("Yeni işlem güncellendi:", response);
+      setIsAddModalOpen(false);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("İşlem güncelleme hatası:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // İşlem silme işlemi
   const handleDeleteTransaction = (transactionId) => {
+    
     if (Array.isArray(transactionId)) {
       // Toplu silme
       setTransactionToDelete({
@@ -174,19 +203,39 @@ function BankTransactions() {
   };
 
   // Silme onaylama işlemi
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (transactionToDelete) {
-      // API silme işlemi burada yapılacak
-      const updatedTransactions = transactions.filter(
-        (transaction) => !transactionToDelete.ids.includes(transaction.id)
-      );
-      setTransactions(updatedTransactions);
-      setFilteredTransactions(updatedTransactions);
-      setSelectedItems([]); // Seçili öğeleri temizle
-      setIsDeleteModalOpen(false);
-      setTransactionToDelete(null);
+      if (transactionToDelete) {
+        try {
+          if (Array.isArray(transactionToDelete.ids)) {
+            // Toplu silme
+            for (const id of transactionToDelete.ids) {
+              await deleteBankDetail(id);
+            }
+            showToast(`${transactionToDelete.ids.length} işlem başarıyla silindi`, "success");
+          } else {
+            // Tekli silme
+            await deleteBankDetail(transactionToDelete.ids);
+            showToast(`${transactionToDelete.name} işlem başarıyla silindi`, "success");
+          }
+          // Update the currents state to remove deleted items
+          const updatedCurrents = transactions.filter(
+            (cash) => !transactionToDelete.ids.includes(cash.id)
+          );
+          setTransactions(updatedCurrents);
+          setFilteredTransactions(updatedCurrents);
+        } catch (error) {
+          console.error("Error deleting cash register:", error);
+          showToast("Kasa silinirken bir hata oluştu", "error");
+        }
+        setIsDeleteModalOpen(false);
+        setTransactionToDelete(null);
+      }
+
+
     }
   };
+ 
 
   // Geçerli sayfadaki işlemleri hesapla
   const currentTransactions = Array.isArray(filteredTransactions)
@@ -247,6 +296,8 @@ function BankTransactions() {
       Seçilenleri Sil ({selectedItems.length})
     </button>
   );
+ 
+  console.log("selectedItems",selectedItems)
 
   return (
     <>
@@ -285,6 +336,7 @@ function BankTransactions() {
         onClose={() => setIsAddModalOpen(false)}
         onAddTransaction={handleAddBankTransaction}
         bankData={bankData}
+        
       />
       <BankTransactionsModal
         isOpen={isEditModalOpen}
@@ -299,6 +351,7 @@ function BankTransactions() {
           setIsEditModalOpen(false);
           setSelectedTransaction(null);
         }}
+        onUpdateTransaction={handleUpdateBankTransaction}
       />
       <DeleteConfirmationModal
         isOpen={isDeleteModalOpen}
