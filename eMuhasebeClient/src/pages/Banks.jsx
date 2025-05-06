@@ -2,7 +2,7 @@ import { Info, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import BankAddModal from "../components/UI/Modals/BankModal";
 import { useNavigate } from "react-router-dom";
-import { useGetAllBanksMutation } from "../store/api";
+import { useGetAllBanksMutation, useCreateBankMutation } from "../store/api";
 import { useToast } from "../hooks/useToast";
 
 function Banks() {
@@ -10,6 +10,7 @@ function Banks() {
   const [banks, setBanks] = useState([]);
   const navigate = useNavigate();
   const [getAllBanks] = useGetAllBanksMutation();
+  const [createBank] = useCreateBankMutation();
 
   const { showToast } = useToast();
   console.log(banks);
@@ -25,30 +26,8 @@ function Banks() {
     fetchData();
   }, []);
 
-  // Örnek banka verileri
-  const bankList = [
-    {
-      id: 1,
-      name: "GARANTİ BANKASI",
-      iban: "0000001234567890",
-      currencyType: "TL",
-      input: 0,
-      output: 0,
-      balance: "0,0 TL",
-    },
-    {
-      id: 2,
-      name: "ZİRAAT BANKASI",
-      iban: "0000001234567890",
-      currencyType: "TL",
-      input: 0,
-      output: 0,
-      balance: "0,0 TL",
-    },
-  ];
-
-  const handleAddBank = (bankData) => {
-    createBank(bankData)
+  const handleAddBank = async (bankData) => {
+    await createBank(bankData)
       .unwrap()
       .then(() => {
         showToast("Banka başarıyla eklendi!", "success");
@@ -128,7 +107,7 @@ function Banks() {
       <BankAddModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onAddBank={handleAddBank}
+        createBank={handleAddBank}
       />
     </div>
   );

@@ -1,36 +1,39 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import DataTable from "../components/Admin/data-table";
+import { useGetAllCustomerDetailsMutation } from "../store/api";
+import { useParams } from "react-router-dom";
 
 const CariHareketleri = () => {
+  const [cariHareketleri, setCariHareketleri] = useState([]);
+  const [getAllCariHareketleri, { isLoading }] = useGetAllCustomerDetailsMutation();
+
+  const { id:customerId } = useParams();
+
+  useEffect(() => {
+    const fetchCariHareketleri = async () => {
+      try {
+        const response = await getAllCariHareketleri(customerId).unwrap();
+        setCariHareketleri(response.data.details);
+      } catch (error) {
+        console.error("Error fetching cari hareketleri:", error);
+      }
+    };
+    fetchCariHareketleri();
+  }, [getAllCariHareketleri,customerId]);
+ 
   return (
     <DataTable
       title="Cari Hareketleri"
       columns={[
-        { header: "Cari Hesap No", accessor: "cariAccount" },
+        { header: "# Numara", accessor: "id" },
         { header: "Tarih", accessor: "date" },
-        { header: "Cari Tipi", accessor: "cariType" },
+        { header: "Cari Tipi", accessor: "type.name" },
         { header: "Açıklama", accessor: "description" },
-        { header: "Giriş", accessor: "inflow" },
-        { header: "Çıkış", accessor: "checkout" },
+        { header: "Giriş", accessor: "depositAmount" },
+        { header: "Çıkış", accessor: "withdrawalAmount" },
       ]}
-      data={[
-        {
-          cariAccount: "Şirket A",
-          date: "2023-10-01",
-          cariType: "Alış",
-          description: "Malzeme alımı",
-          inflow: 1000,
-          checkout: 0,
-        },
-        {
-          cariAccount: "Şirket B",
-          date: "2023-10-01",
-          cariType: "Veriş",
-          description: "Malzeme alımı",
-          inflow: 1000,
-          checkout: 0,
-        },
-      ]}
+      data={cariHareketleri}
+      isLoading={isLoading}
       isCari={true} // Cari hesaplar için özel stil
     />
   );
