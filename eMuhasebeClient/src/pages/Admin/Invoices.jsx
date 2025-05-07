@@ -34,6 +34,7 @@ const Faturalar = () => {
   const [deleteInvoice] = useDeleteInvoiceMutation();
 
   const { data } = useGetAllCustomersQuery();
+  console.log("data", data)
 
   const itemsPerPage = 50;
 
@@ -138,6 +139,21 @@ const Faturalar = () => {
     }
   };
 
+  // const handleEditInvoice = async (formData) => {
+  //   try {
+  //     await updateInvoice({ id: selectedFatura.id, ...formData }).unwrap();
+  //     setIsEditModalOpen(false);
+  //     showToast("Fatura başarıyla güncellendi", "success");
+  //     setSelectedFatura(null);
+  //   } catch (err) {
+  //     console.error("Error updating invoice:", err);
+  //     showToast(
+  //       err.data?.errorMessages?.[0] || "Fatura güncellenirken bir hata oluştu",
+  //       "error"
+  //     );
+  //   }
+  // };
+
   // Fatura silme işlemi
   const handleDeleteFatura = (faturaId) => {
     if (Array.isArray(faturaId)) {
@@ -229,12 +245,12 @@ const Faturalar = () => {
     if (searchTerm.trim() === "") {
       setFilteredFaturalar(faturalar);
     } else {
+      const searchTermLower = searchTerm.toLowerCase();
       const filtered = faturalar.filter(
         (fatura) =>
-          fatura.invoiceNumber
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          fatura.customer.toLowerCase().includes(searchTerm.toLowerCase())
+          (fatura.invoiceNumber?.toLowerCase() || '').includes(searchTermLower) ||
+          (fatura.customer?.name?.toLowerCase() || '').includes(searchTermLower) ||
+          (fatura.customer?.companyName?.toLowerCase() || '').includes(searchTermLower)
       );
       setFilteredFaturalar(filtered);
       setCurrentPage(1); // Arama yapıldığında ilk sayfaya dön

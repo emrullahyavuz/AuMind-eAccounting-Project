@@ -6,7 +6,13 @@ import CashTransactionModal from "../components/UI/Modals/CashTransactionModal";
 import DeleteConfirmationModal from "../components/UI/Modals/DeleteConfirmationModal";
 import { Trash2 } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { useGetAllCashRegisterDetailsMutation } from "../store/api";
+import {
+  useGetAllCashRegisterDetailsMutation,
+  useCreateCashRegisterDetailMutation,
+  useUpdateCashRegisterDetailMutation,
+  useDeleteCashRegisterDetailByIdMutation,
+} from "../store/api";
+import { useToast } from "../hooks/useToast";
 
 function CashTransaction() {
   const [transactions, setTransactions] = useState([]);
@@ -21,18 +27,36 @@ function CashTransaction() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
-  const { id:cashId } = useParams();
+  const { id: cashId } = useParams();
   const itemsPerPage = 50;
+  const { showToast } = useToast();
 
+  // RTK Query Hooks
   const [getAllCashRegisterDetails] = useGetAllCashRegisterDetailsMutation();
+  const [createCashRegisterDetail] = useCreateCashRegisterDetailMutation();
+  const [updateCashRegisterDetail] = useUpdateCashRegisterDetailMutation();
+  const [deleteCashRegisterDetailById] = useDeleteCashRegisterDetailByIdMutation();
 
   useEffect(() => {
-   const fetchCashRegisterDetails = async () => {
-     const response = await getAllCashRegisterDetails();
-     console.log(response);
-   };
-   fetchCashRegisterDetails();
-  }, []);
+    const fetchCashRegisterDetails = async () => {
+      try {
+        const response = await getAllCashRegisterDetails({
+          cashRegisterId: cashId,
+          startDate: "2025-05-07",
+          endDate: "2025-05-10",
+        });
+        console.log(response);
+        const details = response?.data?.data?.details || [];
+        setTransactions(details);
+        setFilteredTransactions(details);
+      } catch (error) {
+        console.error("Error fetching cash register details:", error);
+        setTransactions([]);
+        setFilteredTransactions([]);
+      }
+    };
+    fetchCashRegisterDetails();
+  }, [getAllCashRegisterDetails, cashId]);
 
   // Kasa hareketleri sütun tanımları
   const columns = [
@@ -45,22 +69,15 @@ function CashTransaction() {
     { header: "Açıklama", accessor: "description" },
     {
       header: "Giriş",
-      accessor: "input",
+      accessor: "depositAmount",
       className: "text-right text-green-600 font-medium",
     },
     {
       header: "Çıkış",
-      accessor: "output",
+      accessor: "withdrawalAmount",
       className: "text-right text-red-600 font-medium",
     },
   ];
-
-
-  // useEffect(() => {
-    
-
-  
-  // }, []);
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
@@ -103,55 +120,126 @@ function CashTransaction() {
     setIsAddModalOpen(true);
   };
 
-  const handleAddTransactionSubmit = (transactionData) => {
-    console.log("Yeni işlem eklendi:", transactionData);
-    // Gerçek uygulamada API çağrısı yapılacak
-
-    // Örnek işlem verisi ekleme
-    const newTransaction = {
-      id: transactions.length + 1,
-      date: transactionData.date,
-      description: transactionData.description,
-      input: transactionData.input ? `${transactionData.input} ₺` : "",
-      output: transactionData.output ? `${transactionData.output} ₺` : "",
-    };
-
-    setTransactions([...transactions, newTransaction]);
-    setFilteredTransactions([...filteredTransactions, newTransaction]);
-    setIsAddModalOpen(false);
-  };
-
   // İşlem düzenleme işlemi
   const handleEditTransaction = (transaction) => {
     setSelectedTransaction(transaction);
     setIsEditModalOpen(true);
   };
 
-  // İşlem silme işlemi
-  const handleDeleteTransaction = (transactionId) => {
+  const handleAddTransactionSubmit = async (transactionData) => {
+    try {
+      setIsLoading(true);
+      debugger;
+      // Prepare the data with proper null handling for opposite IDs
+      const transactionPayload = {
+        ...transactionData,
+        cashRegisterId: cashId,
+        oppositeBankId: transactionData.oppositeBankId || null,
+        oppositeCashRegisterId: transactionData.oppositeCashRegisterId || null,
+        oppositeCustomerId: transactionData.oppositeCustomerId || null,
+      };
+      const { bankId: _, ...newCashTransaction } = transactionPayload;
+
+      const response = await createCashRegisterDetail(
+        newCashTransaction
+      ).unwrap();
+      
+      console.log("Yeni işlem eklendi:", response);
+      setTransactions([...transactions]);
+      setFilteredTransactions([...filteredTransactions]);
+
+      setIsAddModalOpen(false);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("İşlem ekleme hatası:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  console.log(selectedTransaction);
+  const handleUpdateCashTransaction = async (transactionData) => {
+    debugger;
+    try {
+      setIsLoading(true);
+      
+      // Prepare the data with proper null handling for opposite IDs
+      const transactionPayload = {
+        ...transactionData,
+        id: selectedTransaction.id,
+        cashRegisterId: cashId,
+        type: transactionData.oppositeAmount >= 0 ? 1 : 0, // withdrawalAmount'a göre type belirleme
+      };
+
+      const response = await updateCashRegisterDetail(transactionPayload).unwrap();
+      console.log("Yeni işlem güncellendi:", response);
+      
+      // Güncellenmiş işlemi transactions listesinde güncelle
+      const updatedTransactions = transactions.map(t => 
+        t.id === selectedTransaction.id ? response.data.data : t
+      );
+      setTransactions(updatedTransactions);
+      setFilteredTransactions(updatedTransactions);
+      
+      setIsAddModalOpen(false);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("İşlem güncelleme hatası:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+   // İşlem silme işlemi
+   const handleDeleteTransaction = (transactionId) => {
+    
     if (Array.isArray(transactionId)) {
       // Toplu silme
-      setTransactionToDelete({ ids: transactionId, name: `${transactionId.length} işlem` });
+      setTransactionToDelete({
+        ids: transactionId,
+        name: `${transactionId.length} işlem`,
+      });
     } else {
       // Tekli silme
       const transaction = transactions.find((t) => t.id === transactionId);
-      setTransactionToDelete({ ids: [transactionId], name: `#${transaction.id} numaralı işlem` });
+      setTransactionToDelete({
+        ids: [transactionId],
+        name: `#${transaction.id} numaralı işlem`,
+      });
     }
     setIsDeleteModalOpen(true);
   };
 
   // Silme onaylama işlemi
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (transactionToDelete) {
-      // API silme işlemi burada yapılacak
-      const updatedTransactions = transactions.filter(
-        (transaction) => !transactionToDelete.ids.includes(transaction.id)
-      );
-      setTransactions(updatedTransactions);
-      setFilteredTransactions(updatedTransactions);
-      setSelectedItems([]); // Seçili öğeleri temizle
-      setIsDeleteModalOpen(false);
-      setTransactionToDelete(null);
+      if (transactionToDelete) {
+        try {
+          if (Array.isArray(transactionToDelete.ids)) {
+            // Toplu silme
+            for (const id of transactionToDelete.ids) {
+              await deleteCashRegisterDetailById(id);
+            }
+            showToast(`${transactionToDelete.ids.length} işlem başarıyla silindi`, "success");
+          } else {
+            // Tekli silme
+            await deleteCashRegisterDetailById(transactionToDelete.ids);
+            showToast(`${transactionToDelete.name} işlem başarıyla silindi`, "success");
+          }
+          // Update the currents state to remove deleted items
+          const updatedCurrents = transactions.filter(
+            (cash) => !transactionToDelete.ids.includes(cash.id)
+          );
+          setTransactions(updatedCurrents);
+          setFilteredTransactions(updatedCurrents);
+        } catch (error) {
+          console.error("Error deleting cash register:", error);
+          showToast("Kasa silinirken bir hata oluştu", "error");
+        }
+        setIsDeleteModalOpen(false);
+        setTransactionToDelete(null);
+      }
+
+
     }
   };
 
@@ -234,7 +322,7 @@ function CashTransaction() {
           currentPage={currentPage}
           totalItems={filteredTransactions.length}
           onPageChange={handlePageChange}
-          isLoading={isLoading}
+          // isLoading={isLoading}
           customFilters={customFilters}
           customButtons={customButtons}
           hideTitle={true}
@@ -257,6 +345,7 @@ function CashTransaction() {
           setSelectedTransaction(null);
         }}
         isEditMode={true}
+        onUpdateTransaction={handleUpdateCashTransaction}
         transaction={selectedTransaction}
         onAddTransaction={(data) => {
           console.log("Düzenlenen işlem:", data);
@@ -272,7 +361,9 @@ function CashTransaction() {
         }}
         onConfirm={confirmDelete}
         title="İşlem Silme"
-        message={`${transactionToDelete?.name || ''} ${transactionToDelete?.ids?.length > 1 ? 'işlemlerini' : 'işlemini'} silmek istediğinizden emin misiniz?`}
+        message={`${transactionToDelete?.name || ""} ${
+          transactionToDelete?.ids?.length > 1 ? "işlemlerini" : "işlemini"
+        } silmek istediğinizden emin misiniz?`}
       />
     </>
   );

@@ -11,6 +11,7 @@ import { bankDetailsApi } from './bankDetails';
 import { productDetailsApi } from './ProductDetailsApi';
 import { customerDetailsApi } from './CustomerDetailsApi';
 import { cashRegistersDetailsApi } from './cashRegistersDetails';
+import { purchaseReportsApi } from './purchaseReportsApi';
 
 export const apiReducers = {
   [authApi.reducerPath]: authApi.reducer,
@@ -26,6 +27,7 @@ export const apiReducers = {
   [productDetailsApi.reducerPath]: productDetailsApi.reducer,
   [customerDetailsApi.reducerPath]: customerDetailsApi.reducer,
   [cashRegistersDetailsApi.reducerPath]: cashRegistersDetailsApi.reducer,
+  [purchaseReportsApi.reducerPath]: purchaseReportsApi.reducer,
   };
 
 export const apiMiddlewares = [
@@ -42,4 +44,5 @@ export const apiMiddlewares = [
   productDetailsApi.middleware,
   customerDetailsApi.middleware,
   cashRegistersDetailsApi.middleware,
+  purchaseReportsApi.middleware,
 ];
