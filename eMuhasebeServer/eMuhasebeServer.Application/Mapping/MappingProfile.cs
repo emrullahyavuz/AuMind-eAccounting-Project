@@ -62,16 +62,20 @@ namespace eMuhasebeServer.Application.Mapping
             CreateMap<UpdateProductCommand, Product>();
 
             CreateMap<CreateInvoiceCommand, Invoice>()
-     .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.Details.Select(d => new InvoiceDetail
-     {
-         ProductId = d.ProductId,
-         Quantity = d.Quantity,
-         Price = d.Price,
-         VATRate = d.VATRate
-     }).ToList()))
-     .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Details.Sum(d => d.Quantity * d.Price * (1 + (d.VATRate / 100)))));
+    .ForMember(dest => dest.Type, opt => opt.MapFrom(src => InvoiceTypeEnum.FromValue(src.TypeValue)))
+    .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.Details.Select(d => new InvoiceDetail
+    {
+        ProductId = d.ProductId,
+        Quantity = d.Quantity,
+        Price = d.Price,
+        VATRate = d.VATRate
+    }).ToList()))
+    .ForMember(dest => dest.Amount, opt => opt.MapFrom(src =>
+        src.Details.Sum(d => d.Quantity * d.Price * (1 + (d.VATRate / 100M)))
+    ));
 
             CreateMap<UpdateInvoiceCommand, Invoice>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => InvoiceTypeEnum.FromValue(src.TypeValue)))
                 .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.Details.Select(d => new InvoiceDetail
                 {
                     ProductId = d.ProductId,
@@ -79,7 +83,10 @@ namespace eMuhasebeServer.Application.Mapping
                     Price = d.Price,
                     VATRate = d.VATRate
                 }).ToList()))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Details.Sum(d => d.Quantity * d.Price * (1 + (d.VATRate / 100)))));
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src =>
+                    src.Details.Sum(d => d.Quantity * d.Price * (1 + (d.VATRate / 100M)))
+                ));
+
 
         }
     }
