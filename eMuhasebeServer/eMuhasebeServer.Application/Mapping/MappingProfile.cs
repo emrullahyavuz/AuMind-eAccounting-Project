@@ -62,42 +62,25 @@ namespace eMuhasebeServer.Application.Mapping
             CreateMap<UpdateProductCommand, Product>();
 
             CreateMap<CreateInvoiceCommand, Invoice>()
-           .ForMember(member => member.Type, options =>
-           {
-               options.MapFrom(map => InvoiceTypeEnum.FromValue(map.TypeValue));
-           })
-           .ForMember(member => member.Details, options =>
-           {
-               options.MapFrom(map => map.Details.Select(s => new InvoiceDetail()
-               {
-                   ProductId = s.ProductId,
-                   Quantity = s.Quantity,
-                   Price = s.Price
-               }).ToList());
-           })
-           .ForMember(member => member.Amount, options =>
-           {
-               options.MapFrom(map => map.Details.Sum(s => s.Quantity * s.Price));
-           });
+     .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.Details.Select(d => new InvoiceDetail
+     {
+         ProductId = d.ProductId,
+         Quantity = d.Quantity,
+         Price = d.Price,
+         VATRate = d.VATRate
+     }).ToList()))
+     .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Details.Sum(d => d.Quantity * d.Price * (1 + (d.VATRate / 100)))));
 
             CreateMap<UpdateInvoiceCommand, Invoice>()
-                .ForMember(member => member.Type, options =>
+                .ForMember(dest => dest.Details, opt => opt.MapFrom(src => src.Details.Select(d => new InvoiceDetail
                 {
-                    options.MapFrom(map => InvoiceTypeEnum.FromValue(map.TypeValue));
-                })
-                .ForMember(member => member.Details, options =>
-                {
-                    options.MapFrom(map => map.Details.Select(s => new InvoiceDetail()
-                    {
-                        ProductId = s.ProductId,
-                        Quantity = s.Quantity,
-                        Price = s.Price
-                    }).ToList());
-                })
-                .ForMember(member => member.Amount, options =>
-                {
-                    options.MapFrom(map => map.Details.Sum(s => s.Quantity * s.Price));
-                });
+                    ProductId = d.ProductId,
+                    Quantity = d.Quantity,
+                    Price = d.Price,
+                    VATRate = d.VATRate
+                }).ToList()))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Details.Sum(d => d.Quantity * d.Price * (1 + (d.VATRate / 100)))));
+
         }
     }
 }
