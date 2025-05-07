@@ -51,7 +51,15 @@ internal sealed class ProductProfitabilityReportsQueryHandler(
             };
 
             data.Profit = data.WithdrawalPrice - data.DepositPrice;
-            data.ProfitPercent = ((profitPercentAmount) - 1) * 100;
+
+            if (data.DepositPrice > 0)
+            {
+                data.ProfitPercent = ((data.WithdrawalPrice / data.DepositPrice) - 1) * 100;
+            }
+            else
+            {
+                data.ProfitPercent = null; 
+            }
 
             response.Add(data);
         }

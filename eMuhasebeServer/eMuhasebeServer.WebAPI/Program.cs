@@ -9,6 +9,18 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
+var openAIKey = builder.Configuration["OpenAI:ApiKey"];
+
+builder.Services.AddSingleton(new OpenAIOptions
+{
+    ApiKey = openAIKey ?? throw new InvalidOperationException("OpenAI API Key is missing in the configuration.")
+});
+
 builder.Services.AddDefaultCors();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
