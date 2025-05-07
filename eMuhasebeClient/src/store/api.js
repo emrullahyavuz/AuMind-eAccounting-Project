@@ -13,6 +13,17 @@ export const api = createApi({
     },
   }),
   endpoints: (builder) => ({
+    // Reports endpoints
+    getPurchaseReports: builder.query({
+      query: () => ({
+        url: "/Reports/PurchaseReports",
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      providesTags: ["PurchaseReports"],
+    }),
     // BankDetails endpoints
     getAllBankDetails: builder.mutation({
       query: (bankDetails) => ({
@@ -444,13 +455,13 @@ export const api = createApi({
 
      // Get all cash register details
      getAllCashRegisterDetails: builder.mutation({
-      query: () => ({
+      query: (cashRegisterDetailsData) => ({
         url: "/CashRegistersDetails/GetAll",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({...cashRegisterDetailsData}),
       }),
       providesTags: ["CashRegisterDetails"],
     }),
@@ -527,6 +538,7 @@ export const {
   useUpdateProductMutation,
   useDeleteProductMutation,
   useGetProductProfitabilityReportsQuery,
+  useGetPurchaseReportsQuery,
   useGetAllProductDetailsMutation,
   useGetAllBankDetailsMutation,
   useCreateBankDetailMutation,

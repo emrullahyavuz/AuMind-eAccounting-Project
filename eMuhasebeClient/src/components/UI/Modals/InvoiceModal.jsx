@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { X, Calendar, ChevronDown, Plus } from "lucide-react";
 import { useGetAllCustomersQuery, useGetAllProductsMutation} from "../../../store/api";
 
-function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEditInvoice }) {
+function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEditInvoice, updateInvoice }) {
   const { data: customers } = useGetAllCustomersQuery();
   const [products] = useGetAllProductsMutation();
   const [productsData, setProductsData] = useState([]);
@@ -83,28 +83,54 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const updatedFormData = {
-      ...formData,
-      typeValue: formData.typeValue === "satis" ? 2 : 1,
-    };
+    debugger
+    if (isEditMode) {
+      const updatedFormData = {
+        ...formData,
+        typeValue: formData.typeValue === "satis" ? 2 : 1,
+      };
 
-    // Get customer and product data
-    const customer = customers?.data.find((c) => c.name === formData.customerId);
-    const productIds = updatedFormData.details.map((item) => item.productId);
-    const relevantProducts = productsData.filter((p) => productIds.includes(p.name));
+      const customer = customers?.data.find((c) => c.name === formData.customerId);
+      const productIds = updatedFormData.details.map((item) => item.productId);
+      const relevantProducts = productsData.filter((p) => productIds.includes(p.name));
 
-    console.log("Customer:", customer);
-    console.log("Products:", productsData);
-    const filteredUpdateFormData = {
-      ...updatedFormData,
-      customerId: customer.id,
-      details: updatedFormData.details.map((item) => ({
-        ...item,
-        productId: relevantProducts[0].id
-      })),
-    };
-    debugger;
-    onAddInvoice(filteredUpdateFormData);
+      console.log("Customer:", customer);
+      console.log("Products:", productsData);
+      const filteredUpdateFormData = {
+        ...updatedFormData,
+        customerId: customer.id,
+        details: updatedFormData.details.map((item) => ({
+          ...item,
+          productId: relevantProducts[0].id
+        })),
+      };
+      debugger;
+      onEditInvoice(filteredUpdateFormData);
+    } else {
+      const updatedFormData = {
+        ...formData,
+        typeValue: formData.typeValue === "satis" ? 2 : 1,
+      };
+  
+      // Get customer and product data
+      const customer = customers?.data.find((c) => c.name === formData.customerId);
+      const productIds = updatedFormData.details.map((item) => item.productId);
+      const relevantProducts = productsData.filter((p) => productIds.includes(p.name));
+  
+      console.log("Customer:", customer);
+      console.log("Products:", productsData);
+      const filteredUpdateFormData = {
+        ...updatedFormData,
+        customerId: customer.id,
+        details: updatedFormData.details.map((item) => ({
+          ...item,
+          productId: relevantProducts[0].id
+        })),
+      };
+      debugger;
+      onAddInvoice(filteredUpdateFormData);
+      onClose();
+    }
     onClose();
   };
 

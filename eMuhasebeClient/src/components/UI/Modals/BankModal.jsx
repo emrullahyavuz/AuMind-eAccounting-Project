@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { X, ChevronDown } from "lucide-react";
-import { useCreateBankMutation } from "../../../store/api";
+
 
 function BankModal({ isOpen, onClose, createBank }) {
   const [formData, setFormData] = useState({
@@ -19,11 +19,11 @@ function BankModal({ isOpen, onClose, createBank }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    debugger;
+    
     const updatedFormData = {
       name: formData.name,
       iban: formData.iban,
-      currencyType: formData.currencyTypeValue === "TRY" ? 0 : formData.currencyTypeValue === "USD" ? 1 : formData.currencyTypeValue === "EUR" ? 2 : formData.currencyTypeValue,
+      currencyTypeValue: formData.currencyTypeValue === "TRY" ? 1 : formData.currencyTypeValue === "USD" ? 2 : formData.currencyTypeValue === "EUR" ? 3 : formData.currencyTypeValue,
     };
     createBank(updatedFormData);
     onClose();
