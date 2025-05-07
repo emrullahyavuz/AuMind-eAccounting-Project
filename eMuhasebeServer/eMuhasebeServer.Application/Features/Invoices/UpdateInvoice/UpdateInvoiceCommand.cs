@@ -10,4 +10,5 @@ public sealed record UpdateInvoiceCommand(
     DateOnly Date,
     int TypeValue,
     Guid CustomerId,
+    decimal VATRate,
     List<InvoiceDetailDto> Details) : IRequest<Result<string>>;

@@ -48,7 +48,7 @@ internal sealed class CreateInvoiceCommandHandler(
             Date = request.Date,
             DepositAmount = request.TypeValue == 2 ? invoice.Amount : 0,
             WithdrawalAmount = request.TypeValue == 1 ? invoice.Amount : 0,
-            Description = invoice.InvoiceNumber + "numaralı " + invoice.Type.Name,
+            Description = invoice.InvoiceNumber + " numaralı " + invoice.Type.Name,
             Type = request.TypeValue == 1 ? CustomerDetailTypeEnum.PurchaseInvoice : CustomerDetailTypeEnum.SellingInvoice,
             InvoiceId = invoice.Id
         };
@@ -73,7 +73,7 @@ internal sealed class CreateInvoiceCommandHandler(
                 Date = request.Date,
                 Deposit = request.TypeValue == 1 ? item.Quantity : 0,
                 Withdrawal = request.TypeValue == 2 ? item.Quantity : 0,
-                Description = invoice.InvoiceNumber + "numaralı " + invoice.Type.Name,
+                Description = invoice.InvoiceNumber + " numaralı " + invoice.Type.Name,
                 InvoiceId = invoice.Id,
                 Price = item.Price,
             };
