@@ -12,10 +12,11 @@ import {
   profitIcon,
   fundIcon,
 } from "../assets/icons/index";
+import { useGetAllInvoicesQuery, useGetPurchaseReportsQuery } from "../store/api";
 
 function Reports() {
-  // Çizgi grafik için örnek veri noktaları
-  const chartData = [
+  // Static data as fallback
+  const staticChartData = [
     { date: "05.01.24", value: 120000 },
     { date: "08.02.24", value: 150000 },
     { date: "12.03.24", value: 180000 },
@@ -29,6 +30,39 @@ function Reports() {
     { date: "16.11.24", value: 240000 },
     { date: "02.12.24", value: 250000 },
   ];
+
+  const { data: purchaseReports, isLoading, error } = useGetPurchaseReportsQuery();
+  
+  // Log the raw purchase reports data for debugging
+  console.log('Purchase Reports Data:', purchaseReports);
+  
+  // Transform purchase reports data for the chart using date and amounts arrays
+  const chartData = purchaseReports?.data?.date?.map((date, index) => {
+    const formattedDate = new Date(date).toLocaleDateString('tr-TR');
+    const value = purchaseReports?.data?.amounts?.[index] || 0;
+    console.log(`Date: ${date} -> ${formattedDate}, Value: ${value}`);
+    return {
+      date: formattedDate,
+      value: value
+    };
+  }) || staticChartData; // Fallback to static data if no reports
+  
+  console.log('Final Chart Data:', chartData);
+  const { data: invoices } = useGetAllInvoicesQuery();
+  // Calculate total sales and total for type value 2
+  const { totalSales, totalType2 } = invoices?.data?.reduce((acc, invoice) => {
+    const amount = invoice.amount || 0;
+    const isType2 = invoice.type?.value === 2;
+    return {
+      totalSales: acc.totalSales + amount,
+      totalType2: acc.totalType2 + (isType2 ? amount : 0)
+    };
+  }, { totalSales: 0, totalType2: 0 }) || { totalSales: 0, totalType2: 0 };
+  
+  console.log('Total Sales:', totalSales);
+  console.log('Total for Type 2 Invoices:', totalType2);
+
+  
 
   // Pasta grafik verileri
   const pieData = {
@@ -161,7 +195,7 @@ function Reports() {
             </div>
             <div>
               <div className="text-sm text-gray-500">Toplam Gelir</div>
-              <div className="text-lg font-bold">2.500.450,00</div>
+              <div className="text-lg font-bold">{totalType2}</div>
               <div className="text-xs text-green-600">
                 Önceki aya göre %5,5 daha fazla
               </div>
@@ -217,7 +251,7 @@ function Reports() {
             </div>
             <div>
               <div className="text-sm text-gray-500">Toplam Gider</div>
-              <div className="text-lg font-bold">1.090.000,00</div>
+              <div className="text-lg font-bold">{totalSales -totalType2}</div>
               <div className="text-xs text-red-600">
                 Önceki aya göre %2,5 daha fazla
               </div>

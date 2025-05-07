@@ -139,10 +139,10 @@ function DataTable({
 
               {/* Tablo Gövdesi */}
               <tbody>
-                {data.length > 0
+                {data && data.length > 0
                   ? data.map((item, rowIndex) => (
                       <tr
-                        key={item.id || rowIndex}
+                        key={item?.id || rowIndex}
                         className="border-b border-gray-300 hover:bg-gray-200"
                       >
                         <td className="p-3">
@@ -159,7 +159,7 @@ function DataTable({
                             key={colIndex}
                             className={`p-3 ${column.className || ""}`}
                           >
-                            {item[column.accessor]}
+                            {item?.[column.accessor]}
                           </td>
                         ))}
 
@@ -167,38 +167,23 @@ function DataTable({
                           <div className="flex justify-center">
                             <input
                               type="checkbox"
-                              checked={selectedItems.includes(item.id)}
-                              onChange={() => handleSelectItem(item.id)}
+                              checked={selectedItems.includes(item?.id)}
+                              onChange={() => handleSelectItem(item?.id)}
                               className="h-5 w-5 text-red-500 border-gray-300 rounded focus:ring-red-500"
                             />
                           </div>
                         </td>
                       </tr>
                     ))
-                  : // Veri yoksa boş satırlar göster
-                    Array.from({ length: 6 }).map((_, index) => (
-                      <tr key={index} className="border-b border-gray-300">
-                        <td className="p-3">
-                          <button className="text-blue-500 hover:text-blue-700 bg-blue-100 p-1 rounded">
-                            <Edit size={18} />
-                          </button>
-                        </td>
-
-                        {columns.map((_, colIndex) => (
-                          <td key={colIndex} className="p-3"></td>
-                        ))}
-
-                        <td className="p-3 text-center">
-                          <div className="flex justify-center">
-                            <input
-                              type="checkbox"
-                              disabled
-                              className="h-5 w-5 text-red-500 border-gray-300 rounded focus:ring-red-500"
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                  : // Veri yoksa tek satırda bilgi göster
+                    <tr className="border-b border-gray-300">
+                      <td colSpan={columns.length + 2} className="p-4 text-center text-gray-500">
+                        <div className="flex flex-col items-center justify-center py-4">
+                          <p className="text-lg font-medium text-red-500">Veri bulunamadı!</p>
+                          <p className="text-sm">Listelenecek veri bulunmamaktadır.</p>
+                        </div>
+                      </td>
+                    </tr>}
               </tbody>
             </table>
           </div>
