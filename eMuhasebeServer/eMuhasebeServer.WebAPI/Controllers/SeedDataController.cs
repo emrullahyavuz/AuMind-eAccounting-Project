@@ -86,7 +86,6 @@ public sealed class SeedDataController(IMediator mediator) : ApiController(media
             var invoice = new CreateInvoiceCommand(
                 TypeValue: fakerInvoice.PickRandom(new[] { 1, 2 }),
                 Date: DateOnly.FromDateTime(fakerInvoice.Date.Recent(30)),
-                InvoiceNumber: fakerInvoice.Random.Replace("INV#####"),
                 CustomerId: selectedCustomer.Id,
                 Details: details 
             );

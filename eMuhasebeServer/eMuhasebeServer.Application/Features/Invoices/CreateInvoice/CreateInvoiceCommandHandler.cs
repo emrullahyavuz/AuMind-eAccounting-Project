@@ -5,12 +5,15 @@ using eMuhasebeServer.Domain.Entities;
 using eMuhasebeServer.Domain.Enum;
 using eMuhasebeServer.Domain.Repositories;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using TS.Result;
 
 namespace eMuhasebeServer.Application.Features.Invoices.CreateInvoice;
 
 internal sealed class CreateInvoiceCommandHandler(
+    IHttpContextAccessor httpContextAccessor,
+    ICompanyRepository companyRepository,
     IInvoiceRepository invoiceRepository,
     IProductRepository productRepository,
     IProductDetailRepository productDetailRepository,
@@ -23,9 +26,28 @@ internal sealed class CreateInvoiceCommandHandler(
 {
     public async Task<Result<string>> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
     {
+
+        #region Company Id ve Company Name alma
+        var companyIdStr = httpContextAccessor.HttpContext.User.FindFirst("companyId")?.Value;
+        if (!Guid.TryParse(companyIdStr, out Guid companyId))
+        {
+            return Result<string>.Failure("Şirket ID'si geçersiz veya bulunamadı.");
+        }
+
+        Company? company = await companyRepository.GetByExpressionAsync(p => p.Id == companyId, cancellationToken);
+        if (company is null)
+        {
+            return Result<string>.Failure("Şirket bulunamadı.");
+        }
+        #endregion
+
         #region Invoice and Detail
         Invoice invoice = mapper.Map<Invoice>(request);
 
+        int invoiceCount = await invoiceRepository.GetInvoiceCountAsync(cancellationToken);
+
+        // Fatura numarası güncelleniyor
+        invoice.InvoiceNumber = $"{company.Name[..3].ToUpper()}{DateTime.Now:yyyy}{(invoiceCount + 1).ToString("D7")}";
         await invoiceRepository.AddAsync(invoice, cancellationToken);
         #endregion
 
@@ -57,10 +79,9 @@ internal sealed class CreateInvoiceCommandHandler(
         #endregion
 
         #region Product
-        
         foreach (var item in request.Details)
         {
-            Product product = await productRepository.GetByExpressionAsync(P=> P.Id == item.ProductId, cancellationToken);
+            Product product = await productRepository.GetByExpressionAsync(p => p.Id == item.ProductId, cancellationToken);
 
             product.Deposit += request.TypeValue == 1 ? item.Quantity : 0;
             product.Withdrawal += request.TypeValue == 2 ? item.Quantity : 0;
@@ -79,7 +100,6 @@ internal sealed class CreateInvoiceCommandHandler(
             };
 
             await productDetailRepository.AddAsync(productDetail, cancellationToken);
-            
         }
         #endregion
 

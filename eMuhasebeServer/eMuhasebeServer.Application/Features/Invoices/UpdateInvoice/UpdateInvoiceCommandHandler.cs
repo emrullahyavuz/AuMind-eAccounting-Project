@@ -21,7 +21,6 @@ internal sealed class UpdateInvoiceCommandHandler(
 {
     public async Task<Result<string>> Handle(UpdateInvoiceCommand request, CancellationToken cancellationToken)
     {
-        // Eski fatura
         var oldInvoice = await invoiceRepository
             .Where(p => p.Id == request.Id)
             .Include(p => p.Details)
@@ -30,7 +29,6 @@ internal sealed class UpdateInvoiceCommandHandler(
         if (oldInvoice is null)
             return Result<string>.Failure("Fatura bulunamadı");
 
-        // Eski müşteri detay sil
         var oldCustomerDetail = await customerDetailRepository
             .Where(p => p.InvoiceId == oldInvoice.Id)
             .FirstOrDefaultAsync(cancellationToken);
@@ -39,7 +37,6 @@ internal sealed class UpdateInvoiceCommandHandler(
             customerDetailRepository.Delete(oldCustomerDetail);
 
 
-        // Eski ürün detaylarını sil ve stokları geri al
         if (oldInvoice.Details is not null && oldInvoice.Details.Any())
         {
             foreach (var detail in oldInvoice.Details)
@@ -66,7 +63,6 @@ internal sealed class UpdateInvoiceCommandHandler(
             }
         }
 
-        // Müşteri bakiyesini geri al
         var customer = await customerRepository
             .Where(p => p.Id == oldInvoice.CustomerId)
             .FirstOrDefaultAsync(cancellationToken);
@@ -78,16 +74,14 @@ internal sealed class UpdateInvoiceCommandHandler(
             customerRepository.Update(customer);
         }
 
-        // Eski faturayı sil
         invoiceRepository.Delete(oldInvoice);
 
-        // Yeni fatura oluştur
         Invoice newInvoice = mapper.Map<Invoice>(request);
-        newInvoice.Id = Guid.NewGuid(); // yeni fatura, yeni ID
+        newInvoice.Id = Guid.NewGuid();
+        newInvoice.InvoiceNumber = oldInvoice.InvoiceNumber;
 
         await invoiceRepository.AddAsync(newInvoice, cancellationToken);
 
-        // Yeni müşteri güncellemesi
         if (customer is not null)
         {
             customer.DepositAmount += newInvoice.Type.Value == 2 ? newInvoice.Amount : 0;
@@ -95,7 +89,7 @@ internal sealed class UpdateInvoiceCommandHandler(
             customerRepository.Update(customer);
         }
 
-        // Yeni CustomerDetail oluştur
+
         CustomerDetail customerDetail = new()
         {
             CustomerId = newInvoice.CustomerId,
@@ -109,7 +103,6 @@ internal sealed class UpdateInvoiceCommandHandler(
 
         await customerDetailRepository.AddAsync(customerDetail, cancellationToken);
 
-        // Yeni ProductDetail ve stok güncellemeleri
         if (newInvoice.Details is not null && newInvoice.Details.Any())
         {
             foreach (var detail in newInvoice.Details)
@@ -141,7 +134,7 @@ internal sealed class UpdateInvoiceCommandHandler(
 
         await unitOfWorkCompany.SaveChangesAsync(cancellationToken);
 
-        // Cache temizliği
+
         cacheService.Remove("invoices");
         cacheService.Remove("customers");
         cacheService.Remove("products");
