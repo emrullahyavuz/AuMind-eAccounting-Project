@@ -36,8 +36,12 @@ function DataTable({
   const [searchTerm, setSearchTerm] = useState("");
 
   // Arama işlemi
-  const renderCell = (column, row) => {
+  const renderCell = (column, row, rowIndex) => {
     let value;
+    if (column.accessor === "id") {
+      return (currentPage - 1) * itemsPerPage + rowIndex + 1;
+    }
+    
     if (typeof column.accessor === 'function') {
       value = column.accessor(row);
     } else if (typeof column.accessor === 'string' && column.accessor.includes('.')) {
@@ -47,6 +51,10 @@ function DataTable({
       value = row[column.accessor];
     } else {
       value = '';
+    }
+
+    if (column.Cell) {
+      return column.Cell({ value, row });
     }
     if (column.render) {
       return column.render(row);
@@ -189,11 +197,11 @@ function DataTable({
                       </td>
                     )}
 
-{columns.map((column, colIndex) => (
-  <td key={colIndex} className={`p-3 ${column.className || ""}`}>
-    {renderCell(column, item)}
-  </td>
-))}
+                      {columns.map((column, colIndex) => (
+                        <td key={colIndex} className={`p-3 ${column.className || ""}`}>
+                          {renderCell(column, item, rowIndex)}
+                        </td>
+                      ))}
 
 
                     {!isCari && !isStock && (

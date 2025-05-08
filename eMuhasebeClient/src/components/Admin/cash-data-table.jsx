@@ -65,6 +65,32 @@ function DataTable({
       ? "bg-yellow-400 hover:bg-yellow-500 text-gray-800"
       : "bg-blue-600 hover:bg-blue-700 text-white";
 
+  const renderCell = (column, row, rowIndex) => {
+    let value;
+    if (column.accessor === "id") {
+      return (currentPage - 1) * itemsPerPage + rowIndex + 1;
+    }
+    
+    if (typeof column.accessor === 'function') {
+      value = column.accessor(row);
+    } else if (typeof column.accessor === 'string' && column.accessor.includes('.')) {
+      const [first, second] = column.accessor.split('.');
+      value = row[first]?.[second];
+    } else if (typeof column.accessor === 'string') {
+      value = row[column.accessor];
+    } else {
+      value = '';
+    }
+
+    if (column.Cell) {
+      return column.Cell({ value, row });
+    }
+    if (column.render) {
+      return column.render(row);
+    }
+    return value;
+  };
+
   return (
     <div className="bg-gray-100">
       {/* Başlık */}
@@ -159,7 +185,7 @@ function DataTable({
                             key={colIndex}
                             className={`p-3 ${column.className || ""}`}
                           >
-                            {item?.[column.accessor]}
+                            {renderCell(column, item, rowIndex)}
                           </td>
                         ))}
 

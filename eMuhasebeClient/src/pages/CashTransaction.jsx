@@ -42,8 +42,8 @@ function CashTransaction() {
       try {
         const response = await getAllCashRegisterDetails({
           cashRegisterId: cashId,
-          startDate: "2025-05-07",
-          endDate: "2025-05-10",
+          startDate: "2024-05-07",
+          endDate: "2026-05-10",
         });
         console.log(response);
         const details = response?.data?.data?.details || [];
@@ -103,16 +103,28 @@ function CashTransaction() {
   };
 
   // Tarih filtresi uygulama
-  const handleApplyFilter = () => {
-    console.log("Tarih filtresi uygulanıyor:", { startDate, endDate });
-    // Gerçek uygulamada burada API çağrısı yapılacak
-
-    setIsLoading(true);
-
-    setTimeout(() => {
-      // Filtreleme simülasyonu
+  const handleApplyFilter = async () => {
+    debugger
+    try {
+      setIsLoading(true);
+      const response = await getAllCashRegisterDetails({
+        cashRegisterId: cashId,
+        startDate: startDate || null,
+        endDate: endDate || null
+      }).unwrap();
+      
+      if (response?.isSuccessful) {
+        const details = response.data?.details || [];
+        setTransactions(details);
+        setFilteredTransactions(details);
+        showToast("Tarih filtresi başarıyla uygulandı", "success");
+      }
+    } catch (error) {
+      console.error("Error applying date filter:", error);
+      showToast("Tarih filtresi uygulanırken bir hata oluştu", "error");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   // İşlem ekleme işlemi
@@ -156,8 +168,9 @@ function CashTransaction() {
       setIsLoading(false);
     }
   };
-  console.log(selectedTransaction);
+  console.log(selectedItems)
   const handleUpdateCashTransaction = async (transactionData) => {
+    
     debugger;
     try {
       setIsLoading(true);
@@ -167,7 +180,7 @@ function CashTransaction() {
         ...transactionData,
         id: selectedTransaction.id,
         cashRegisterId: cashId,
-        type: transactionData.oppositeAmount >= 0 ? 1 : 0, // withdrawalAmount'a göre type belirleme
+        type:selectedTransaction.depositAmount === 0 ? 1: 0, // withdrawalAmount'a göre type belirleme
       };
 
       const response = await updateCashRegisterDetail(transactionPayload).unwrap();

@@ -125,6 +125,7 @@ function BankTransactionsModal({
     e.preventDefault();
     debugger;
     if (isEditMode) {
+     
       onUpdateTransaction(formData);
       onClose();
     } else {

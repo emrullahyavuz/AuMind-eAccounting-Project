@@ -59,9 +59,9 @@ const Products = () => {
       className: "w-24 font-bold text-yellow-500",
     },
     { header: "Ürün Adı", accessor: "name" },
-    { header: "Giriş", accessor: "stock" },
-    { header: "Çıkış", accessor: "withdrawal" },
-    { header: "Bakiye", accessor: "deposit" },
+    { header: "Giriş", accessor: "deposit" , className: "text-green-600"},
+    { header: "Çıkış", accessor: "withdrawal" , className: "text-red-600"},
+    { header: "Bakiye", accessor: (row) => (row.deposit - row.withdrawal).toFixed(2) , className: "text-blue-600"},
     {
       header: "İşlemler",
       accessor: "actions",

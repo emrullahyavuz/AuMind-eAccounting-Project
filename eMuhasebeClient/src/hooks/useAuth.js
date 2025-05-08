@@ -23,25 +23,31 @@ export const useAuth = () => {
   const [changeCompanyMutation] = useChangeCompanyMutation();
 
   const handleLogin = async (credentials) => {
-    try {
-      await loginMutation(credentials).unwrap();
-      navigate('/dashboard');
-    } catch (error) {
-      throw error;
+    // Get selected company ID from localStorage if exists
+    const selectedCompanyId = localStorage.getItem('selectedCompanyId');
+    
+    // If there's a selected company, include it in the login request
+    if (selectedCompanyId) {
+      credentials.companyId = selectedCompanyId;
+      localStorage.removeItem('selectedCompanyId'); // Clear after use
     }
+
+    await loginMutation(credentials).unwrap();
+    navigate('/dashboard');
   };
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    navigate('/auth/login');
   };
 
   const handleChangeCompany = async (companyId) => {
-    try {
-      const result = await changeCompanyMutation(companyId).unwrap();
-      dispatch(setCurrentCompany(result.company));
-    } catch (error) {
-      throw error;
+    const result = await changeCompanyMutation(companyId).unwrap();
+    if (result.isSuccessful && result.data) {
+      // Update token in localStorage
+      localStorage.setItem('token', result.data.token);
+      // Update token in Redux store
+      dispatch(setCurrentCompany(result.data));
     }
   };
 
