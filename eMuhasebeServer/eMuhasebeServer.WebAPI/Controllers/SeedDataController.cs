@@ -33,7 +33,7 @@ public sealed class SeedDataController(IMediator mediator) : ApiController(media
             {
                 var createCustomerCommand = new CreateCustomerCommand(
                     Name: faker.Company.CompanyName(),
-                    TypeValue: faker.Random.Int(1, 2), // Assuming 1 = Individual, 2 = Corporate
+                    TypeValue: faker.Random.Int(1, 2),
                     City: faker.Address.City(),
                     Town: faker.Address.State(),
                     FullAdress: faker.Address.StreetAddress(),
@@ -79,15 +79,15 @@ public sealed class SeedDataController(IMediator mediator) : ApiController(media
             {
                 ProductId = product.Id,
                 Quantity = fakerInvoice.Random.Int(1, 10),
-                Price = fakerInvoice.Random.Int(10, 1000) // Random price since Product has no Price property
+                Price = fakerInvoice.Random.Int(10, 1000), 
+                VATRate = fakerInvoice.Random.Int(1, 18) 
             }).ToList();
 
             var invoice = new CreateInvoiceCommand(
                 TypeValue: fakerInvoice.PickRandom(new[] { 1, 2 }),
                 Date: DateOnly.FromDateTime(fakerInvoice.Date.Recent(30)),
-                InvoiceNumber: fakerInvoice.Random.Replace("INV#####"),
                 CustomerId: selectedCustomer.Id,
-                Details: details
+                Details: details 
             );
 
             invoices.Add(invoice);
@@ -106,7 +106,7 @@ public sealed class SeedDataController(IMediator mediator) : ApiController(media
             {
                 // Mevcut faturaların her birini kontrol et
                 var duplicateInvoice = allInvoices.FirstOrDefault(existingInvoice =>
-        existingInvoice.Details != null && existingInvoice.Details.Any(d => d.ProductId == invoiceDetail.ProductId));
+                    existingInvoice.Details != null && existingInvoice.Details.Any(d => d.ProductId == invoiceDetail.ProductId));
 
                 // Eğer mevcut faturada aynı ürün var ise, duplicate olarak işaretle
                 if (duplicateInvoice != null)

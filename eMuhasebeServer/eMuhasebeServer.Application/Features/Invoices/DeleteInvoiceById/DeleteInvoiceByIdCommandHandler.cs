@@ -56,8 +56,7 @@ internal sealed class DeleteInvoiceByIdCommandHandler(
 
         foreach (var detail in productDetails)
         {
-            detail.IsDeleted = true;
-            productDetailRepository.Update(detail);
+            productDetailRepository.Delete(detail);
 
             Product? product = await productRepository.GetByExpressionWithTrackingAsync(p => p.Id == detail.ProductId, cancellationToken);
 
