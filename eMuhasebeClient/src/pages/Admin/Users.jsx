@@ -74,7 +74,20 @@ function UsersPage() {
     { header: "Kullanıcı Adı", accessor: "firstName" },
     { header: "Kullanıcı Soyadı", accessor: "lastName" },
     { header: "E-Mail Adresi", accessor: "email" },
-    { header: "Bağlı Olduğu Şirketler", accessor: "companies" },
+    { 
+      header: "Bağlı Olduğu Şirketler", 
+      accessor: "companyUsers",
+      Cell: ({ value }) => {
+        if (!value) return "-";
+        if (Array.isArray(value)) {
+          const companyNames = value
+            .map(cu => cu.company?.name)
+            .filter(Boolean);
+          return companyNames.length > 0 ? companyNames.join(", ") : "-";
+        }
+        return value.company?.name || "-";
+      }
+    },
     { header: "Username", accessor: "userName" },
 
   ];

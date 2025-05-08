@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../../schemas/auth.schema";
-import { User, Lock, Eye, EyeOff } from "lucide-react";
+import { User, Lock, Eye, EyeOff, Building2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 import { useLoginMutation } from "../../store/api/authApi";
@@ -11,6 +11,14 @@ import AuMindLogo from "../../assets/AuMindLogo.png";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedCompanyName, setSelectedCompanyName] = useState("");
+
+  useEffect(() => {
+    const companyName = localStorage.getItem('selectedCompanyName');
+    if (companyName) {
+      setSelectedCompanyName(companyName);
+    }
+  }, []);
 
   const [loginMutation, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
@@ -33,6 +41,8 @@ function LoginForm() {
       console.log("Login response:", result);
       if (result.data.token) {
         localStorage.setItem("token", result.data.token);
+        // Clear selected company info after successful login
+        localStorage.removeItem('selectedCompanyName');
         // Token'ı store'a da kaydet
         showToast("Giriş yapıldı", "success");
         setTimeout(() => {
@@ -66,6 +76,16 @@ function LoginForm() {
             alt="AuMind Logo"
           />
         </div>
+
+        {/* Seçili Şirket */}
+        {selectedCompanyName && (
+          <div className="w-full mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-md flex items-center">
+            <Building2 className="h-5 w-5 text-yellow-600 mr-2" />
+            <span className="text-gray-700">
+              Seçili Şirket: <span className="font-semibold">{selectedCompanyName}</span>
+            </span>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6">
           {/* Kullanıcı Adı */}

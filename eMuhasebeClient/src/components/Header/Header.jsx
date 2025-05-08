@@ -1,7 +1,9 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../UI/Button";
 import { useAuth } from "../../hooks/useAuth";
-import { LogIn } from "lucide-react";
+import { LogIn, ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useGetAllCompaniesMutation } from "../../store/api/companiesApi";
 
 const Header = () => {
   // Get the current location
@@ -11,7 +13,30 @@ const Header = () => {
   const navigate = useNavigate();
 
   // Get the isAuthenticated state and logout function from the useAuth hook
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, currentCompany, changeCompany } = useAuth();
+
+  // State for companies dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [companies, setCompanies] = useState([]);
+  const [getAllCompanies] = useGetAllCompaniesMutation();
+
+  // Fetch companies when component mounts
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const result = await getAllCompanies().unwrap();
+        if (result?.isSuccessful) {
+          setCompanies(Array.isArray(result.data) ? result.data : []);
+        }
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchCompanies();
+    }
+  }, [isAuthenticated, getAllCompanies]);
 
   // Handle the authentication action
   const handleAuthAction = () => {
@@ -19,6 +44,24 @@ const Header = () => {
       logout();
     } else {
       navigate("/auth/login");
+    }
+  };
+
+  // Handle company change
+  const handleCompanyChange = async (companyId) => {
+    try {
+      debugger
+      const selectedCompany = companies.find(company => company.id === companyId);
+      await changeCompany(companyId);
+      setIsDropdownOpen(false);
+      // Store selected company ID and name in localStorage
+      localStorage.setItem('selectedCompanyId', companyId);
+      localStorage.setItem('selectedCompanyName', selectedCompany.name);
+      // Logout and redirect to login
+      logout();
+      navigate('/auth/login');
+    } catch (error) {
+      console.error("Error changing company:", error);
     }
   };
 
@@ -33,22 +76,35 @@ const Header = () => {
       {/* Header */}
       <header className="bg-gray-800 text-white p-2 px-4 flex justify-between items-center">
         <div className="flex items-center border-l-[3px] ml-[-10px] border-yellow-400">
-          <div className="ml-4 bg-white text-black rounded px-3 py-2 flex items-center">
-            <span className="mr-2">Kardeşler Taşımacılık A.Ş</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-4 w-4"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
+          <div className="ml-4 bg-white text-black rounded px-3 py-2 flex items-center relative">
+            <span className="mr-2">{currentCompany?.name || "Şirket Seçiniz"}</span>
+            {isAuthenticated && (
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="focus:outline-none"
+              >
+                <ChevronDown size={20} className="text-gray-600" />
+              </button>
+            )}
+            
+            {/* Company Dropdown */}
+            {isDropdownOpen && (
+              <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-md shadow-lg z-50">
+                <div className="py-1">
+                  {companies.map((company) => (
+                    <button
+                      key={company.id}
+                      onClick={() => handleCompanyChange(company.id)}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
+                        currentCompany?.id === company.id ? "bg-yellow-50" : ""
+                      }`}
+                    >
+                      {company.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
