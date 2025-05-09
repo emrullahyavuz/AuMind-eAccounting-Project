@@ -34,7 +34,7 @@ const Faturalar = () => {
   const [deleteInvoice] = useDeleteInvoiceMutation();
 
   const { data } = useGetAllCustomersQuery();
-  console.log("data", data)
+  console.log("data", data);
 
   const itemsPerPage = 50;
 
@@ -63,22 +63,6 @@ const Faturalar = () => {
     },
     {
       header: "Tutar",
-      accessor: "amount",
-      className: "text-right",
-    },
-    {
-      header: "KDV",
-      accessor: (row) => {
-        // KDV hesaplaması yapılacaksa burada yapılabilir
-        const kdv = row.details?.reduce((acc, item) => {
-          return acc + item.price * item.quantity * 0.2; // %20 KDV örneği
-        }, 0);
-        return kdv?.toFixed(2) || "0.00";
-      },
-      className: "text-right",
-    },
-    {
-      header: "Toplam",
       accessor: (row) => {
         const total = row.details?.reduce((acc, item) => {
           return acc + item.price * item.quantity;
@@ -86,6 +70,23 @@ const Faturalar = () => {
         return total?.toFixed(2) || "0.00";
       },
       className: "text-right font-bold",
+      
+    },
+    {
+      header: "KDV",
+      accessor: (row) => {
+        const kdv = row.details?.reduce((acc, item) => {
+          return acc + item.vatRate;
+        }, 0);
+
+        return kdv?.toFixed(2) || "0.00";
+      },
+      className: "text-right",
+    },
+    {
+      header: "Toplam",
+      accessor: "amount",
+      className: "text-right",
     },
     {
       header: "Durum",
@@ -248,9 +249,15 @@ const Faturalar = () => {
       const searchTermLower = searchTerm.toLowerCase();
       const filtered = faturalar.filter(
         (fatura) =>
-          (fatura.invoiceNumber?.toLowerCase() || '').includes(searchTermLower) ||
-          (fatura.customer?.name?.toLowerCase() || '').includes(searchTermLower) ||
-          (fatura.customer?.companyName?.toLowerCase() || '').includes(searchTermLower)
+          (fatura.invoiceNumber?.toLowerCase() || "").includes(
+            searchTermLower
+          ) ||
+          (fatura.customer?.name?.toLowerCase() || "").includes(
+            searchTermLower
+          ) ||
+          (fatura.customer?.companyName?.toLowerCase() || "").includes(
+            searchTermLower
+          )
       );
       setFilteredFaturalar(filtered);
       setCurrentPage(1); // Arama yapıldığında ilk sayfaya dön

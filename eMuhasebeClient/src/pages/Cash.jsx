@@ -41,6 +41,7 @@ const Cash = () => {
 
   // Detay butonu render fonksiyonu
   const renderDetailButton = (cash) => (
+    <div className="flex justify-end mr-5">
     <button
       onClick={() => navigate(`/cash-transaction/${cash.id}`)}
       className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-1 px-3 rounded-md flex items-center"
@@ -48,6 +49,7 @@ const Cash = () => {
       <Info size={16} className="mr-1" />
       Detay Gör
     </button>
+    </div>
   );
 
   // Kasalar tablosu sütun tanımları
@@ -218,11 +220,13 @@ const Cash = () => {
 
   // Kasa arama işlemi
   const handleSearch = (searchTerm) => {
+    debugger
     setFilteredCurrents(
       currents.filter((cash) =>
         cash.name.toLowerCase().trim().includes(searchTerm.toLowerCase().trim())
       )
     );
+    console.log(filteredCurrents);
     setCurrentPage(1);
   };
 
@@ -256,7 +260,7 @@ const Cash = () => {
         addButtonText="Kasa Ekle"
         addButtonColor="yellow"
         columns={columns}
-        data={currents}
+        data={filteredCurrents}
         searchPlaceholder="Kasa Adı Giriniz..."
         onAdd={handleAddCash}
         onEdit={handleEditCash}

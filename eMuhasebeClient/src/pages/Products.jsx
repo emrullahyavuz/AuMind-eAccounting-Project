@@ -42,13 +42,15 @@ const Products = () => {
 
   // Detay butonu render fonksiyonu
   const renderDetailButton = (product) => (
-    <button
-      onClick={() => navigate(`/product-detail/${product.id}`)}
-      className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-1 px-3 rounded-md flex items-center"
-    >
-      <Info size={16} className="mr-1" />
-      Detay Gör
-    </button>
+    <div className="flex justify-end mr-5">
+      <button
+        onClick={() => navigate(`/product-detail/${product.id}`)}
+        className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-1 px-3 rounded-md flex items-center"
+      >
+        <Info size={16} className="mr-1" />
+        Detay Gör
+      </button>
+    </div>
   );
 
   // Ürünler tablosu sütun tanımları
@@ -59,12 +61,17 @@ const Products = () => {
       className: "w-24 font-bold text-yellow-500",
     },
     { header: "Ürün Adı", accessor: "name" },
-    { header: "Giriş", accessor: "deposit" , className: "text-green-600"},
-    { header: "Çıkış", accessor: "withdrawal" , className: "text-red-600"},
-    { header: "Bakiye", accessor: (row) => (row.deposit - row.withdrawal).toFixed(2) , className: "text-blue-600"},
+    { header: "Giriş", accessor: "deposit", className: "text-green-600" },
+    { header: "Çıkış", accessor: "withdrawal", className: "text-red-600" },
+    {
+      header: "Bakiye",
+      accessor: (row) => (row.deposit - row.withdrawal).toFixed(2),
+      className: "text-blue-600",
+    },
     {
       header: "İşlemler",
       accessor: "actions",
+
       render: renderDetailButton,
     },
   ];
@@ -73,7 +80,9 @@ const Products = () => {
     const fetchData = async () => {
       try {
         const result = await getAllProducts().unwrap();
+        console.log("API Response:", result); // API yanıtını kontrol et
         const productArray = Array.isArray(result.data) ? result.data : [];
+        console.log("Product Array:", productArray); // Ürün array'ini kontrol et
         setCurrents(productArray);
         setFilteredCurrents(productArray);
       } catch (error) {
@@ -83,7 +92,7 @@ const Products = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [getAllProducts]);
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
@@ -94,17 +103,6 @@ const Products = () => {
       setCurrentPage(newPage);
     }
   };
-
-  // Kasalar sayfasına özel Detay Gör butonu
-  const detailButton = (
-    <button
-      onClick={() => console.log("Detay Gör butonuna tıklandı")}
-      className="bg-yellow-300 hover:bg-yellow-400 text-gray-800 font-medium py-2 px-4 rounded-md flex items-center mr-4"
-    >
-      <Info size={18} className="mr-2" />
-      Detay Gör
-    </button>
-  );
 
   // Kasa ekleme işlemi
   const handleAddProduct = () => {
@@ -130,13 +128,16 @@ const Products = () => {
   const handleEditSubmit = async (product) => {
     debugger;
     console.log(selectedProduct);
-    const result = await updateProduct({id:selectedProduct.id,...product}).unwrap();
+    const result = await updateProduct({
+      id: selectedProduct.id,
+      ...product,
+    }).unwrap();
     console.log(result);
     setIsEditModalOpen(false);
     setSelectedProduct(null);
     showToast("Ürün başarıyla güncellendi", "success");
   };
-  console.log(currents);
+  
 
   // Kasa silme işlemi
   const handleDeleteProduct = (productId) => {
@@ -160,11 +161,17 @@ const Products = () => {
           for (const id of productToDelete.ids) {
             await deleteProduct(id);
           }
-          showToast(`${productToDelete.ids.length} ürün başarıyla silindi`, "success");
+          showToast(
+            `${productToDelete.ids.length} ürün başarıyla silindi`,
+            "success"
+          );
         } else {
           // Tekli silme
           await deleteProduct(productToDelete.ids);
-          showToast(`${productToDelete.name} ürün başarıyla silindi`, "success");
+          showToast(
+            `${productToDelete.name} ürün başarıyla silindi`,
+            "success"
+          );
         }
         // Update the currents state to remove deleted items
         const updatedCurrents = currents.filter(
@@ -185,18 +192,20 @@ const Products = () => {
 
   // Kasa arama işlemi
   const handleSearch = (searchTerm) => {
-    setFilteredCurrents(
-      currents.filter((cash) =>
-        cash.name.toLowerCase().trim().includes(searchTerm.toLowerCase().trim())
-      )
+    console.log(searchTerm)
+    console.log("currents array:", currents); // Debug için currents array'ini kontrol et
+    const filteredProducts = currents.filter((product) =>
+      product.name.toLowerCase().trim().includes(searchTerm.toLowerCase().trim())
     );
+
+    console.log("filteredProducts", filteredProducts);
+    setFilteredCurrents(filteredProducts);
     setCurrentPage(1);
   };
 
   // Özel butonlar
   const customButtons = (
     <>
-    
       {selectedItems.length > 0 && (
         <button
           onClick={() => handleDeleteProduct(selectedItems)}
@@ -210,8 +219,8 @@ const Products = () => {
   );
 
   // Sayfa başına listeleme işlemi
-  const currentProducts = Array.isArray(currents)
-    ? currents.slice(
+  const currentProducts = Array.isArray(filteredCurrents)
+    ? filteredCurrents.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
       )

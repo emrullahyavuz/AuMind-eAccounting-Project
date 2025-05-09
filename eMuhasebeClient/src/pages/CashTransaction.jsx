@@ -307,7 +307,7 @@ function CashTransaction() {
   const customButtons = selectedItems.length > 0 && (
     <button
       onClick={() => handleDeleteTransaction(selectedItems)}
-      className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md flex items-center"
+      className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 ml-5 rounded-md flex items-center"
     >
       <Trash2 size={18} className="mr-2" />
       Seçilenleri Sil ({selectedItems.length})
