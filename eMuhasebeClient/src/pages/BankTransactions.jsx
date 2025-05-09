@@ -39,6 +39,7 @@ function BankTransactions() {
   const [deleteBankDetail] = useDeleteBankDetailMutation();
 
   const itemsPerPage = 50;
+  
 
   // Kasa hareketleri sütun tanımları
   const columns = [
@@ -61,20 +62,21 @@ function BankTransactions() {
     },
   ];
 
-  // Örnek veri yükleme - gerçek uygulamada API'den gelecek
+
   useEffect(() => {
     const fetchData = async () => {
+      debugger
       try {
         const response = await getAllBankDetails({
           bankId: bankName,
-          startDate: "2025-05-05",
-          endDate: "2025-05-30"
+          startDate: "2024-05-05",
+          endDate: "2026-05-30"
         }).unwrap();
         console.log(response);
         setBankData(response.data);
         setTransactions(response.data.details);
         setFilteredTransactions(response.data.details);
-        setBankName(response.data.name);
+        setBankName(response.data.id);
 
         setIsLoading(false);
       } catch (error) {
@@ -109,18 +111,30 @@ function BankTransactions() {
     }
   };
 
-  // Tarih filtresi uygulama
-  const handleApplyFilter = () => {
-    console.log("Tarih filtresi uygulanıyor:", { startDate, endDate });
-    // Gerçek uygulamada burada API çağrısı yapılacak
-
+ // Tarih filtresi uygulama
+ const handleApplyFilter = async () => {
+  debugger
+  try {
     setIsLoading(true);
-
-    setTimeout(() => {
-      // Filtreleme simülasyonu
-      setIsLoading(false);
-    }, 1000);
-  };
+    const response = await getAllBankDetails({
+      bankId: bankName,
+      startDate: startDate || null,
+      endDate: endDate || null
+    }).unwrap();
+    
+    if (response?.isSuccessful) {
+      const details = response.data?.details || [];
+      setTransactions(details);
+      setFilteredTransactions(details);
+      showToast("Tarih filtresi başarıyla uygulandı", "success");
+    }
+  } catch (error) {
+    console.error("Error applying date filter:", error);
+    showToast("Tarih filtresi uygulanırken bir hata oluştu", "error");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // İşlem ekleme işlemi
   const handleAddTransaction = () => {
@@ -166,8 +180,7 @@ console.log(selectedTransaction)
         ...transactionData,
         id:selectedTransaction.id,
         bankId:selectedTransaction.bankId,
-        type:0,
-
+        type:selectedTransaction.depositAmount === 0 ? 1: 0,
       };
      
 

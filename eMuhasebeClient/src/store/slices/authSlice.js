@@ -28,13 +28,23 @@ const authSlice = createSlice({
       .addMatcher(
         authApi.endpoints.login.matchFulfilled,
         (state, { payload }) => {
-          state.token = payload.token;
-          state.user = payload.user;
+          state.token = payload.data.token;
+          state.user = payload.data;
           state.isAuthenticated = true;
-          localStorage.setItem('token', payload.token);
+          state.currentCompany = payload.data;
+          localStorage.setItem('token', payload.data.token);
         }
       )
-      
+      .addMatcher(
+        authApi.endpoints.changeCompany.matchFulfilled,
+        (state, { payload }) => {
+          if (payload.isSuccessful && payload.data) {
+            state.token = payload.data.token;
+            state.currentCompany = payload.data;
+            localStorage.setItem('token', payload.data.token);
+          }
+        }
+      );
   },
 });
 

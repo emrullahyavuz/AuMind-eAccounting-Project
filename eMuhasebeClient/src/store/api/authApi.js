@@ -27,7 +27,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
     changeCompany: builder.mutation({
       query: (companyId) => ({
-        url: '/auth/changeCompany',
+        url: '/Auth/ChangeCompany',
         method: 'POST',
         body: { companyId },
       }),

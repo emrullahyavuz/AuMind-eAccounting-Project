@@ -61,12 +61,12 @@ const Cash = () => {
     { header: "Döviz Tipi", accessor: "currencyType.name" },
     {
       header: "Giriş",
-      accessor: "inflow",
+      accessor: "depositAmount",
       className: "text-right text-green-600",
     },
     {
       header: "Çıkış",
-      accessor: "checkout",
+      accessor: "withdrawalAmount",
       className: "text-right text-red-600",
     },
     {

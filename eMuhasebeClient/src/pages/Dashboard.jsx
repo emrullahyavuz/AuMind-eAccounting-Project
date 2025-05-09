@@ -1,35 +1,102 @@
-import { Search, ChevronLeft, ChevronRight } from "lucide-react"
+import { useState, useEffect } from "react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { useGetAllInvoicesQuery } from "../store/api";
+import { useAuth } from "../hooks/useAuth";
+import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay";
 
 function Anasayfa() {
-  // Örnek işlem verileri
-  const transactions = [
-    { id: 1, customer: "ABC Lojistik", amount: "12,500.00 ₺", date: "22.05.2025", type: "Satış", status: "approved" },
-    { id: 2, customer: "XYZ Nakliyat", amount: "8,750.00 ₺", date: "21.05.2025", type: "Alış", status: "waiting" },
-    { id: 3, customer: "123 Taşıma", amount: "15,000.00 ₺", date: "20.05.2025", type: "Satış", status: "approved" },
-    { id: 4, customer: "Hızlı Kargo", amount: "5,250.00 ₺", date: "19.05.2025", type: "Satış", status: "approved" },
-    { id: 5, customer: "Güven Nakliyat", amount: "9,800.00 ₺", date: "18.05.2025", type: "Alış", status: "waiting" },
-    { id: 6, customer: "Yıldız Lojistik", amount: "7,300.00 ₺", date: "17.05.2025", type: "Satış", status: "approved" },
-  ]
+  const { user, currentCompany } = useAuth();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const itemsPerPage = 50;
 
-  // Gelir ve gider verileri (grafik için)
-  const financialData = [
-    { month: "Oca", income: 65000, expense: 45000 },
-    { month: "Şub", income: 85000, expense: 55000 },
-    { month: "Mar", income: 60000, expense: 35000 },
-    { month: "Nis", income: 70000, expense: 30000 },
-    { month: "May", income: 55000, expense: 40000 },
-    { month: "Haz", income: 50000, expense: 45000 },
-  ]
+  // RTK Query hooks
+  const { data: invoices, isLoading: isInvoicesLoading } = useGetAllInvoicesQuery();
 
-  // En yüksek gelir değerini bul (grafik ölçeklendirmesi için)
-  const maxValue = Math.max(...financialData.map((item) => Math.max(item.income, item.expense)))
+  console.log(invoices)
+  // Transform invoice data for the table
+  const transactions = invoices?.data?.map(invoice => ({
+    id: invoice.id,
+    customer: `${invoice.customer?.name || ''} ${invoice.customer?.surname || ''}`.trim(),
+    amount: new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(invoice.amount),
+    date: new Date(invoice.date).toLocaleDateString('tr-TR'),
+    type: invoice.type?.value === 1 ? "Satış" : "Alış",
+    status: invoice.status === 1 ? "approved" : "waiting"
+  })) || [];
+
+  // Filter transactions based on search term
+  const filteredTransactions = transactions.filter(transaction =>
+    transaction.customer.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, filteredTransactions.length);
+
+  // Get current page transactions
+  const currentTransactions = filteredTransactions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Calculate financial data for the chart
+  const financialData = Array.from({ length: 6 }, (_, i) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - i);
+    
+    // Get invoices for the current month
+    const monthInvoices = invoices?.data?.filter(invoice => {
+      const invoiceDate = new Date(invoice.date);
+      return invoiceDate.getMonth() === date.getMonth() &&
+             invoiceDate.getFullYear() === date.getFullYear();
+    }) || [];
+
+    // Calculate income (type 1 = Satış)
+    const income = monthInvoices
+      .filter(invoice => invoice.type?.value === 1)
+      .reduce((sum, invoice) => sum + (invoice.amount || 0), 0);
+
+    // Calculate expense (type 2 = Alış)
+    const expense = monthInvoices
+      .filter(invoice => invoice.type?.value === 2)
+      .reduce((sum, invoice) => sum + (invoice.amount || 0), 0);
+
+    return {
+      month: date.toLocaleDateString('tr-TR', { month: 'short' }),
+      income,
+      expense
+    };
+  }).reverse();
+
+  // Find max value for chart scaling
+  const maxValue = Math.max(...financialData.map(item => Math.max(item.income, item.expense))) || 1;
+
+  // Handle search
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  // Handle page change
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  if (isInvoicesLoading) {
+    return <LoadingOverlay message="Veriler yükleniyor..." />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Üst Başlık */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-700">Ana Sayfa</h1>
-        <h2 className="text-xl font-bold text-gray-700 mt-1">HOŞ GELDİNİZ, ŞEREF CAN AVLAK</h2>
+        <h2 className="text-xl font-bold text-gray-700 mt-1">
+          HOŞ GELDİNİZ, {user?.fullName?.toUpperCase()}
+        </h2>
       </div>
 
       {/* Ana Bilgi Kartı */}
@@ -42,22 +109,24 @@ function Anasayfa() {
             <div className="space-y-4">
               <div>
                 <p className="text-gray-300">Firma Adı</p>
-                <p className="font-medium">KARDEŞLER TAŞIMACILIK A.Ş</p>
+                <p className="font-medium">{currentCompany?.name || 'Firma Seçilmedi'}</p>
               </div>
 
               <div>
                 <p className="text-gray-300">Vergi Numarası</p>
-                <p className="font-medium">0000123456789</p>
+                <p className="font-medium">{currentCompany?.taxNumber || '-'}</p>
               </div>
 
               <div>
                 <p className="text-gray-300">Adres</p>
-                <p className="font-medium">Atatürk Cad. No:123, İstanbul/Türkiye</p>
+                <p className="font-medium">{currentCompany?.address || '-'}</p>
               </div>
 
               <div>
                 <p className="text-gray-300">Son İşlem Tarihi</p>
-                <p className="font-medium">23.05.2025</p>
+                <p className="font-medium">
+                  {transactions[0]?.date || new Date().toLocaleDateString('tr-TR')}
+                </p>
               </div>
             </div>
           </div>
@@ -71,12 +140,18 @@ function Anasayfa() {
                 <div key={index} className="flex-1 flex flex-col items-center">
                   {/* Gelir Çubuğu */}
                   <div className="w-full flex justify-center mb-1">
-                    <div className="bg-yellow-400 w-8" style={{ height: `${(item.income / maxValue) * 200}px` }}></div>
+                    <div 
+                      className="bg-yellow-400 w-8" 
+                      style={{ height: `${(item.income / maxValue) * 200}px` }}
+                    ></div>
                   </div>
 
                   {/* Gider Çubuğu */}
                   <div className="w-full flex justify-center mb-2">
-                    <div className="bg-gray-700 w-8" style={{ height: `${(item.expense / maxValue) * 200}px` }}></div>
+                    <div 
+                      className="bg-gray-700 w-8" 
+                      style={{ height: `${(item.expense / maxValue) * 200}px` }}
+                    ></div>
                   </div>
 
                   {/* Ay Etiketi */}
@@ -110,6 +185,8 @@ function Anasayfa() {
             <input
               type="text"
               placeholder="İşlem Numarası Giriniz..."
+              value={searchTerm}
+              onChange={handleSearch}
               className="pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500"
             />
             <button className="absolute right-2 top-1/2 transform -translate-y-1/2">
@@ -133,7 +210,7 @@ function Anasayfa() {
 
           {/* Tablo İçeriği */}
           <div className="bg-white">
-            {transactions.map((transaction) => (
+            {currentTransactions.map((transaction) => (
               <div key={transaction.id} className="grid grid-cols-12 border-b border-gray-200 text-sm">
                 <div className="col-span-1 p-3 border-r border-gray-200 font-medium text-yellow-600">
                   {transaction.id}
@@ -164,16 +241,27 @@ function Anasayfa() {
 
       {/* Sayfalama */}
       <div className="flex justify-end items-center text-sm text-gray-600">
-        <button className="p-1 mr-2">
+        <button 
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="p-1 mr-2 disabled:opacity-50"
+        >
           <ChevronLeft size={18} />
         </button>
-        <span>1-50 arası gösteriliyor. Devam et</span>
-        <button className="p-1 ml-2">
-          <ChevronRight size={18} />
-        </button>
+        <span>{startItem}-{endItem} arası gösteriliyor.</span>
+        {totalPages > 1 && (
+          <button 
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="p-1 ml-2 disabled:opacity-50"
+          >
+            <span>Devam et</span>
+            <ChevronRight size={18} className="inline ml-1" />
+          </button>
+        )}
       </div>
     </div>
-  )
+  );
 }
 
-export default Anasayfa
+export default Anasayfa;

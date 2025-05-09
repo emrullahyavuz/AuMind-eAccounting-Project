@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react"
 import { Send, Bot, User, Loader2, ArrowLeft, Download, Share2 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useAccountingBot } from "../hooks/useAccountingBot"
+import { useGetChatSummaryMutation } from "../store/api/aiChatApi"
 
 function ChatPage() {
   const { messages, addMessage } = useAccountingBot()
@@ -9,10 +10,7 @@ function ChatPage() {
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef(null)
   const navigate = useNavigate()
-
-  // OpenAI API key ve url
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-  const apiUrl = import.meta.env.VITE_OPENAI_API_URL;
+  const [getChatSummary] = useGetChatSummaryMutation()
 
   // Mesajlar güncellendiğinde otomatik olarak en alta kaydır
   useEffect(() => {
@@ -31,43 +29,11 @@ function ChatPage() {
     setIsLoading(true)
 
     try {
-      // OpenAI API'ye istek
-      const systemMessage = {
-        role: "system",
-        content:
-          "Sen AuMind Muhasebe yazılımının bir parçası olan muhasebe asistanısın. Muhasebe, finans, vergi ve işletme konularında uzmansın. Türkiye'deki muhasebe mevzuatı, vergi kanunları ve finansal raporlama standartları hakkında güncel bilgilere sahipsin. Kullanıcılara kısa, net ve doğru bilgiler ver. Muhasebe terimleri kullan ama açıklamalarını da ekle.",
-      }
-
-      // API isteği için mesajları hazırla
-      // Kullanıcı ve asistan mesajlarını filtrele
-      const messagesToSend = [
-        systemMessage,
-        ...messages.filter((msg) => msg.role === "user" || msg.role === "assistant"),
-        userMessage,
-      ]
-
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-4o",  // gpt 4o modelini kullanıyoruz
-          messages: messagesToSend,
-          temperature: 0.7,
-          max_tokens: 500,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`API hatası: ${response.status}`)
-      }
-
-      const data = await response.json()
+      const response = await getChatSummary(inputMessage).unwrap()
+      
       const botResponse = {
         role: "assistant",
-        content: data.choices[0].message.content,
+        content: response,
       }
 
       addMessage(botResponse)
@@ -77,18 +43,7 @@ function ChatPage() {
       // API hatası durumunda yedek yanıt mekanizması
       const fallbackResponse = {
         role: "assistant",
-        content: "Üzgünüm, şu anda yanıt veremiyorum. Lütfen daha sonra tekrar deneyiniz.",
-      }
-
-      // Basit anahtar kelime tabanlı yedek yanıtlar
-      if (apiKey && inputMessage.toLowerCase().includes("kdv")) {
-        fallbackResponse.content =
-          "KDV (Katma Değer Vergisi), mal ve hizmet alımlarında ödenen bir vergi türüdür. Türkiye'de genel KDV oranı %18'dir, ancak bazı ürün ve hizmetlerde %1 veya %8 gibi indirimli oranlar uygulanabilir. KDV beyannamesi her ay düzenli olarak verilmelidir."
-      } else if (apiKey && inputMessage.toLowerCase().includes("fatura")) {
-        fallbackResponse.content =
-          "Faturalar, ticari işlemlerin kaydını tutan önemli belgelerdir. E-fatura sistemine kayıtlı mükellefler arasında elektronik ortamda düzenlenir. Faturalar, düzenleme tarihinden itibaren 5 yıl süreyle saklanmalıdır. Sistemimizde 'Fatura Ekle' bölümünden yeni fatura oluşturabilirsiniz."
-      } else if (!apiKey) {
-        fallbackResponse.content = "API anahtarı bulunamadı. Lütfen sistem yöneticinizle iletişime geçin."
+        content: error.message || "Üzgünüm, şu anda yanıt veremiyorum. Lütfen daha sonra tekrar deneyiniz.",
       }
 
       addMessage(fallbackResponse)
