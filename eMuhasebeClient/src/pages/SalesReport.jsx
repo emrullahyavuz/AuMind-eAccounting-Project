@@ -14,7 +14,7 @@ import {
 } from "../assets/icons/index";
 import { useGetAllInvoicesQuery, useGetPurchaseReportsQuery } from "../store/api";
 import { useAuth } from "../hooks/useAuth";
-
+import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay";
 function Reports() {
   const { user } = useAuth();
   const { data: purchaseReports, isLoading: isPurchaseReportsLoading } = useGetPurchaseReportsQuery();
@@ -61,7 +61,7 @@ function Reports() {
   };
 
   if (isPurchaseReportsLoading || isInvoicesLoading) {
-    return <div className="min-h-screen bg-gray-100 p-4">Loading...</div>;
+    return <LoadingOverlay />
   }
 
   return (

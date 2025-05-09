@@ -66,6 +66,8 @@ function DataTable({
       : "bg-blue-600 hover:bg-blue-700 text-white";
 
   const renderCell = (column, row, rowIndex) => {
+    if (!row) return null;
+
     let value;
     if (column.accessor === "id") {
       return (currentPage - 1) * itemsPerPage + rowIndex + 1;
@@ -75,9 +77,9 @@ function DataTable({
       value = column.accessor(row);
     } else if (typeof column.accessor === 'string' && column.accessor.includes('.')) {
       const [first, second] = column.accessor.split('.');
-      value = row[first]?.[second];
+      value = row[first]?.[second] ?? '';
     } else if (typeof column.accessor === 'string') {
-      value = row[column.accessor];
+      value = row[column.accessor] ?? '';
     } else {
       value = '';
     }
@@ -165,7 +167,7 @@ function DataTable({
 
               {/* Tablo Gövdesi */}
               <tbody>
-                {data && data.length > 0
+                {data && Array.isArray(data) && data.length > 0
                   ? data.map((item, rowIndex) => (
                       <tr
                         key={item?.id || rowIndex}
@@ -193,7 +195,7 @@ function DataTable({
                           <div className="flex justify-center">
                             <input
                               type="checkbox"
-                              checked={selectedItems.includes(item?.id)}
+                              checked={selectedItems?.includes(item?.id)}
                               onChange={() => handleSelectItem(item?.id)}
                               className="h-5 w-5 text-red-500 border-gray-300 rounded focus:ring-red-500"
                             />

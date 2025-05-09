@@ -141,7 +141,7 @@ export const api = createApi({
 
     changeCompany: builder.mutation({
       query: (companyId) => ({
-        url: "/auth/changeCompany",
+        url: "/Auth/changeCompany",
         method: "POST",
         body: { companyId },
       }),
@@ -189,6 +189,20 @@ export const api = createApi({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ id: invoiceIds }),
+      }),
+    }),
+
+    generateInvoicePdf: builder.mutation({
+      query: (invoiceId) => ({
+        url: `/Invoices/GenerateInvoicePdf?invoiceId=${invoiceId}`,
+        method: "GET",
+        responseHandler: async (response) => {
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'PDF generation failed');
+          }
+          return response.blob();
+        },
       }),
     }),
 
@@ -553,4 +567,5 @@ export const {
   useCreateCashRegisterDetailMutation,
   useUpdateCashRegisterDetailMutation,
   useDeleteCashRegisterDetailByIdMutation,
+  useGenerateInvoicePdfMutation,
 } = api;

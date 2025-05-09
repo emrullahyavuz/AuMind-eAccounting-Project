@@ -146,7 +146,7 @@ const Cash = () => {
   };
 
   const handleEditSubmit = async (cash) => {
-    debugger;
+   
     const currencyType =
       cash.currencyTypeValue === "TL"
         ? 1
@@ -161,7 +161,8 @@ const Cash = () => {
         ...cash,
         currencyTypeValue: currencyType,
       });
-      console.log(result);
+      console.log("resultUpdate",result);
+      
 
       showToast(`${result.data.data}`, "success");
       setIsEditModalOpen(false);

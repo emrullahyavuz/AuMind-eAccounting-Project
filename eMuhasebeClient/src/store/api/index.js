@@ -1,17 +1,18 @@
-import { authApi } from './authApi';
-import { companyApi } from './companiesApi';
-import { invoiceApi } from './invoicesApi';
-import { userApi } from './usersApi';
-import { customersApi } from './customersApi';
-import { cashRegisterApi } from './cashRegisterApi';
-import { productsApi } from './productsApi';
-import { stockProfitabilityApi } from './stockProfitabilityApi';
-import { banksApi } from './banksApi';
-import { bankDetailsApi } from './bankDetails';
-import { productDetailsApi } from './ProductDetailsApi';
-import { customerDetailsApi } from './CustomerDetailsApi';
-import { cashRegistersDetailsApi } from './cashRegistersDetails';
-import { purchaseReportsApi } from './purchaseReportsApi';
+import { authApi } from "./authApi";
+import { companyApi } from "./companiesApi";
+import { invoiceApi } from "./invoicesApi";
+import { userApi } from "./usersApi";
+import { customersApi } from "./customersApi";
+import { cashRegisterApi } from "./cashRegisterApi";
+import { productsApi } from "./productsApi";
+import { stockProfitabilityApi } from "./stockProfitabilityApi";
+import { banksApi } from "./banksApi";
+import { bankDetailsApi } from "./bankDetails";
+import { productDetailsApi } from "./ProductDetailsApi";
+import { customerDetailsApi } from "./CustomerDetailsApi";
+import { cashRegistersDetailsApi } from "./cashRegistersDetails";
+import { purchaseReportsApi } from "./purchaseReportsApi";
+import { generateInvoicePdfApi } from "./generateInvoicePdfApi";
 
 export const apiReducers = {
   [authApi.reducerPath]: authApi.reducer,
@@ -28,7 +29,8 @@ export const apiReducers = {
   [customerDetailsApi.reducerPath]: customerDetailsApi.reducer,
   [cashRegistersDetailsApi.reducerPath]: cashRegistersDetailsApi.reducer,
   [purchaseReportsApi.reducerPath]: purchaseReportsApi.reducer,
-  };
+  [generateInvoicePdfApi.reducerPath]: generateInvoicePdfApi.reducer,
+};
 
 export const apiMiddlewares = [
   authApi.middleware,
@@ -45,4 +47,5 @@ export const apiMiddlewares = [
   customerDetailsApi.middleware,
   cashRegistersDetailsApi.middleware,
   purchaseReportsApi.middleware,
+  generateInvoicePdfApi.middleware,
 ];
