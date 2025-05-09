@@ -11,6 +11,7 @@ import {
   useCreateCashRegisterDetailMutation,
   useUpdateCashRegisterDetailMutation,
   useDeleteCashRegisterDetailByIdMutation,
+  useGetAllCashRegistersMutation,
 } from "../store/api";
 import { useToast } from "../hooks/useToast";
 
@@ -27,6 +28,7 @@ function CashTransaction() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [safeName, setSafeName] = useState("")
   const { id: cashId } = useParams();
   const itemsPerPage = 50;
   const { showToast } = useToast();
@@ -36,6 +38,8 @@ function CashTransaction() {
   const [createCashRegisterDetail] = useCreateCashRegisterDetailMutation();
   const [updateCashRegisterDetail] = useUpdateCashRegisterDetailMutation();
   const [deleteCashRegisterDetailById] = useDeleteCashRegisterDetailByIdMutation();
+  // const [getAllCashRegisters] = useGetAllCashRegistersMutation();
+  // console.log("getAllCashRegisters",getAllCashRegisters)
 
   useEffect(() => {
     const fetchCashRegisterDetails = async () => {
@@ -46,6 +50,7 @@ function CashTransaction() {
           endDate: "2026-05-10",
         });
         console.log(response);
+        setSafeName(response?.data?.data?.name)
         const details = response?.data?.data?.details || [];
         setTransactions(details);
         setFilteredTransactions(details);
@@ -168,10 +173,10 @@ function CashTransaction() {
       setIsLoading(false);
     }
   };
-  console.log(selectedItems)
+  
   const handleUpdateCashTransaction = async (transactionData) => {
     
-    debugger;
+    
     try {
       setIsLoading(true);
       
@@ -190,6 +195,7 @@ function CashTransaction() {
       const updatedTransactions = transactions.map(t => 
         t.id === selectedTransaction.id ? response.data.data : t
       );
+      console.log("updatedTransactions",updatedTransactions)
       setTransactions(updatedTransactions);
       setFilteredTransactions(updatedTransactions);
       
@@ -298,7 +304,7 @@ function CashTransaction() {
   const customHeader = (
     <div className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-bold border-b-2 border-gray-300 text-gray-800">
-        (Kasa İsmi) Hareketleri
+        ({safeName}) Hareketleri
       </h1>
     </div>
   );

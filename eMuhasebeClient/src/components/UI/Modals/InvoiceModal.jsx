@@ -1,8 +1,19 @@
 import { useEffect, useState } from "react";
 import { X, Calendar, ChevronDown, Plus } from "lucide-react";
-import { useGetAllCustomersQuery, useGetAllProductsMutation} from "../../../store/api";
+import {
+  useGetAllCustomersQuery,
+  useGetAllProductsMutation,
+} from "../../../store/api";
 
-function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEditInvoice, updateInvoice }) {
+function InvoiceModal({
+  isOpen,
+  isEditMode,
+  invoice,
+  onClose,
+  onAddInvoice,
+  onEditInvoice,
+  updateInvoice,
+}) {
   const { data: customers } = useGetAllCustomersQuery();
   const [products] = useGetAllProductsMutation();
   const [productsData, setProductsData] = useState([]);
@@ -21,11 +32,11 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
   }, [products]);
 
   const [formData, setFormData] = useState({
-    typeValue: invoice?.typeValue || "satis",
+    typeValue: invoice?.typeValue === 2 ? "satis" : "alis",
     date: invoice?.date || new Date().toISOString().split("T")[0],
     customerId: invoice?.customerId || "",
-    invoiceNumber: invoice?.invoiceNumber || "",
-    details: [],
+    details: invoice?.details || [],
+    vatRate: invoice?.vatRate || 0,
   });
 
   const [newItem, setNewItem] = useState({
@@ -33,7 +44,36 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
     quantity: "",
     price: "",
     total: "",
+    vatRate: 0
   });
+
+  // Düzenleme modunda fatura verilerini yükle
+  useEffect(() => {
+    if (isEditMode && invoice) {
+      // Müşteri adını bul
+      const customer = customers?.data?.find(c => c.id === invoice.customerId);
+      
+      // Ürün detaylarını hazırla
+      const details = invoice.details?.map(detail => {
+        const product = productsData.find(p => p.id === detail.productId);
+        return {
+          productId: product?.name || "",
+          quantity: detail.quantity,
+          price: detail.price,
+          vatRate: detail.vatRate,
+          total: detail.total
+        };
+      });
+
+      setFormData({
+        typeValue: invoice.typeValue === 2 ? "satis" : "alis",
+        date: invoice.date,
+        customerId: customer?.name || "",
+        details: details || [],
+        vatRate: invoice.vatRate || 0,
+      });
+    }
+  }, [isEditMode, invoice, customers?.data, productsData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,7 +82,7 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
       [name]: value,
     });
   };
-  
+
   const handleItemChange = (e) => {
     const { name, value } = e.target;
 
@@ -61,10 +101,13 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
       updatedItem.total = (quantity * price).toFixed(2);
     }
 
+    // KDV input'u temizlendiğinde 0 olarak ayarla
+    if (name === "vatRate") {
+      updatedItem.vatRate = value === "" ? 0 : Number(value).toFixed(2);
+    }
+
     setNewItem(updatedItem);
   };
-
-  
 
   const addItem = () => {
     if (newItem.productId && newItem.quantity && newItem.price) {
@@ -77,59 +120,67 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
         quantity: "",
         price: "",
         total: "",
+        vatRate: 0
       });
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    debugger
     if (isEditMode) {
       const updatedFormData = {
         ...formData,
         typeValue: formData.typeValue === "satis" ? 2 : 1,
       };
 
-      const customer = customers?.data.find((c) => c.name === formData.customerId);
-      const productIds = updatedFormData.details.map((item) => item.productId);
-      const relevantProducts = productsData.filter((p) => productIds.includes(p.name));
+      const customer = customers?.data.find(
+        (c) => c.name === formData.customerId
+      );
 
-      console.log("Customer:", customer);
-      console.log("Products:", productsData);
+      // Tüm ürünleri tek bir faturada topla
       const filteredUpdateFormData = {
         ...updatedFormData,
         customerId: customer.id,
-        details: updatedFormData.details.map((item) => ({
-          ...item,
-          productId: relevantProducts[0].id
-        })),
+        details: updatedFormData.details.map((item) => {
+          const product = productsData.find((p) => p.name === item.productId);
+          return {
+            productId: product.id,
+            quantity: Number(item.quantity),
+            price: Number(item.price),
+            vatRate: Number(item.vatRate || 0),
+            total: Number(item.total)
+          };
+        }),
       };
-      debugger;
+
       onEditInvoice(filteredUpdateFormData);
     } else {
       const updatedFormData = {
         ...formData,
         typeValue: formData.typeValue === "satis" ? 2 : 1,
       };
-  
-      // Get customer and product data
-      const customer = customers?.data.find((c) => c.name === formData.customerId);
-      const productIds = updatedFormData.details.map((item) => item.productId);
-      const relevantProducts = productsData.filter((p) => productIds.includes(p.name));
-  
-      console.log("Customer:", customer);
-      console.log("Products:", productsData);
+
+      const customer = customers?.data.find(
+        (c) => c.name === formData.customerId
+      );
+
+      // Tüm ürünleri tek bir faturada topla
       const filteredUpdateFormData = {
         ...updatedFormData,
         customerId: customer.id,
-        details: updatedFormData.details.map((item) => ({
-          ...item,
-          productId: relevantProducts[0].id
-        })),
+        details: updatedFormData.details.map((item) => {
+          const product = productsData.find((p) => p.name === item.productId);
+          return {
+            productId: product.id,
+            quantity: Number(item.quantity),
+            price: Number(item.price),
+            vatRate: Number(item.vatRate || 0),
+            total: Number(item.total)
+          };
+        }),
       };
-      debugger;
+
       onAddInvoice(filteredUpdateFormData);
-      onClose();
     }
     onClose();
   };
@@ -202,8 +253,11 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
                   required
                 >
                   <option value="">Seçiniz...</option>
-                  <option value="Hegmann Group">Müşteri 1</option>
-                  <option value="Hegmann Group">Müşteri 2</option>
+                  {customers?.data?.map((customer) => (
+                    <option key={customer.id} value={customer.name}>
+                      {customer.name}
+                    </option>
+                  ))}
                 </select>
                 <ChevronDown
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
@@ -212,7 +266,7 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
               </div>
             </div>
 
-            <div>
+            {/* <div>
               <label className="block text-gray-700 mb-1">
                 Fatura Numarası
               </label>
@@ -224,20 +278,32 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
                 required
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Ürün Ekleme Alanı */}
           <div className="grid grid-cols-5 gap-2 mb-4">
             <div>
               <label className="block text-gray-700 mb-1">Ürün</label>
-              <input
-                type="text"
-                name="productId"
-                value={newItem.productId}
-                onChange={handleItemChange}
-                className="w-full border border-gray-300 rounded-md p-2 bg-white"
-              />
+              <div className="relative">
+                <select
+                  name="productId"
+                  value={newItem.productId}
+                  onChange={handleItemChange}
+                  className="w-full border border-gray-300 rounded-md p-2 bg-white appearance-none pr-10"
+                >
+                  <option value="">Seçiniz...</option>
+                  {productsData?.map((product) => (
+                    <option key={product.id} value={product.name}>
+                      {product.name}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                  size={16}
+                />
+              </div>
             </div>
             <div>
               <label className="block text-gray-700 mb-1">Adet</label>
@@ -255,6 +321,16 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
                 type="number"
                 name="price"
                 value={newItem.price}
+                onChange={handleItemChange}
+                className="w-full border border-gray-300 rounded-md p-2 bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700 mb-1">KDV Oranı</label>
+              <input
+                type="number"
+                name="vatRate"
+                value={newItem.vatRate}
                 onChange={handleItemChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
               />
@@ -291,36 +367,41 @@ function InvoiceModal({ isOpen, isEditMode, invoice, onClose, onAddInvoice, onEd
                   <th className="py-2 text-left">Ürün Adı</th>
                   <th className="py-2 text-left">Adet</th>
                   <th className="py-2 text-left">Birim Fiyat</th>
+                  <th className="py-2 text-left">KDV Oranı</th>
                   <th className="py-2 text-left">Toplam</th>
                   <th className="py-2 text-left">İşlemler</th>
                 </tr>
               </thead>
               <tbody>
-                {formData.details && formData.details.map((item, index) => (
-                  <tr key={index} className="border-b border-gray-300">
-                    <td className="py-2">{index + 1}</td>
-                    <td className="py-2">{item.productId}</td>
-                    <td className="py-2">{item.quantity}</td>
-                    <td className="py-2">{item.price}</td>
-                    <td className="py-2">{item.total}</td>
-                    <td className="py-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFormData({
-                            ...formData,
-                            details: formData.details.filter(
-                              (i) => i.productId !== item.productId
-                            ),
-                          });
-                        }}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        Sil
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {formData.details &&
+                  formData.details.map((item, index) => (
+                    <tr key={index} className="border-b border-gray-300">
+                      <td className="py-2">{index + 1}</td>
+                      <td className="py-2">{item.productId}</td>
+                      <td className="py-2">{Number(item.quantity).toFixed(2)}</td>
+                      <td className="py-2">{Number(item.price).toFixed(2)}</td>
+                      <td className="py-2">{Number(item.vatRate).toFixed(2)}</td>
+                      <td className="py-2">
+                        {(Number(item.price) + Number((item.vatRate * item.price) / 100)).toFixed(2)}
+                      </td>
+                      <td className="py-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData({
+                              ...formData,
+                              details: formData.details.filter(
+                                (i) => i.productId !== item.productId
+                              ),
+                            });
+                          }}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          Sil
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
                 {formData.details && formData.details.length === 0 && (
                   <tr>
                     <td colSpan="6" className="py-4 text-center text-gray-500">

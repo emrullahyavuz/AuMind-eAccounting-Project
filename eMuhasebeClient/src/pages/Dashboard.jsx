@@ -15,14 +15,17 @@ function Anasayfa() {
 
   console.log(invoices)
   // Transform invoice data for the table
-  const transactions = invoices?.data?.map(invoice => ({
-    id: invoice.id,
-    customer: `${invoice.customer?.name || ''} ${invoice.customer?.surname || ''}`.trim(),
-    amount: new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(invoice.amount),
-    date: new Date(invoice.date).toLocaleDateString('tr-TR'),
-    type: invoice.type?.value === 1 ? "Satış" : "Alış",
-    status: invoice.status === 1 ? "approved" : "waiting"
-  })) || [];
+  const transactions = [...(invoices?.data || [])]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5)
+    .map(invoice => ({
+      id: invoice.id,
+      customer: `${invoice.customer?.name || ''} ${invoice.customer?.surname || ''}`.trim(),
+      amount: new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(invoice.amount),
+      date: new Date(invoice.date).toLocaleDateString('tr-TR'),
+      type: invoice.type?.value === 1 ? "Satış" : "Alış",
+      status: new Date(invoice.date) < new Date() ? "approved" : (invoice.status === 1 ? "approved" : "waiting")
+    }));
 
   // Filter transactions based on search term
   const filteredTransactions = transactions.filter(transaction =>

@@ -29,6 +29,7 @@ function BankTransactions() {
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
   const [bankName, setBankName] = useState(useParams().bankName);
+  const [name, setName] = useState("");
   const { showToast } = useToast();
 
 
@@ -77,6 +78,7 @@ function BankTransactions() {
         setTransactions(response.data.details);
         setFilteredTransactions(response.data.details);
         setBankName(response.data.id);
+        setName(response.data?.name);
 
         setIsLoading(false);
       } catch (error) {
@@ -294,7 +296,7 @@ console.log(selectedTransaction)
   const customHeader = (
     <div className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-bold border-b-2 border-gray-300 text-gray-800">
-        <span className="text-yellow-500">{bankName}</span> Banka Hareketleri
+        <span className="text-yellow-500">{name}</span> Banka Hareketleri
       </h1>
     </div>
   );

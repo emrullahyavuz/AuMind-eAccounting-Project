@@ -34,6 +34,19 @@ export const invoiceApi = baseApi.injectEndpoints({
         body: JSON.stringify({ id : invoiceIds }),
       }),
     }),
+    generateInvoicePdf: builder.mutation({
+      query: (invoiceId) => ({
+        url: `/Invoices/GenerateInvoicePdf?invoiceId=${invoiceId}`,
+        method: "GET",
+        responseHandler: async (response) => {
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'PDF generation failed');
+          }
+          return response.blob();
+        },
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -43,4 +56,5 @@ export const {
   useCreateInvoiceMutation,
   useUpdateInvoiceMutation,
   useDeleteInvoiceMutation,
+  useGenerateInvoicePdfMutation,
 } = invoiceApi;

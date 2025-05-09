@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "../../components/Admin/data-table";
-import { Info, Trash2 } from "lucide-react";
+import { Info, Trash2, Download } from "lucide-react";
 import LoadingOverlay from "../../components/UI/Spinner/LoadingOverlay";
 import InvoiceModal from "../../components/UI/Modals/InvoiceModal";
 import DeleteConfirmationModal from "../../components/UI/Modals/DeleteConfirmationModal";
@@ -10,6 +10,7 @@ import {
   useCreateInvoiceMutation,
   useUpdateInvoiceMutation,
   useDeleteInvoiceMutation,
+  useGenerateInvoicePdfMutation,
 } from "../../store/api/invoicesApi";
 import { useGetAllCustomersQuery } from "../../store/api";
 
@@ -32,6 +33,7 @@ const Faturalar = () => {
   const [createInvoice] = useCreateInvoiceMutation();
   const [updateInvoice] = useUpdateInvoiceMutation();
   const [deleteInvoice] = useDeleteInvoiceMutation();
+  const [generatePdf] = useGenerateInvoicePdfMutation();
 
   const { data } = useGetAllCustomersQuery();
   console.log("data", data);
@@ -70,7 +72,6 @@ const Faturalar = () => {
         return total?.toFixed(2) || "0.00";
       },
       className: "text-right font-bold",
-      
     },
     {
       header: "KDV",
@@ -79,7 +80,7 @@ const Faturalar = () => {
           return acc + item.vatRate;
         }, 0);
 
-        return kdv?.toFixed(2) || "0.00";
+        return `${kdv}%`;
       },
       className: "text-right",
     },
@@ -89,8 +90,19 @@ const Faturalar = () => {
       className: "text-right",
     },
     {
-      header: "Durum",
-      accessor: (row) => (row.isDeleted ? "Silinmiş" : "Aktif"),
+      header: "PDF",
+      accessor: "actions",
+      render: (row) => (
+        <div className="flex justify-center">
+          <button
+            onClick={() => handleDownloadPdf(row.id)}
+            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-md"
+            title="PDF İndir"
+          >
+            <Download size={18} />
+          </button>
+        </div>
+      ),
     },
   ];
 
@@ -208,22 +220,6 @@ const Faturalar = () => {
     }
   };
 
-  // Fatura ekleme işlemi
-  // const handleInvoiceSubmit = async (invoiceData) => {
-  //   try {
-  //     debugger;
-  //     await createInvoice(invoiceData).unwrap();
-  //     showToast("Fatura başarıyla oluşturuldu", "success");
-  //     setIsAddModalOpen(false);
-  //   } catch (err) {
-  //     console.error("Error creating invoice:", err);
-  //     showToast(
-  //       err.data?.errorMessages?.[0] || "Fatura oluşturulurken bir hata oluştu",
-  //       "error"
-  //     );
-  //   }
-  // };
-
   // Fatura güncelleme işlemi
   const handleEditSubmit = async (invoiceData) => {
     try {
@@ -246,7 +242,7 @@ const Faturalar = () => {
     if (searchTerm.trim() === "") {
       setFilteredFaturalar(faturalar);
     } else {
-      const searchTermLower = searchTerm.toLowerCase();
+      const searchTermLower = searchTerm.toLowerCase().trim();
       const filtered = faturalar.filter(
         (fatura) =>
           (fatura.invoiceNumber?.toLowerCase() || "").includes(
@@ -285,13 +281,26 @@ const Faturalar = () => {
     currentPage * itemsPerPage
   );
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="p-6">
-  //       <LoadingOverlay />
-  //     </div>
-  //   );
-  // }
+  const handleDownloadPdf = async (invoiceId) => {
+    try {
+      const response = await generatePdf(invoiceId).unwrap();
+      console.log("response", response);
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(response);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `invoice-${invoiceId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      showToast("PDF başarıyla indirildi", "success");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      showToast(error.message || "PDF oluşturulurken bir hata oluştu", "error");
+    }
+  };
 
   return (
     <>
