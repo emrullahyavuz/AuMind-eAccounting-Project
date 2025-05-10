@@ -69,8 +69,8 @@ function RegisterForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-300 bg-opacity-80 bg-[url('/images/auth-bg.jpg')] bg-cover bg-blend-overlay">
-      <div className="w-full max-w-md p-8 flex flex-col items-center">
+    <div className="min-h-screen flex items-center justify-center py-2 bg-gray-300 bg-opacity-80 bg-[url('/images/auth-bg.jpg')] bg-cover bg-blend-overlay">
+      <div className="w-full max-w-md p-8 flex flex-col items-center border border-yellow-400 rounded-lg shadow-lg bg-white bg-opacity-90">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
           AuMind Muhasebe Sistemi
         </h1>
@@ -80,7 +80,7 @@ function RegisterForm() {
           <img src={AuMindLogo} className="w-full h-full object-contain" alt="AuMind Logo" />
         </div>
 
-        <h2 className="text-xl font-semibold text-gray-800 mb-2">
+        <h2 className="text-xl font-semibold text-gray-800 m">
           Yeni Hesap Oluştur
         </h2>
 

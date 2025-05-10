@@ -75,7 +75,7 @@ function Banks() {
               </div>
               <div className="text-center">
                 <p className="text-gray-300">Bakiye</p>
-                <p className="font-medium">{bank.balance}</p>
+                <p className="font-medium">{bank.depositAmount - bank.withdrawalAmount}</p>
               </div>
             </div>
 
