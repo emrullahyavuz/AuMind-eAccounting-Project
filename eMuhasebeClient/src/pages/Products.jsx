@@ -137,7 +137,6 @@ const Products = () => {
     setSelectedProduct(null);
     showToast("Ürün başarıyla güncellendi", "success");
   };
-  
 
   // Kasa silme işlemi
   const handleDeleteProduct = (productId) => {
@@ -192,10 +191,13 @@ const Products = () => {
 
   // Kasa arama işlemi
   const handleSearch = (searchTerm) => {
-    console.log(searchTerm)
+    console.log(searchTerm);
     console.log("currents array:", currents); // Debug için currents array'ini kontrol et
     const filteredProducts = currents.filter((product) =>
-      product.name.toLowerCase().trim().includes(searchTerm.toLowerCase().trim())
+      product.name
+        .toLowerCase()
+        .trim()
+        .includes(searchTerm.toLowerCase().trim())
     );
 
     console.log("filteredProducts", filteredProducts);
@@ -225,14 +227,6 @@ const Products = () => {
         currentPage * itemsPerPage
       )
     : [];
-
-  // if (isLoading) {
-  //   return (
-  //     <div className="p-6">
-  //       <LoadingOverlay />
-  //     </div>
-  //   );
-  // }
 
   return (
     <>

@@ -41,16 +41,19 @@ function DataTable({
     if (column.accessor === "id") {
       return (currentPage - 1) * itemsPerPage + rowIndex + 1;
     }
-    
-    if (typeof column.accessor === 'function') {
+
+    if (typeof column.accessor === "function") {
       value = column.accessor(row);
-    } else if (typeof column.accessor === 'string' && column.accessor.includes('.')) {
-      const [first, second] = column.accessor.split('.');
+    } else if (
+      typeof column.accessor === "string" &&
+      column.accessor.includes(".")
+    ) {
+      const [first, second] = column.accessor.split(".");
       value = row[first]?.[second];
-    } else if (typeof column.accessor === 'string') {
+    } else if (typeof column.accessor === "string") {
       value = row[column.accessor];
     } else {
-      value = '';
+      value = "";
     }
 
     if (column.Cell) {
@@ -70,7 +73,7 @@ function DataTable({
       onSearch(value);
     }
   };
-  
+
   // Checkbox işlemleri
   const handleSelectItem = (id) => {
     let newSelectedItems;
@@ -180,54 +183,65 @@ function DataTable({
 
           {/* Tablo Gövdesi */}
           <tbody>
-            {data.length > 0
-              ? data.map((item, rowIndex) => (
-                  <tr
-                    key={item.id || rowIndex}
-                    className="border-b border-gray-300 hover:bg-gray-200"
-                  >
-                    {!isCari && !isStock && (
-                      <td className="p-3">
-                        <button
-                          onClick={() => onEdit(item)}
-                          className="bg-blue-500 text-white hover:text-yellow-400  p-1 rounded"
-                        >
-                          <Edit size={18} />
-                        </button>
-                      </td>
-                    )}
+            {data.length > 0 ? (
+              data.map((item, rowIndex) => (
+                <tr
+                  key={item.id || rowIndex}
+                  className="border-b border-gray-300 hover:bg-gray-200"
+                >
+                  {!isCari && !isStock && (
+                    <td className="p-3">
+                      <button
+                        onClick={() => onEdit(item)}
+                        className="bg-blue-500 text-white hover:text-yellow-400  p-1 rounded"
+                      >
+                        <Edit size={18} />
+                      </button>
+                    </td>
+                  )}
 
-                      {columns.map((column, colIndex) => (
-                        <td key={colIndex} className={`p-3 ${column.className || ""}`}>
-                          {renderCell(column, item, rowIndex)}
-                        </td>
-                      ))}
+                  {columns.map((column, colIndex) => (
+                    <td
+                      key={colIndex}
+                      className={`p-3 ${column.className || ""}`}
+                    >
+                      {renderCell(column, item, rowIndex)}
+                    </td>
+                  ))}
 
-
-                    {!isCari && !isStock && (
-                      <td className="p-3 text-center">
-                        <div className="flex justify-center">
-                          <input
-                            type="checkbox"
-                            checked={selectedItems.includes(item.id)}
-                            onChange={() => handleSelectItem(item.id)}
-                            className="h-5 w-5 text-red-500 border-gray-300 rounded focus:ring-red-500"
-                          />
-                        </div>
-                      </td>
-                    )}
-                  </tr>
-                ))
-              : // Veri yoksa boş satırlar göster
-                // Veri yoksa tek satırda bilgi göster
-                <tr className="border-b border-gray-300">
-                <td colSpan={columns.length + 2} className="p-4 text-center text-gray-500">
+                  {!isCari && !isStock && (
+                    <td className="p-3 text-center">
+                      <div className="flex justify-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedItems.includes(item.id)}
+                          onChange={() => handleSelectItem(item.id)}
+                          className="h-5 w-5 text-red-500 border-gray-300 rounded focus:ring-red-500"
+                        />
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))
+            ) : (
+              // Veri yoksa boş satırlar göster
+              // Veri yoksa tek satırda bilgi göster
+              <tr className="border-b border-gray-300">
+                <td
+                  colSpan={columns.length + 2}
+                  className="p-4 text-center text-gray-500"
+                >
                   <div className="flex flex-col items-center justify-center py-4">
-                    <p className="text-lg font-medium text-red-500">Veri bulunamadı!</p>
-                    <p className="text-sm">Listelenecek veri bulunmamaktadır.</p>
+                    <p className="text-lg font-medium text-red-500">
+                      Veri bulunamadı!
+                    </p>
+                    <p className="text-sm">
+                      Listelenecek veri bulunmamaktadır.
+                    </p>
                   </div>
                 </td>
-              </tr>}
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

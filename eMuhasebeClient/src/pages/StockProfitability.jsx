@@ -60,7 +60,10 @@ export default function StockProfitability() {
         { header: "Alış Birim Fiyat", accessor: "depositPrice" },
         { header: "Satış Birim Fiyat", accessor: "withdrawalPrice" },
         { header: "Kârlılık", accessor: "profit" },
-        { header: "Kârlılık Yüzdesi", accessor: "profitPercent" },
+        {
+          header: "Kârlılık Yüzdesi",
+          accessor: (row) => Number(row.profitPercent).toFixed(2) + "%",
+        },
       ]}
       data={currentProducts}
       isStock={true}

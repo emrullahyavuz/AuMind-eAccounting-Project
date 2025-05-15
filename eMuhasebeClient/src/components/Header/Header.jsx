@@ -4,6 +4,9 @@ import { useAuth } from "../../hooks/useAuth";
 import { LogIn, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useGetAllCompaniesMutation } from "../../store/api/companiesApi";
+import {useGetAllUsersMutation, useChangeCompanyMutation} from "../../store/api"
+import {useToast} from "../../hooks/useToast"
+import LoadingOverlay from "../UI/Spinner/LoadingOverlay";
 
 const Header = () => {
   // Get the current location
@@ -11,22 +14,58 @@ const Header = () => {
 
   // Get the navigate function from the useNavigate hook
   const navigate = useNavigate();
-
+  
   // Get the isAuthenticated state and logout function from the useAuth hook
-  const { isAuthenticated, logout, currentCompany, changeCompany } = useAuth();
+  const { isAuthenticated, logout, currentCompany } = useAuth();
+
+  const {showToast} = useToast()
+
 
   // State for companies dropdown
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [companies, setCompanies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [getAllUsers] = useGetAllUsersMutation();
   const [getAllCompanies] = useGetAllCompaniesMutation();
+  const [changeCompany] = useChangeCompanyMutation();
+
+  
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const result = await getAllUsers().unwrap();
+      console.log("users", result);
+    };
+    fetchUsers();
+  }, [getAllUsers]);
 
   // Fetch companies when component mounts
   useEffect(() => {
+    
     const fetchCompanies = async () => {
       try {
         const result = await getAllCompanies().unwrap();
-        if (result?.isSuccessful) {
-          setCompanies(Array.isArray(result.data) ? result.data : []);
+        const userResult = await getAllUsers().unwrap();
+        
+        if (result?.isSuccessful && userResult?.isSuccessful) {
+          const allCompanies = Array.isArray(result.data) ? result.data : [];
+          const userCompanies = Array.isArray(userResult.data) ? userResult.data : [];
+          
+          // Find current user
+          const currentUser = userCompanies.find(user => user.userName === "serefcanavlak");
+          
+          if (currentUser && currentUser.companyUsers && Array.isArray(currentUser.companyUsers)) {
+            // Get company IDs from current user's companyUsers
+            const currentUserCompanyIds = currentUser.companyUsers.map(cu => cu.company.id);
+            
+            // Filter companies to only include those that belong to current user
+            const filteredCompanies = allCompanies.filter(company => 
+              currentUserCompanyIds.includes(company.id)
+            );
+            
+            setCompanies(filteredCompanies);
+          } else {
+            setCompanies([]);
+          }
         }
       } catch (error) {
         console.error("Error fetching companies:", error);
@@ -36,7 +75,7 @@ const Header = () => {
     if (isAuthenticated) {
       fetchCompanies();
     }
-  }, [isAuthenticated, getAllCompanies]);
+  }, [isAuthenticated, getAllCompanies, getAllUsers]);
 
   // Handle the authentication action
   const handleAuthAction = () => {
@@ -52,16 +91,31 @@ const Header = () => {
     try {
       debugger
       const selectedCompany = companies.find(company => company.id === companyId);
-      await changeCompany(companyId);
-      setIsDropdownOpen(false);
-      // Store selected company ID and name in localStorage
-      localStorage.setItem('selectedCompanyId', companyId);
-      localStorage.setItem('selectedCompanyName', selectedCompany.name);
-      // Logout and redirect to login
-      logout();
-      navigate('/auth/login');
+      const result = await changeCompany(companyId);
+      
+      if (result?.data?.isSuccessful && result?.data?.data?.token) {
+        // Yeni token'ları kaydet
+        localStorage.setItem('token', result.data.data.token);
+        localStorage.setItem('refreshToken', result.data.data.refreshToken);
+        localStorage.setItem('selectedCompanyId', companyId);
+        localStorage.setItem('selectedCompanyName', selectedCompany.name);
+        
+        setIsDropdownOpen(false);
+        
+        // Önce toast mesajını göster
+        showToast("Şirket değiştirildi", "success");
+        
+        // Loading göstergesini göster
+        setIsLoading(true);
+        
+        // Kısa bir gecikme ile sayfayı yenile
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
     } catch (error) {
       console.error("Error changing company:", error);
+      showToast("Şirket değiştirilirken bir hata oluştu", "error");
     }
   };
 
@@ -73,6 +127,7 @@ const Header = () => {
 
   return (
     <>
+      {isLoading && <LoadingOverlay />}
       {/* Header */}
       <header className="bg-gray-800 text-white p-2 px-4 flex justify-between items-center">
         <div className="flex items-center border-l-[3px] ml-[-10px] border-yellow-400">

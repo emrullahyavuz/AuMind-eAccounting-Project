@@ -62,7 +62,7 @@ function LoginForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-300 bg-opacity-80 bg-[url('/images/auth-bg.jpg')] bg-cover bg-blend-overlay">
-      <div className="w-full max-w-md p-8 flex flex-col items-center">
+      <div className="w-full max-w-md p-8 flex flex-col items-center border border-yellow-400 rounded-lg shadow-lg bg-white bg-opacity-90">
         {/* Başlık */}
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
           AuMind Muhasebe Sistemi
@@ -167,7 +167,7 @@ function LoginForm() {
           {/* Onay Maili Linki */}
           <div className="text-center">
             <Link
-              to="/resend-verification"
+              to="/auth/confirm-email"
               className="text-gray-700 text-sm hover:text-yellow-600"
             >
               Onay Mailini Tekrar Gönder

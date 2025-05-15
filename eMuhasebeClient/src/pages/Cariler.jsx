@@ -75,7 +75,20 @@ const Cariler = () => {
     { header: "Vergi Numarası", accessor: "taxNumber" },
     { header: "Giriş", accessor: "depositAmount" },
     { header: "Çıkış", accessor: "withdrawalAmount" },
-    { header: "Bakiye", accessor: "balance" },
+    { 
+      header: "Bakiye", 
+      accessor: "balance",
+      Cell: ({ row }) => {
+        const deposit = parseFloat(row.depositAmount) || 0;
+        const withdrawal = parseFloat(row.withdrawalAmount) || 0;
+        const balance = deposit - withdrawal;
+        return (
+          <span className={balance >= 0 ? "text-green-600" : "text-red-600"}>
+            {balance.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        );
+      }
+    },
     {
       header: "İşlemler",
       accessor: "transactions",
@@ -232,7 +245,7 @@ const Cariler = () => {
         addButtonColor="yellow"
         columns={columns}
         data={currentCariler}
-        searchPlaceholder="Şirket Adı Giriniz..."
+        searchPlaceholder="Cari Adı Giriniz..."
         onAdd={handleAddCari}
         onEdit={handleEditCari}
         onDelete={handleDeleteCari}

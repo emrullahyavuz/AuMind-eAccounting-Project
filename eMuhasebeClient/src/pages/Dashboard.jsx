@@ -1,28 +1,68 @@
 import { useState, useEffect } from "react";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { useGetAllInvoicesQuery } from "../store/api";
-import { useAuth } from "../hooks/useAuth";
+import { useGetAllInvoicesQuery, useGetAllUsersMutation, useGetAllCompaniesMutation } from "../store/api";
 import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay";
 
 function Anasayfa() {
-  const { user, currentCompany } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [user, setUser] = useState(null);
+  const [currentCompany, setCurrentCompany] = useState(null);
   const itemsPerPage = 50;
+  
 
   // RTK Query hooks
   const { data: invoices, isLoading: isInvoicesLoading } = useGetAllInvoicesQuery();
+  const [getAllUsers] = useGetAllUsersMutation();
+  const [getAllCompanies] = useGetAllCompaniesMutation();
+
+  useEffect(() => {
+    const fetchUserAndCompany = async () => {
+      try {
+        const userResult = await getAllUsers().unwrap();
+        const companyResult = await getAllCompanies().unwrap();
+        
+        if (userResult?.isSuccessful && companyResult?.isSuccessful) {
+          const users = Array.isArray(userResult.data) ? userResult.data : [];
+          const companies = Array.isArray(companyResult.data) ? companyResult.data : [];
+          
+          // Find current user
+          const currentUser = users.find(user => user.userName === "serefcanavlak");
+          
+          if (currentUser && currentUser.companyUsers && Array.isArray(currentUser.companyUsers)) {
+            // Get company IDs from current user's companyUsers
+            const currentUserCompanyIds = currentUser.companyUsers.map(cu => cu.company.id);
+            
+            // Find current company
+            const userCompany = companies.find(company => 
+              currentUserCompanyIds.includes(company.id)
+            );
+            console.log("userCompany", userCompany)
+            setUser(currentUser);
+            setCurrentCompany(userCompany);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user and company data:", error);
+      }
+    };
+
+    fetchUserAndCompany();
+  }, [getAllUsers, getAllCompanies]);
 
   console.log(invoices)
   // Transform invoice data for the table
-  const transactions = invoices?.data?.map(invoice => ({
-    id: invoice.id,
-    customer: `${invoice.customer?.name || ''} ${invoice.customer?.surname || ''}`.trim(),
-    amount: new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(invoice.amount),
-    date: new Date(invoice.date).toLocaleDateString('tr-TR'),
-    type: invoice.type?.value === 1 ? "Satış" : "Alış",
-    status: invoice.status === 1 ? "approved" : "waiting"
-  })) || [];
+  const transactions = [...(invoices?.data || [])]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5)
+    .map(invoice => ({
+      id: invoice.id,
+      customer: `${invoice.customer?.name || ''} ${invoice.customer?.surname || ''}`.trim(),
+      amount: new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(invoice.amount),
+      date: new Date(invoice.date).toLocaleDateString('tr-TR'),
+      type: invoice.type?.value === 1 ? "Satış" : "Alış",
+      status: new Date(invoice.date) < new Date() ? "approved" : (invoice.status === 1 ? "approved" : "waiting")
+    }));
 
   // Filter transactions based on search term
   const filteredTransactions = transactions.filter(transaction =>
@@ -119,7 +159,7 @@ function Anasayfa() {
 
               <div>
                 <p className="text-gray-300">Adres</p>
-                <p className="font-medium">{currentCompany?.address || '-'}</p>
+                <p className="font-medium">{currentCompany?.fullAdress || '-'}</p>
               </div>
 
               <div>

@@ -7,6 +7,8 @@ export default function ProductDetail() {
   const [productDetails, setProductDetails] = useState([]);
   const [filteredDetails, setFilteredDetails] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [productName, setProductName] = useState("");
+
   const [getAllProductDetails, { isLoading }] = useGetAllProductDetailsMutation();
   const { id: productId } = useParams(); // URL'den productId'yi alıyoruz
    
@@ -16,6 +18,7 @@ export default function ProductDetail() {
     const fetchProductDetails = async () => {
       try {
         const response = await getAllProductDetails(productId).unwrap();
+        setProductName(response?.data?.name)
         console.log(response);
         const details = response.data.details || [];
         setProductDetails(details);
@@ -63,7 +66,7 @@ export default function ProductDetail() {
 
   return (
     <DataTable
-      title="Stok Hareketleri"
+      title={`(${productName}) Stok Hareketleri`}
       columns={[
         { 
           header: "# Numara", 

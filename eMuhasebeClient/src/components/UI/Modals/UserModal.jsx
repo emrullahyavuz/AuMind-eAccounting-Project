@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X, ChevronDown } from "lucide-react";
+import { useGetAllCompaniesMutation } from "../../../store/api";
 
 const initialFormData = {
   firstName: "",
@@ -19,10 +20,24 @@ function UserModal({
   onSubmit,
   user,
 }) {
+  const [getAllCompanies] = useGetAllCompaniesMutation();
+  const [companies, setCompanies] = useState([]);
   const [formData, setFormData] = useState(initialFormData);
 
-  // user prop'u değiştiğinde form verilerini güncelle
+  // Şirketleri yükle
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const result = await getAllCompanies().unwrap();
+        setCompanies(result.data || []);
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+      }
+    };
+    fetchCompanies();
+  }, [getAllCompanies]);
 
+  // user prop'u değiştiğinde form verilerini güncelle
   useEffect(() => {
     if (user) {
       setFormData({
@@ -130,22 +145,27 @@ function UserModal({
 
           <div className="mb-4">
             <label className="block text-gray-700 mb-1">Şirket</label>
-            <select
-              name="companyIds"
-              value={formData.companyIds[0] || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, companyIds: [e.target.value] })
-              }
-              className="w-full border border-gray-300 rounded-md p-2 bg-white"
-            >
-              <option value="">Şirket seçin</option>
-              <option value="3fa85f64-5717-4562-b3fc-2c963f66afa6">
-                Şirket 1
-              </option>
-              <option value="4fa85f64-5717-4562-b3fc-2c963f66afa7">
-                Şirket 2
-              </option>
-            </select>
+            <div className="relative">
+              <select
+                name="companyIds"
+                value={formData.companyIds[0] || ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, companyIds: [e.target.value] })
+                }
+                className="w-full border border-gray-300 rounded-md p-2 bg-white appearance-none pr-10"
+              >
+                <option value="">Şirket seçin</option>
+                {companies.map((company) => (
+                  <option key={company.id} value={company.id}>
+                    {company.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                size={16}
+              />
+            </div>
           </div>
 
           <div className="mb-4 flex items-center">

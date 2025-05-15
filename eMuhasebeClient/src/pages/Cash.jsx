@@ -74,7 +74,16 @@ const Cash = () => {
     {
       header: "Bakiye",
       accessor: "balance",
-      className: "text-right font-bold",
+      Cell: ({ row }) => {
+        const deposit = parseFloat(row.depositAmount) || 0;
+        const withdrawal = parseFloat(row.withdrawalAmount) || 0;
+        const balance = deposit - withdrawal;
+        return (
+          <span className={`text-right font-bold ${balance >= 0 ? "text-green-600" : "text-red-600"}`}>
+            {balance.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        );
+      }
     },
     {
       header: "İşlemler",
@@ -146,7 +155,7 @@ const Cash = () => {
   };
 
   const handleEditSubmit = async (cash) => {
-    debugger;
+   
     const currencyType =
       cash.currencyTypeValue === "TL"
         ? 1
@@ -161,7 +170,8 @@ const Cash = () => {
         ...cash,
         currencyTypeValue: currencyType,
       });
-      console.log(result);
+      console.log("resultUpdate",result);
+      
 
       showToast(`${result.data.data}`, "success");
       setIsEditModalOpen(false);
