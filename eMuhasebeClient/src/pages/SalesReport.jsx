@@ -15,16 +15,51 @@ import {
 import { useGetAllInvoicesQuery, useGetPurchaseReportsQuery } from "../store/api";
 import { useAuth } from "../hooks/useAuth";
 import LoadingOverlay from "../components/UI/Spinner/LoadingOverlay";
+import { useState, useMemo } from "react";
+
 function Reports() {
   const { user } = useAuth();
+  const [selectedPeriod, setSelectedPeriod] = useState('daily'); // 'daily', 'monthly', 'yearly'
   const { data: purchaseReports, isLoading: isPurchaseReportsLoading } = useGetPurchaseReportsQuery();
   const { data: invoices, isLoading: isInvoicesLoading } = useGetAllInvoicesQuery();
 
-  // Transform purchase reports data for the chart
-  const chartData = purchaseReports?.data?.dates?.map((date, index) => ({
-    date: new Date(date).toLocaleDateString('tr-TR'),
-    value: purchaseReports?.data?.amounts?.[index] || 0
-  })) || [];
+  // Transform purchase reports data based on selected period
+  const chartData = useMemo(() => {
+    if (!purchaseReports?.data?.dates) return [];
+
+    const dates = purchaseReports.data.dates;
+    const amounts = purchaseReports.data.amounts || [];
+
+    const groupedData = dates.reduce((acc, date, index) => {
+      const dateObj = new Date(date);
+      let key;
+
+      switch (selectedPeriod) {
+        case 'daily':
+          key = dateObj.toLocaleDateString('tr-TR');
+          break;
+        case 'monthly':
+          key = `${dateObj.getMonth() + 1}/${dateObj.getFullYear()}`;
+          break;
+        case 'yearly':
+          key = dateObj.getFullYear().toString();
+          break;
+        default:
+          key = dateObj.toLocaleDateString('tr-TR');
+      }
+
+      if (!acc[key]) {
+        acc[key] = 0;
+      }
+      acc[key] += amounts[index] || 0;
+      return acc;
+    }, {});
+
+    return Object.entries(groupedData).map(([date, value]) => ({
+      date,
+      value
+    }));
+  }, [purchaseReports?.data, selectedPeriod]);
 
   // Calculate totals from invoices
   const { totalSales, totalType2, monthlySales, monthlyType2 } = invoices?.data?.reduce((acc, invoice) => {
@@ -76,29 +111,139 @@ function Reports() {
 
       {/* Çizgi Grafik */}
       <div className="bg-gray-700 rounded-lg p-4 mb-6">
+        {/* Period Selection Buttons */}
+        <div className="flex justify-center space-x-4 mb-6">
+          <button
+            onClick={() => setSelectedPeriod('daily')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              selectedPeriod === 'daily'
+                ? 'bg-yellow-400 text-gray-900'
+                : 'bg-gray-600 text-white hover:bg-gray-500'
+            }`}
+          >
+            Günlük
+          </button>
+          <button
+            onClick={() => setSelectedPeriod('monthly')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              selectedPeriod === 'monthly'
+                ? 'bg-yellow-400 text-gray-900'
+                : 'bg-gray-600 text-white hover:bg-gray-500'
+            }`}
+          >
+            Aylık
+          </button>
+          <button
+            onClick={() => setSelectedPeriod('yearly')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              selectedPeriod === 'yearly'
+                ? 'bg-yellow-400 text-gray-900'
+                : 'bg-gray-600 text-white hover:bg-gray-500'
+            }`}
+          >
+            Yıllık
+          </button>
+        </div>
+
         <div className="h-64 relative">
           {/* Y ekseni değerleri */}
-          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-white text-xs">
+          <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-white text-xs w-16">
             {[5, 4, 3, 2, 1, 0].map((multiplier) => (
-              <div key={multiplier}>
+              <div key={multiplier} className="px-2">
                 {formatCurrency(Math.max(...chartData.map(d => d.value)) * (multiplier / 5))}
               </div>
             ))}
           </div>
 
-          {/* Izgara çizgileri */}
-          <div className="absolute left-12 right-0 top-0 bottom-0 grid grid-cols-12 grid-rows-5">
-            {Array.from({ length: 72 }).map((_, index) => (
-              <div key={index} className="border border-gray-600"></div>
-            ))}
+          {/* Grafik alanı */}
+          <div className="absolute left-16 right-0 top-0 bottom-0 pl-4 pr-4">
+            {/* Izgara çizgileri */}
+            <div className="absolute inset-0 grid grid-cols-12 grid-rows-5">
+              {Array.from({ length: 72 }).map((_, index) => (
+                <div key={index} className="border border-gray-600"></div>
+              ))}
+            </div>
+
+            {/* Grafik çizgisi */}
+            <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              {/* Gradient tanımı */}
+              <defs>
+                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#00ff00" stopOpacity="0.2" />
+                  <stop offset="100%" stopColor="#00ff00" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+
+              {/* Alan dolgusu */}
+              <path
+                d={`M 0,100 ${chartData.map((point, index) => {
+                  const x = (index / (chartData.length - 1)) * 100;
+                  const y = 100 - (point.value / Math.max(...chartData.map(d => d.value))) * 100;
+                  return `L ${x},${y}`;
+                }).join(' ')} L 100,100 Z`}
+                fill="url(#lineGradient)"
+              />
+
+              {/* Ana çizgi */}
+              <polyline
+                points={chartData.map((point, index) => {
+                  const x = (index / (chartData.length - 1)) * 100;
+                  const y = 100 - (point.value / Math.max(...chartData.map(d => d.value))) * 100;
+                  return `${x},${y}`;
+                }).join(' ')}
+                fill="none"
+                stroke="#00ff00"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+              {/* Veri noktaları */}
+              {chartData.map((point, index) => {
+                const x = (index / (chartData.length - 1)) * 100;
+                const y = 100 - (point.value / Math.max(...chartData.map(d => d.value))) * 100;
+                return (
+                  <g key={index}>
+                    <circle
+                      cx={x}
+                      cy={y}
+                      r="3"
+                      fill="#00ff00"
+                      className="transition-all duration-200 hover:r-5"
+                    />
+                    {/* Tooltip */}
+                    <g className="opacity-0 hover:opacity-100 transition-opacity">
+                      <rect
+                        x={x - 30}
+                        y={y - 25}
+                        width="60"
+                        height="20"
+                        fill="#1a1a1a"
+                        rx="4"
+                      />
+                      <text
+                        x={x}
+                        y={y - 10}
+                        textAnchor="middle"
+                        fill="#fff"
+                        fontSize="8"
+                      >
+                        {formatCurrency(point.value)}
+                      </text>
+                    </g>
+                  </g>
+                );
+              })}
+            </svg>
           </div>
 
           {/* X ekseni değerleri */}
-          <div className="absolute bottom-0 left-12 right-0 flex justify-between transform translate-y-6">
+          <div className="absolute bottom-0 left-16 right-0 flex justify-between transform translate-y-6 px-4">
             {chartData.map((point, index) => (
               <div
                 key={index}
-                className="text-white text-xs -rotate-45 origin-top-left"
+                className="text-white text-xs -rotate-45 origin-top-left whitespace-nowrap"
+                style={{ width: '60px' }}
               >
                 {point.date}
               </div>
@@ -106,7 +251,9 @@ function Reports() {
           </div>
         </div>
         <div className="text-center text-white text-sm mt-8">
-          Son ay günlük raporu görüntülüyorsunuz
+          {selectedPeriod === 'daily' && 'Son ay günlük raporu görüntülüyorsunuz'}
+          {selectedPeriod === 'monthly' && 'Son 12 ay aylık raporu görüntülüyorsunuz'}
+          {selectedPeriod === 'yearly' && 'Son 5 yıl yıllık raporu görüntülüyorsunuz'}
         </div>
       </div>
 
