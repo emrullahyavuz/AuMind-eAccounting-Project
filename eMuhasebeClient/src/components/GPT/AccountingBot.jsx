@@ -17,7 +17,7 @@ function AccountingBot() {
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
   const apiUrl = import.meta.env.VITE_OPENAI_API_URL;
 
