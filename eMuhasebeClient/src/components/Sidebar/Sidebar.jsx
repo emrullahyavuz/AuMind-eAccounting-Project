@@ -50,7 +50,14 @@ function Sidebar({ toggleSidebar }) {
     <div
       className={`h-screen bg-gray-800  text-white transition-all duration-300 ${
         collapsed ? "w-16" : "w-64"
-      } fixed left-0 top-0 z-50`}
+      } fixed left-0 top-0 z-50 overflow-auto`}
+      style={{ 
+        msOverflowStyle: "none",
+        scrollbarWidth: "none",
+        "&::-webkit-scrollbar": {
+          display: "none"
+        }
+      }}
     >
       {/* Sidebar Header */}
       <div className="flex justify-end items-center p-4 border-b border-gray-700">
@@ -71,7 +78,7 @@ function Sidebar({ toggleSidebar }) {
       </div>
 
       {/* Sidebar Content */}
-      <div className="overflow-y-auto overflow-hidden h-[100vh-64px)]">
+      <div className="overflow-y-auto overflow-hidden h-[100vh-64px)] py-3">
         {/* Admin Section */}
         <div className="py-4">
           {!collapsed && (
