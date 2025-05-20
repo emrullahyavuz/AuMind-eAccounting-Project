@@ -7,6 +7,7 @@ import { useGetAllCompaniesMutation } from "../../store/api/companiesApi";
 import {useGetAllUsersMutation, useChangeCompanyMutation} from "../../store/api"
 import {useToast} from "../../hooks/useToast"
 import LoadingOverlay from "../UI/Spinner/LoadingOverlay";
+import ConfirmationModal from "../UI/Modals/ConfirmationModal";
 
 const Header = () => {
   // Get the current location
@@ -20,6 +21,8 @@ const Header = () => {
 
   const {showToast} = useToast()
 
+  // State for logout confirmation modal
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   // State for companies dropdown
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -80,10 +83,16 @@ const Header = () => {
   // Handle the authentication action
   const handleAuthAction = () => {
     if (isAuthenticated) {
-      logout();
+      setIsLogoutModalOpen(true);
     } else {
       navigate("/auth/login");
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsLogoutModalOpen(false);
+    showToast("Başarıyla çıkış yapıldı", "success");
   };
 
   // Handle company change
@@ -203,6 +212,17 @@ const Header = () => {
           </button>
         </div>
       </header>
+
+      {/* Logout Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleLogout}
+        title="Çıkış Yap"
+        message="Çıkış yapmak istediğinize emin misiniz?"
+        confirmText="Evet, Çıkış Yap"
+        cancelText="Vazgeç"
+      />
 
       {/* Back Button */}
       {isAuthPage || isBotPage ? (
