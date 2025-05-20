@@ -23,6 +23,7 @@ import Banks from "./pages/Banks";
 import Products from "./pages/Products";
 import BankTransactions from "./pages/BankTransactions";
 import ProductDetailPage from "./pages/ProductDetail";
+import NotFound from "./pages/NotFound";
 function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -66,7 +67,8 @@ function App() {
               <Route path="/cash-transaction/:id" element={<CashTransactionPage />} />
               <Route path="/stok-karlilik" element={<StockProfitability />} />
               <Route path="/raporlar" element={<Reports />} />
-              <Route path="*" element={<Navigate to="/auth/login" replace />} />
+              <Route path="/not-found" element={<NotFound />} />
+              <Route path="*" element={<Navigate to="/not-found" replace />} />
             </Routes>
           </main>
         </div>

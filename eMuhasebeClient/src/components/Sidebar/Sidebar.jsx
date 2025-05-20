@@ -48,16 +48,9 @@ function Sidebar({ toggleSidebar }) {
 
   return (
     <div
-      className={`h-screen bg-gray-800  text-white transition-all duration-300 ${
+      className={`h-screen bg-gray-800 text-white transition-all duration-300 ${
         collapsed ? "w-16" : "w-64"
-      } fixed left-0 top-0 z-50 overflow-auto`}
-      style={{ 
-        msOverflowStyle: "none",
-        scrollbarWidth: "none",
-        "&::-webkit-scrollbar": {
-          display: "none"
-        }
-      }}
+      } fixed left-0 top-0 z-50 overflow-auto scrollbar-hide`}
     >
       {/* Sidebar Header */}
       <div className="flex justify-end items-center p-4 border-b border-gray-700">
