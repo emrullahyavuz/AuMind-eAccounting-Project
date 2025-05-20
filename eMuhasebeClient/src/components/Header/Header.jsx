@@ -98,7 +98,6 @@ const Header = () => {
   // Handle company change
   const handleCompanyChange = async (companyId) => {
     try {
-      debugger
       const selectedCompany = companies.find(company => company.id === companyId);
       const result = await changeCompany(companyId);
       
@@ -174,7 +173,7 @@ const Header = () => {
 
         <div className="flex items-center gap-x-3">
          {/* Home Button */}
-         <Link to="/">
+         <Link to="/dashboard">
             <Button
               variant="ghost"
               size="icon"
