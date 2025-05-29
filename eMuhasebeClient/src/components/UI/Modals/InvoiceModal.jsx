@@ -44,24 +44,26 @@ function InvoiceModal({
     quantity: "",
     price: "",
     total: "",
-    vatRate: 0
+    vatRate: 0,
   });
 
   // Düzenleme modunda fatura verilerini yükle
   useEffect(() => {
     if (isEditMode && invoice) {
       // Müşteri adını bul
-      const customer = customers?.data?.find(c => c.id === invoice.customerId);
-      
+      const customer = customers?.data?.find(
+        (c) => c.id === invoice.customerId
+      );
+
       // Ürün detaylarını hazırla
-      const details = invoice.details?.map(detail => {
-        const product = productsData.find(p => p.id === detail.productId);
+      const details = invoice.details?.map((detail) => {
+        const product = productsData.find((p) => p.id === detail.productId);
         return {
           productId: product?.name || "",
           quantity: detail.quantity,
           price: detail.price,
           vatRate: detail.vatRate,
-          total: detail.total
+          total: detail.total,
         };
       });
 
@@ -120,7 +122,7 @@ function InvoiceModal({
         quantity: "",
         price: "",
         total: "",
-        vatRate: 0
+        vatRate: 0,
       });
     }
   };
@@ -148,7 +150,7 @@ function InvoiceModal({
             quantity: Number(item.quantity),
             price: Number(item.price),
             vatRate: Number(item.vatRate || 0),
-            total: Number(item.total)
+            total: Number(item.total),
           };
         }),
       };
@@ -175,10 +177,18 @@ function InvoiceModal({
             quantity: Number(item.quantity),
             price: Number(item.price),
             vatRate: Number(item.vatRate || 0),
-            total: Number(item.total)
+            total: Number(item.total),
           };
         }),
       };
+
+      if (!filteredUpdateFormData.details.length) {
+        const isFormValid = Object.values(newItem).every(
+          (value) => value !== ""
+        );
+
+        if (!isFormValid) return;
+      }
 
       onAddInvoice(filteredUpdateFormData);
     }
@@ -378,11 +388,18 @@ function InvoiceModal({
                     <tr key={index} className="border-b border-gray-300">
                       <td className="py-2">{index + 1}</td>
                       <td className="py-2">{item.productId}</td>
-                      <td className="py-2">{Number(item.quantity).toFixed(2)}</td>
-                      <td className="py-2">{Number(item.price).toFixed(2)}</td>
-                      <td className="py-2">{Number(item.vatRate).toFixed(2)}</td>
                       <td className="py-2">
-                        {(Number(item.price) + Number((item.vatRate * item.price) / 100)).toFixed(2)}
+                        {Number(item.quantity).toFixed(2)}
+                      </td>
+                      <td className="py-2">{Number(item.price).toFixed(2)}</td>
+                      <td className="py-2">
+                        {Number(item.vatRate).toFixed(2)}
+                      </td>
+                      <td className="py-2">
+                        {(
+                          Number(item.price) +
+                          Number((item.vatRate * item.price) / 100)
+                        ).toFixed(2)}
                       </td>
                       <td className="py-2">
                         <button
