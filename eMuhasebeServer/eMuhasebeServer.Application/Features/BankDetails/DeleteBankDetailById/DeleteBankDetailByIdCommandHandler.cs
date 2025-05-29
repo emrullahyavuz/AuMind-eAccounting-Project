@@ -102,14 +102,14 @@ internal sealed class DeleteBankDetailByIdCommandHandler(
 
             customerDetailRepository.Delete(customerDetail);
 
-            cacheService.Remove("Customers");
+            cacheService.Remove("customers");
         }
 
         bankDetailRepository.Delete(bankDetail);
 
         await unitOfWorkCompany.SaveChangesAsync(cancellationToken);
 
-        cacheService.Remove("Banks");
+        cacheService.Remove("banks");
         
 
         return "Banka hareketi başarıyla silindi";
