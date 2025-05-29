@@ -26,7 +26,6 @@ internal sealed class GetAISummaryQueryHandler(
 
         var invoices = invoiceResult.Data
            .OrderByDescending(f => f.Date) 
-           .Take(15) 
            .ToList();
 
         var sb = new StringBuilder();
@@ -76,7 +75,7 @@ internal sealed class GetAISummaryQueryHandler(
             model = openAIOptions.Value.Model,
             messages = new[]
             {
-                new { role = "system", content = "Sen bir muhasebe uzmanısın. Muhasebe sisteminin ismi AuMind. Cevaplarını detaylı ve resmi ver." },
+                new { role = "system", content = "Sen bir muhasebe uzmanısın. Muhasebe sisteminin ismi AuMind. Cevaplarını detaylı ve resmi ver. Cevabı Json formatında döndür \n json''' {message:string} '''" },
                 new { role = "user", content = prompt }
             }
         };

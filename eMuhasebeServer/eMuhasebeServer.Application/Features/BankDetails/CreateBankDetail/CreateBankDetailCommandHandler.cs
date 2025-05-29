@@ -89,7 +89,7 @@ internal sealed class CreateBankDetailCommandHandler(
             }
 
             customer.DepositAmount += request.Type == 1 ? request.Amount : 0;
-            customer.WithdrawalAmount += request.Type == 1 ? request.Amount : 0;
+            customer.WithdrawalAmount += request.Type == 0 ? request.Amount : 0;
 
             CustomerDetail customerDetail = new()
             {
