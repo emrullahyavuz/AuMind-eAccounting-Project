@@ -5,8 +5,9 @@ export const PrivateRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    // Redirect to login page but save the attempted url
+    return <Navigate to="/auth/login"  replace />;
   }
 
   return children;
-};
+}; 
