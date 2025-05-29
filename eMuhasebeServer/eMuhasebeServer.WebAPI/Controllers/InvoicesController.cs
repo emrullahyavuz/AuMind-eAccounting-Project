@@ -2,9 +2,11 @@
 using eMuhasebeServer.Application.Features.Invoices.DeleteInvoiceById;
 using eMuhasebeServer.Application.Features.Invoices.GeneratePdf;
 using eMuhasebeServer.Application.Features.Invoices.GetAllInvoices;
+using eMuhasebeServer.Application.Features.Invoices.OCRInvoice;
 using eMuhasebeServer.Application.Features.Invoices.UpdateInvoice;
 using eMuhasebeServer.WebAPI.Abstractions;
 using MediatR;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eMuhasebeServer.WebAPI.Controllers;
@@ -41,6 +43,13 @@ public sealed class InvoicesController : ApiController
     {
         var response = await _mediator.Send(request, cancellationToken);
         return StatusCode(response.StatusCode, response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ExtractText([FromForm] OCRInvoiceCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpGet]

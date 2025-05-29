@@ -36,7 +36,7 @@ public sealed class SeedDataController(IMediator mediator) : ApiController(media
                     TypeValue: faker.Random.Int(1, 2),
                     City: faker.Address.City(),
                     Town: faker.Address.State(),
-                    FullAdress: faker.Address.StreetAddress(),
+                    FullAddress: faker.Address.StreetAddress(),
                     TaxNumber: faker.Random.Replace("##########"),
                     TaxDepartment: faker.Address.City()
                 );
@@ -99,28 +99,7 @@ public sealed class SeedDataController(IMediator mediator) : ApiController(media
         // Yeni fatura işlemi yapılacaksa, her bir detayla döngüye giriyoruz
         foreach (var invoice in invoices)
         {
-            bool isDuplicate = false;
-
-            // Yeni faturadaki her bir ürünü kontrol ediyoruz
-            foreach (var invoiceDetail in invoice.Details)
-            {
-                // Mevcut faturaların her birini kontrol et
-                var duplicateInvoice = allInvoices.FirstOrDefault(existingInvoice =>
-                    existingInvoice.Details != null && existingInvoice.Details.Any(d => d.ProductId == invoiceDetail.ProductId));
-
-                // Eğer mevcut faturada aynı ürün var ise, duplicate olarak işaretle
-                if (duplicateInvoice != null)
-                {
-                    isDuplicate = true;
-                    break;
-                }
-            }
-
-            // Eğer duplicate değilse, faturayı ekle
-            if (!isDuplicate)
-            {
-                await _mediator.Send(invoice);
-            }
+                await _mediator.Send(invoice);      
         }
 
         return Ok($"{invoices.Count} fake invoices successfully created.");

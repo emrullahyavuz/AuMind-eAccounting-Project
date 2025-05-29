@@ -100,14 +100,14 @@ internal sealed class DeleteCashRegisterDetailByIdCommandHandler(
 
             customerDetailRepository.Delete(customerDetail);
 
-            cacheService.Remove("Customers");
+            cacheService.Remove("customers");
         }
 
         cashRegisterDetailRepository.Delete(cashRegisterDetail);
 
         await unitOfWorkCompany.SaveChangesAsync(cancellationToken);
 
-        cacheService.Remove("CashRegister");
+        cacheService.Remove("cashRegister");
         cacheService.Remove("banks");
 
         return "Kasa hareketi başarıyla silindi";

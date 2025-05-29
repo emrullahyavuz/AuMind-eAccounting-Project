@@ -43,7 +43,7 @@ internal sealed class UpdateCashRegisterDetailCommandHandler(
         await unitOfWorkCompany.SaveChangesAsync(cancellationToken);
 
 
-        cacheService.Remove("CashRegister");
+        cacheService.Remove("cashRegister");
 
         return "Kasa hareketi başarıyla güncellendi";
     }

@@ -25,6 +25,9 @@ namespace eMuhasebeServer.Infrastructure
             services.AddScoped<ICacheService, MemoryCacheService>();
             //services.AddScoped<ICacheService, RedisCacheService>();
             services.AddScoped<CompanyDbContext>();
+
+            services.AddScoped<IVisionService, GoogleDocumentAiService>();
+
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("SqlServer"));

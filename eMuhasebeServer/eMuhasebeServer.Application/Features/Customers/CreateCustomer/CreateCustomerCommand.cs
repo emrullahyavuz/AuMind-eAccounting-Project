@@ -8,6 +8,6 @@ public sealed record CreateCustomerCommand(
     int TypeValue,
     string City,
     string Town,
-    string FullAdress,
+    string FullAddress,
     string TaxDepartment,
     string TaxNumber) : IRequest<Result<string>>;
