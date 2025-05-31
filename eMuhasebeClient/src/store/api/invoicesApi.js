@@ -47,6 +47,14 @@ export const invoiceApi = baseApi.injectEndpoints({
         },
       }),
     }),
+    extractText: builder.mutation({
+      query: (data) => ({
+        url: '/Invoices/ExtractText',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -57,4 +65,5 @@ export const {
   useUpdateInvoiceMutation,
   useDeleteInvoiceMutation,
   useGenerateInvoicePdfMutation,
+  useExtractTextMutation,
 } = invoiceApi;
