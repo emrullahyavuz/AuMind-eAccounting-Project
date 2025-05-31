@@ -4,7 +4,7 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:5193/api",
-    prepareHeaders: (headers, { getState }) => {
+    prepareHeaders: (headers) => {
       const token = localStorage.getItem("token");
       if (token) {
         headers.set("authorization", `Bearer ${token}`);
@@ -204,6 +204,36 @@ export const api = createApi({
           return response.blob();
         },
       }),
+    }),
+
+    // Extract text from invoice
+    extractText: builder.mutation({
+      query: (file) => {
+        const formData = new FormData();
+        formData.append('FormFile', file);
+
+        return {
+          url: '/Invoices/ExtractText',
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': undefined,
+          },
+        };
+      },
+      transformErrorResponse: (response) => {
+        // Response zaten bir obje olduğu için json() çağrısına gerek yok
+        console.error('Server Error Response:', response);
+        
+        if (response.status === 500) {
+          return {
+            status: response.status,
+            data: response.data || null,
+            message: response.data?.message || 'Sunucu hatası: Fatura işlenirken bir hata oluştu'
+          };
+        }
+        return response;
+      }
     }),
 
     // Companies endpoints
@@ -568,4 +598,5 @@ export const {
   useUpdateCashRegisterDetailMutation,
   useDeleteCashRegisterDetailByIdMutation,
   useGenerateInvoicePdfMutation,
+  useExtractTextMutation,
 } = api;

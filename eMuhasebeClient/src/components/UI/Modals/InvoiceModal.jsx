@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
-import { X, Calendar, ChevronDown, Plus } from "lucide-react";
+import { X, Calendar, ChevronDown, Plus, Upload } from "lucide-react";
 import {
   useGetAllCustomersQuery,
   useGetAllProductsMutation,
+  useExtractTextMutation,
+  useCreateProductMutation,
 } from "../../../store/api";
+import { toast } from "react-hot-toast";
 
 function InvoiceModal({
   isOpen,
@@ -12,24 +15,115 @@ function InvoiceModal({
   onClose,
   onAddInvoice,
   onEditInvoice,
-  updateInvoice,
 }) {
   const { data: customers } = useGetAllCustomersQuery();
-  const [products] = useGetAllProductsMutation();
+  const [getProducts] = useGetAllProductsMutation();
+  const [createProduct] = useCreateProductMutation();
+  const [extractText, { isLoading: isExtracting }] = useExtractTextMutation();
   const [productsData, setProductsData] = useState([]);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Ürünleri yükle
   useEffect(() => {
-    const fetchProducts = async () => {
+    const loadProducts = async () => {
       try {
-        const result = await products().unwrap();
-        setProductsData(result.data);
+        console.log('Ürünler yükleniyor...');
+        const result = await getProducts().unwrap();
+        console.log('API yanıtı:', result);
+        
+        if (!result.data || !Array.isArray(result.data)) {
+          console.error('Geçersiz ürün verisi:', result);
+          toast.error('Ürün verisi geçersiz format');
+          return;
+        }
+
+        const products = result.data;
+        console.log('Yüklenen ürünler:', products.map(p => ({ id: p.id, name: p.name })));
+        
+        // Ürün isimlerini normalize et ve sakla
+        const normalizedProducts = products.map(p => ({
+          ...p,
+          normalizedName: p.name.toLowerCase().trim()
+        }));
+        
+        console.log('Normalize edilmiş ürünler:', normalizedProducts.map(p => ({ 
+          id: p.id, 
+          name: p.name, 
+          normalizedName: p.normalizedName 
+        })));
+        
+        setProductsData(normalizedProducts);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error('Ürünler yüklenirken hata:', error);
+        toast.error('Ürünler yüklenirken bir hata oluştu');
       }
     };
 
-    fetchProducts();
-  }, [products]);
+    loadProducts();
+  }, [getProducts]);
+
+  // Eksik ürünleri oluştur
+  const createMissingProducts = async (productNames) => {
+    if (!Array.isArray(productNames)) {
+      console.error('Geçersiz ürün listesi:', productNames);
+      return [];
+    }
+
+    const createdProducts = [];
+    
+    for (const name of productNames) {
+      // Ürün adı geçerli mi kontrol et
+      if (!name || typeof name !== 'string') {
+        console.error('Geçersiz ürün adı:', name);
+        continue;
+      }
+
+      const normalizedName = name.toLowerCase().trim();
+      if (!normalizedName) {
+        console.error('Boş ürün adı:', name);
+        continue;
+      }
+
+      // Ürün zaten var mı kontrol et
+      const existingProduct = productsData.find(
+        p => p.normalizedName === normalizedName
+      );
+      
+      if (!existingProduct) {
+        try {
+          console.log('Yeni ürün oluşturuluyor:', normalizedName);
+          const result = await createProduct({
+            name: name.trim(), // Orijinal ismi kullan, sadece başındaki ve sonundaki boşlukları temizle
+            deposit: 0,
+            withdrawal: 0
+          }).unwrap();
+          
+          if (result.data) {
+            const newProduct = {
+              ...result.data,
+              normalizedName: result.data.name.toLowerCase().trim()
+            };
+            createdProducts.push(newProduct);
+            console.log('Ürün başarıyla oluşturuldu:', newProduct);
+          }
+        } catch (error) {
+          console.error('Ürün oluşturulurken hata:', error);
+          toast.error(`${name} ürünü oluşturulurken bir hata oluştu`);
+        }
+      } else {
+        console.log('Ürün zaten mevcut:', existingProduct);
+      }
+    }
+    
+    if (createdProducts.length > 0) {
+      // Yeni ürünleri mevcut listeye ekle
+      setProductsData(prev => [...prev, ...createdProducts]);
+      toast.success(`${createdProducts.length} yeni ürün oluşturuldu`);
+    }
+    
+    return createdProducts;
+  };
 
   const [formData, setFormData] = useState({
     typeValue: invoice?.typeValue === 2 ? "satis" : "alis",
@@ -76,6 +170,16 @@ function InvoiceModal({
       });
     }
   }, [isEditMode, invoice, customers?.data, productsData]);
+
+  // Form state değişikliklerini izle
+  useEffect(() => {
+    console.log('Form state güncellendi:', formData);
+    console.log('Mevcut ürünler:', productsData.map(p => ({ 
+      id: p.id, 
+      name: p.name, 
+      normalizedName: p.normalizedName 
+    })));
+  }, [formData, productsData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -127,92 +231,304 @@ function InvoiceModal({
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isEditMode) {
-      const updatedFormData = {
-        ...formData,
-        typeValue: formData.typeValue === "satis" ? 2 : 1,
-      };
+    console.log('Form submit başladı', formData);
+    
+    if (isSubmitting) {
+      console.log('Form zaten gönderiliyor...');
+      return;
+    }
 
-      const customer = customers?.data.find(
+    try {
+      setIsSubmitting(true);
+      console.log('Submit işlemi başlatıldı');
+
+      // Müşteri kontrolü
+      const customer = customers?.data?.find(
         (c) => c.name === formData.customerId
       );
+      console.log('Bulunan müşteri:', customer);
 
-      // Tüm ürünleri tek bir faturada topla
-      const filteredUpdateFormData = {
-        ...updatedFormData,
-        customerId: customer.id,
-        details: updatedFormData.details.map((item) => {
-          const product = productsData.find((p) => p.name === item.productId);
-          return {
-            productId: product.id,
-            quantity: Number(item.quantity),
-            price: Number(item.price),
-            vatRate: Number(item.vatRate || 0),
-            total: Number(item.total),
-          };
-        }),
-      };
-
-      onEditInvoice(filteredUpdateFormData);
-    } else {
-      const updatedFormData = {
-        ...formData,
-        typeValue: formData.typeValue === "satis" ? 2 : 1,
-      };
-
-      const customer = customers?.data.find(
-        (c) => c.name === formData.customerId
-      );
-
-      // Tüm ürünleri tek bir faturada topla
-      const filteredUpdateFormData = {
-        ...updatedFormData,
-        customerId: customer.id,
-        details: updatedFormData.details.map((item) => {
-          const product = productsData.find((p) => p.name === item.productId);
-          return {
-            productId: product.id,
-            quantity: Number(item.quantity),
-            price: Number(item.price),
-            vatRate: Number(item.vatRate || 0),
-            total: Number(item.total),
-          };
-        }),
-      };
-
-      if (!filteredUpdateFormData.details.length) {
-        const isFormValid = Object.values(newItem).every(
-          (value) => value !== ""
-        );
-
-        if (!isFormValid) return;
+      if (!customer) {
+        toast.error('Lütfen geçerli bir müşteri seçin');
+        return;
       }
 
-      onAddInvoice(filteredUpdateFormData);
+      // Eksik ürünleri oluştur
+      if (!formData.details || !Array.isArray(formData.details)) {
+        console.error('Geçersiz fatura detayları:', formData.details);
+        toast.error('Fatura detayları geçersiz');
+        return;
+      }
+
+      const productNames = formData.details
+        .map(item => item?.productId)
+        .filter(name => name && typeof name === 'string');
+
+      console.log('Oluşturulacak ürünler:', productNames);
+      await createMissingProducts(productNames);
+
+      // Ürün detaylarını hazırla
+      const details = formData.details.map((item) => {
+        if (!item || !item.productId) {
+          console.error('Geçersiz ürün detayı:', item);
+          return null;
+        }
+
+        console.log('İşlenen ürün:', item);
+        
+        // Ürün adını normalize et
+        const normalizedProductName = item.productId.toLowerCase().trim();
+        console.log('Normalize edilmiş ürün adı:', normalizedProductName);
+        
+        // Ürünü bul
+        const product = productsData.find(
+          (p) => p.normalizedName === normalizedProductName
+        );
+        
+        console.log('Ürün arama detayları:', {
+          aranan: normalizedProductName,
+          mevcutUrunler: productsData.map(p => p.normalizedName),
+          bulunanUrun: product
+        });
+        
+        if (!product) {
+          console.log('Ürün bulunamadı. Mevcut ürünler:', productsData.map(p => ({
+            id: p.id,
+            name: p.name,
+            normalizedName: p.normalizedName
+          })));
+          toast.error(`Ürün bulunamadı: ${item.productId}`);
+          return null;
+        }
+
+        return {
+          productId: product.id,
+          quantity: Number(item.quantity) || 0,
+          price: Number(item.price) || 0,
+          vatRate: Number(item.vatRate || 0),
+          total: Number(item.total) || 0,
+        };
+      }).filter(Boolean);
+
+      console.log('Hazırlanan detaylar:', details);
+
+      if (details.length === 0) {
+        toast.error('Lütfen en az bir ürün ekleyin');
+        return;
+      }
+
+      const invoiceData = {
+        typeValue: formData.typeValue === "satis" ? 2 : 1,
+        customerId: customer.id,
+        date: formData.date,
+        details: details
+      };
+
+      console.log('Gönderilecek fatura verisi:', invoiceData);
+
+      if (isEditMode) {
+        await onEditInvoice(invoiceData);
+      } else {
+        await onAddInvoice(invoiceData);
+      }
+      
+      console.log('Fatura başarıyla kaydedildi');
+      onClose();
+    } catch (error) {
+      console.error('Fatura işlemi sırasında hata:', error);
+      toast.error('Fatura işlenirken bir hata oluştu');
+    } finally {
+      setIsSubmitting(false);
     }
-    onClose();
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // İzin verilen dosya tipleri
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Lütfen sadece JPG, JPEG veya PNG dosyası yükleyin');
+      return;
+    }
+
+    // Dosya boyutu kontrolü (örn: 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Dosya boyutu 10MB\'dan büyük olamaz');
+      return;
+    }
+
+    setUploadedFile(file);
+
+    try {
+      const result = await extractText(file).unwrap();
+      console.log('API yanıtı:', result);
+      
+      if (result && result.data) {
+        const extractedData = result.data;
+        console.log('İşlenecek veri:', extractedData);
+        
+        // Müşteri adını bul
+        const customer = customers?.data?.find(
+          (c) => c.name.toLowerCase() === extractedData.customerName?.toLowerCase()
+        );
+        console.log('Bulunan müşteri:', customer);
+
+        // Tarih formatını dönüştür
+        let formattedDate = extractedData.date;
+        if (extractedData.date) {
+          try {
+            // Türkçe ay isimlerini sayılara çevir
+            const turkishMonths = {
+              'Ocak': '01', 'Şubat': '02', 'Mart': '03', 'Nisan': '04',
+              'Mayıs': '05', 'Haziran': '06', 'Temmuz': '07', 'Ağustos': '08',
+              'Eylül': '09', 'Ekim': '10', 'Kasım': '11', 'Aralık': '12'
+            };
+
+            // Tarih formatını parse et (örn: "3 Temmuz 2030")
+            const dateParts = extractedData.date.split(' ');
+            if (dateParts.length === 3) {
+              const day = dateParts[0].padStart(2, '0');
+              const month = turkishMonths[dateParts[1]];
+              const year = dateParts[2];
+              if (day && month && year) {
+                formattedDate = `${year}-${month}-${day}`;
+              }
+            }
+          } catch (e) {
+            console.error('Tarih dönüştürme hatası:', e);
+            formattedDate = new Date().toISOString().split('T')[0];
+          }
+        }
+
+        // Ürün detaylarını hazırla ve otomatik ekle
+        const details = extractedData.details?.map(item => {
+          // Ürün adını normalize et
+          const normalizedProductName = item.productName?.toLowerCase().trim();
+          console.log('Normalize edilmiş ürün adı:', normalizedProductName);
+          
+          // Ürünü bul
+          const product = productsData.find(
+            (p) => p.normalizedName === normalizedProductName
+          );
+          
+          console.log('Ürün arama detayları:', {
+            aranan: normalizedProductName,
+            mevcutUrunler: productsData.map(p => p.normalizedName),
+            bulunanUrun: product
+          });
+          
+          // Toplam tutarı hesapla
+          const quantity = Number(item.quantity) || 0;
+          const price = Number(item.price) || 0;
+          const total = (quantity * price).toFixed(2);
+
+          return {
+            productId: product?.name || item.productName || "",
+            quantity: item.quantity || "",
+            price: item.price || "",
+            total: total,
+            vatRate: item.vatRate || 0
+          };
+        }) || [];
+
+        console.log('Hazırlanan detaylar:', details);
+
+        // Form verilerini güncelle
+        const newFormData = {
+          typeValue: extractedData.typeValue === 0 ? "satis" : "alis",
+          customerId: customer?.name || extractedData.customerName || "",
+          date: formattedDate || new Date().toISOString().split("T")[0],
+          details: details,
+          vatRate: 0
+        };
+
+        console.log('Yeni form verisi:', newFormData);
+        setFormData(newFormData);
+
+        // Başarılı mesajı göster
+        toast.success(`${details.length} adet ürün başarıyla eklendi`);
+      } else {
+        toast.error('Fatura verisi alınamadı');
+      }
+    } catch (error) {
+      console.error('Error processing invoice:', error);
+      const errorMessage = error.data?.message || error.message || 'Fatura işlenirken bir hata oluştu';
+      toast.error(errorMessage);
+      setUploadedFile(null);
+      setFormData({
+        typeValue: "satis",
+        date: new Date().toISOString().split("T")[0],
+        customerId: "",
+        details: [],
+        vatRate: 0
+      });
+    }
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-200 rounded-lg p-6 w-full max-w-3xl relative">
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-        >
-          <X size={20} />
-        </button>
+      <div className="bg-white rounded-lg p-6 w-[800px] max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">
+            {isEditMode ? "Fatura Düzenle" : "Yeni Fatura"}
+          </h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <X size={24} />
+          </button>
+        </div>
 
-        <h2 className="text-center text-2xl font-medium mb-6 underline">
-          {isEditMode ? "Faturayı Güncelle" : "Fatura Ekle"}
-        </h2>
+        {/* File Upload Section */}
+        <div className="mb-6 p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+          <div className="flex flex-col items-center">
+            <Upload className="w-8 h-8 text-gray-400 mb-2" />
+            <label 
+              className={`cursor-pointer px-4 py-2 rounded-md transition-colors ${
+                isExtracting 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+              }`}
+            >
+              {isExtracting ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Yükleniyor...
+                </span>
+              ) : (
+                'Fatura Görseli Yükle'
+              )}
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png"
+                onChange={handleFileUpload}
+                className="hidden"
+                disabled={isExtracting}
+              />
+            </label>
+            {uploadedFile && (
+              <div className="mt-2 flex items-center text-sm text-gray-600">
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {uploadedFile.name}
+              </div>
+            )}
+            <p className="mt-2 text-sm text-gray-500">
+              JPG, JPEG veya PNG formatında fatura görseli yükleyerek otomatik fatura oluşturabilirsiniz
+            </p>
+          </div>
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-6 mb-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-2 gap-6">
             <div>
               <label className="block text-gray-700 mb-1">Fatura Tipi</label>
               <div className="relative">
@@ -275,20 +591,6 @@ function InvoiceModal({
                 />
               </div>
             </div>
-
-            {/* <div>
-              <label className="block text-gray-700 mb-1">
-                Fatura Numarası
-              </label>
-              <input
-                type="text"
-                name="invoiceNumber"
-                value={formData.invoiceNumber}
-                onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md p-2 bg-white"
-                required
-              />
-            </div> */}
           </div>
 
           {/* Ürün Ekleme Alanı */}
@@ -383,33 +685,22 @@ function InvoiceModal({
                 </tr>
               </thead>
               <tbody>
-                {formData.details &&
+                {formData.details && formData.details.length > 0 ? (
                   formData.details.map((item, index) => (
                     <tr key={index} className="border-b border-gray-300">
                       <td className="py-2">{index + 1}</td>
                       <td className="py-2">{item.productId}</td>
-                      <td className="py-2">
-                        {Number(item.quantity).toFixed(2)}
-                      </td>
-                      <td className="py-2">{Number(item.price).toFixed(2)}</td>
-                      <td className="py-2">
-                        {Number(item.vatRate).toFixed(2)}
-                      </td>
-                      <td className="py-2">
-                        {(
-                          Number(item.price) +
-                          Number((item.vatRate * item.price) / 100)
-                        ).toFixed(2)}
-                      </td>
+                      <td className="py-2">{Number(item.quantity).toFixed(2)}</td>
+                      <td className="py-2">{Number(item.price).toFixed(2)} ₺</td>
+                      <td className="py-2">%{Number(item.vatRate).toFixed(2)}</td>
+                      <td className="py-2">{Number(item.total).toFixed(2)} ₺</td>
                       <td className="py-2">
                         <button
                           type="button"
                           onClick={() => {
                             setFormData({
                               ...formData,
-                              details: formData.details.filter(
-                                (i) => i.productId !== item.productId
-                              ),
+                              details: formData.details.filter((_, i) => i !== index)
                             });
                           }}
                           className="text-red-500 hover:text-red-700"
@@ -418,24 +709,44 @@ function InvoiceModal({
                         </button>
                       </td>
                     </tr>
-                  ))}
-                {formData.details && formData.details.length === 0 && (
+                  ))
+                ) : (
                   <tr>
-                    <td colSpan="6" className="py-4 text-center text-gray-500">
-                      Henüz ürün eklenmedi
+                    <td colSpan="7" className="py-4 text-center text-gray-500">
+                      {uploadedFile ? 'Fatura görselinden ürün okunamadı' : 'Henüz ürün eklenmedi'}
                     </td>
                   </tr>
                 )}
               </tbody>
+              {formData.details && formData.details.length > 0 && (
+                <tfoot>
+                  <tr className="border-t border-gray-400 font-semibold">
+                    <td colSpan="5" className="py-2 text-right">Toplam Tutar:</td>
+                    <td className="py-2">
+                      {formData.details.reduce((sum, item) => sum + Number(item.total), 0).toFixed(2)} ₺
+                    </td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              )}
             </table>
           </div>
 
           <div className="flex justify-center">
             <button
               type="submit"
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-8 rounded-md"
+              disabled={isSubmitting || formData.details.length === 0}
+              className={`px-8 py-2 rounded-md font-medium ${
+                formData.details.length > 0 && !isSubmitting
+                  ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
-              {isEditMode ? "Faturayı Güncelle" : "Faturayı Ekle"}
+              {isSubmitting 
+                ? "İşleniyor..." 
+                : isEditMode 
+                  ? "Faturayı Güncelle" 
+                  : "Faturayı Ekle"}
             </button>
           </div>
         </form>
