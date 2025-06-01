@@ -1,13 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, ChevronDown } from "lucide-react";
 
+const initialFormData = {
+  name: "",
+  iban: "",
+  currencyTypeValue: "",
+};
 
-function BankModal({ isOpen, onClose, createBank }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    iban: "",
-    currencyTypeValue: "",
-  });
+function BankModal({ isOpen, onClose, createBank, bank, isEdit = false }) {
+  const [formData, setFormData] = useState(initialFormData);
+
+  useEffect(() => {
+    if (isEdit && bank) {
+      setFormData({
+        name: bank.name || "",
+        iban: bank.iban || "",
+        currencyTypeValue: bank.currencyType?.name || "",
+      });
+    } else {
+      setFormData(initialFormData);
+    }
+  }, [isEdit, bank, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,9 +34,12 @@ function BankModal({ isOpen, onClose, createBank }) {
     e.preventDefault();
     
     const updatedFormData = {
-      name: formData.name,
-      iban: formData.iban,
-      currencyTypeValue: formData.currencyTypeValue === "TRY" ? 1 : formData.currencyTypeValue === "USD" ? 2 : formData.currencyTypeValue === "EUR" ? 3 : formData.currencyTypeValue,
+      ...formData,
+      id: isEdit ? bank.id : undefined,
+      currencyTypeValue: formData.currencyTypeValue === "TRY" ? 1 : 
+                        formData.currencyTypeValue === "USD" ? 2 : 
+                        formData.currencyTypeValue === "EUR" ? 3 : 
+                        formData.currencyTypeValue,
     };
     createBank(updatedFormData);
     onClose();
@@ -42,7 +58,7 @@ function BankModal({ isOpen, onClose, createBank }) {
         </button>
 
         <h2 className="text-center text-2xl font-bold mb-6 text-gray-700">
-          Banka Ekleme
+          {isEdit ? "Banka Düzenleme" : "Banka Ekleme"}
         </h2>
 
         <form onSubmit={handleSubmit}>
@@ -107,7 +123,7 @@ function BankModal({ isOpen, onClose, createBank }) {
               type="submit"
               className="bg-white hover:bg-gray-100 text-gray-800 font-medium py-2 px-12 border border-gray-400 rounded-md"
             >
-              Banka Ekle
+              {isEdit ? "Güncelle" : "Banka Ekle"}
             </button>
           </div>
         </form>

@@ -6,7 +6,7 @@ const initialState = {
   typeValue: "",
   city: "",
   town: "",
-  fullAdress: "",
+  fullAddress: "",
   taxDepartment: "",
   taxNumber: "",
 }
@@ -21,7 +21,7 @@ function CariModal({ isOpen,isEditMode,cari, onClose, onSubmit }) {
         typeValue: cari.typeValue || "",
         city: cari.city || "",
         town: cari.town || "",
-        fullAdress: cari.fullAdress || "",
+        fullAddress: cari.fullAddress || "",
         taxDepartment: cari.taxDepartment || "",
         taxNumber: cari.taxNumber || "",
       })
@@ -157,8 +157,8 @@ function CariModal({ isOpen,isEditMode,cari, onClose, onSubmit }) {
               <label className="block text-gray-700 mb-1">Adres</label>
               <input
                 type="text"
-                name="fullAdress"
-                value={formData.fullAdress}
+                name="fullAddress"
+                value={formData.fullAddress}
                 onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
               />
