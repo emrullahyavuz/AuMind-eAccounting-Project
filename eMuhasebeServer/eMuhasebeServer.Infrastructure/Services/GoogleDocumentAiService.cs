@@ -23,7 +23,7 @@ internal sealed class GoogleDocumentAiService : IVisionService
     {
         Environment.SetEnvironmentVariable(
             "GOOGLE_APPLICATION_CREDENTIALS",
-            "C:\\Users\\softw\\OneDrive\\Masaüstü\\arcane-pipe-459911-q6-6e70afd9150c.json");
+            "C:\\Users\\Şeref\\Desktop\\arcane-pipe-459911-q6-6e70afd9150c.json");
 
         imageStream.Position = 0;
         using var memoryStream = new MemoryStream();
@@ -56,13 +56,28 @@ internal sealed class GoogleDocumentAiService : IVisionService
 
         foreach (var entity in response.Document.Entities)
         {
+            _logger.LogInformation("Entity Type: {Type}, MentionText: {MentionText}, NormalizedValue: {NormalizedValue}", 
+                entity.Type, entity.MentionText, JsonConvert.SerializeObject(entity.NormalizedValue));
             switch (entity.Type)
-            {
+            { 
                 case "invoice_date":
                     _logger.LogInformation("invoice_date MentionText: {Text}", entity.MentionText);
-                    invoiceDate = entity.NormalizedValue?.DateValue != null
-                        ? $"{entity.NormalizedValue.DateValue.Year}-{entity.NormalizedValue.DateValue.Month:D2}-{entity.NormalizedValue.DateValue.Day:D2}"
-                        : entity.MentionText;
+
+                    if (entity.NormalizedValue?.DateValue != null)
+                    {
+                        invoiceDate = $"{entity.NormalizedValue.DateValue.Year}-{entity.NormalizedValue.DateValue.Month:D2}-{entity.NormalizedValue.DateValue.Day:D2}";
+                    }
+                    else
+                    {
+                        if (DateTime.TryParse(entity.MentionText, out var parsedDate))
+                        {
+                            invoiceDate = parsedDate.ToString("yyyy-MM-dd");
+                        }
+                        else
+                        {
+                            invoiceDate = entity.MentionText;
+                        }
+                    }
                     break;
 
                 case "receiver_name":
@@ -76,8 +91,12 @@ internal sealed class GoogleDocumentAiService : IVisionService
                     decimal price = 0;
                     decimal vatRate = 0;
 
+                    bool hasQuantity = false;
+                    bool hasPrice = false;
+
                     foreach (var prop in entity.Properties)
                     {
+                        _logger.LogInformation("Property Type: {Type}, MentionText: {MentionText}", prop.Type, prop.MentionText);
                         var propType = prop.Type?.Split('/').LastOrDefault()?.ToLower()?.Trim();
 
                         switch (propType)
@@ -86,10 +105,10 @@ internal sealed class GoogleDocumentAiService : IVisionService
                                 description = prop.MentionText?.Trim();
                                 break;
                             case "quantity":
-                                decimal.TryParse(NormalizeNumber(prop.MentionText), out quantity);
+                                hasQuantity = decimal.TryParse(NormalizeNumber(prop.MentionText), out quantity);
                                 break;
                             case "unit_price":
-                                decimal.TryParse(NormalizeNumber(prop.MentionText), out price);
+                                hasPrice = decimal.TryParse(NormalizeNumber(prop.MentionText), out price);
                                 break;
                             case "vat_rate":
                                 decimal.TryParse(NormalizeNumber(prop.MentionText), out vatRate);
@@ -108,7 +127,6 @@ internal sealed class GoogleDocumentAiService : IVisionService
                         };
                         details.Add(detailObj);
                     }
-
                     break;
             }
         }
@@ -128,18 +146,17 @@ internal sealed class GoogleDocumentAiService : IVisionService
     {
         if (string.IsNullOrEmpty(input)) return "0";
 
+        // Sayıdan geçerli karakterleri çek
         var cleaned = new string(input.Where(c => char.IsDigit(c) || c == ',' || c == '.').ToArray());
 
         if (cleaned.Contains(',') && cleaned.Contains('.') && cleaned.IndexOf(',') > cleaned.IndexOf('.'))
         {
-            
-            cleaned = cleaned.Replace(".", "").Replace(",", ".");
+            cleaned = cleaned.Replace(".", "");
         }
-        else if (cleaned.Contains(','))
+        else if (cleaned.Contains('.') && !cleaned.Contains(','))
         {
-            cleaned = cleaned.Replace(",", ".");
+            cleaned = cleaned.Replace(".", ","); // Noktayı virgüle çevir
         }
-
         return cleaned;
     }
 
