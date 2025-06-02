@@ -42,7 +42,7 @@ internal sealed class UpdateBankDetailCommandHandler(
         await unitOfWorkCompany.SaveChangesAsync(cancellationToken);
 
 
-        cacheService.Remove("bank");
+        cacheService.Remove("banks");
 
         return "Banka hareketi başarıyla güncellendi";
     }
