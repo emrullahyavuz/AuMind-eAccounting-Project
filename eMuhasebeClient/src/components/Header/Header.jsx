@@ -3,7 +3,6 @@ import { Button } from "../UI/Button";
 import { useAuth } from "../../hooks/useAuth";
 import { LogIn, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useGetAllCompaniesMutation } from "../../store/api/companiesApi";
 import {useGetAllUsersMutation, useChangeCompanyMutation} from "../../store/api"
 import {useToast} from "../../hooks/useToast"
 import LoadingOverlay from "../UI/Spinner/LoadingOverlay";
@@ -29,7 +28,6 @@ const Header = () => {
   const [companies, setCompanies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [getAllUsers] = useGetAllUsersMutation();
-  const [getAllCompanies] = useGetAllCompaniesMutation();
   const [changeCompany] = useChangeCompanyMutation();
 
   
@@ -43,29 +41,20 @@ const Header = () => {
 
   // Fetch companies when component mounts
   useEffect(() => {
-    
     const fetchCompanies = async () => {
       try {
-        const result = await getAllCompanies().unwrap();
         const userResult = await getAllUsers().unwrap();
         
-        if (result?.isSuccessful && userResult?.isSuccessful) {
-          const allCompanies = Array.isArray(result.data) ? result.data : [];
+        if (userResult?.isSuccessful) {
           const userCompanies = Array.isArray(userResult.data) ? userResult.data : [];
           
           // Find current user
           const currentUser = userCompanies.find(user => user.userName === "serefcanavlak");
           
           if (currentUser && currentUser.companyUsers && Array.isArray(currentUser.companyUsers)) {
-            // Get company IDs from current user's companyUsers
-            const currentUserCompanyIds = currentUser.companyUsers.map(cu => cu.company.id);
-            
-            // Filter companies to only include those that belong to current user
-            const filteredCompanies = allCompanies.filter(company => 
-              currentUserCompanyIds.includes(company.id)
-            );
-            
-            setCompanies(filteredCompanies);
+            // Doğrudan companyUsers array'inden şirketleri al
+            const userCompanies = currentUser.companyUsers.map(cu => cu.company);
+            setCompanies(userCompanies);
           } else {
             setCompanies([]);
           }
@@ -78,7 +67,7 @@ const Header = () => {
     if (isAuthenticated) {
       fetchCompanies();
     }
-  }, [isAuthenticated, getAllCompanies, getAllUsers]);
+  }, [isAuthenticated, getAllUsers]);
 
   // Handle the authentication action
   const handleAuthAction = () => {
@@ -113,21 +102,16 @@ const Header = () => {
         setIsLoading(true);
 
         // Şirket listesini yeniden yükle
-        const companyResult = await getAllCompanies().unwrap();
         const userResult = await getAllUsers().unwrap();
         
-        if (companyResult?.isSuccessful && userResult?.isSuccessful) {
-          const allCompanies = Array.isArray(companyResult.data) ? companyResult.data : [];
+        if (userResult?.isSuccessful) {
           const userCompanies = Array.isArray(userResult.data) ? userResult.data : [];
-          
           const currentUser = userCompanies.find(user => user.userName === "serefcanavlak");
           
           if (currentUser && currentUser.companyUsers && Array.isArray(currentUser.companyUsers)) {
-            const currentUserCompanyIds = currentUser.companyUsers.map(cu => cu.company.id);
-            const filteredCompanies = allCompanies.filter(company => 
-              currentUserCompanyIds.includes(company.id)
-            );
-            setCompanies(filteredCompanies);
+            
+            const userCompanies = currentUser.companyUsers.map(cu => cu.company);
+            setCompanies(userCompanies);
           }
         }
         
