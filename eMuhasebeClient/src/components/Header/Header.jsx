@@ -109,14 +109,29 @@ const Header = () => {
         localStorage.setItem('selectedCompanyName', selectedCompany.name);
         
         setIsDropdownOpen(false);
-        
-        // Önce toast mesajını göster
         showToast("Şirket değiştirildi", "success");
-        
-        // Loading göstergesini göster
         setIsLoading(true);
+
+        // Şirket listesini yeniden yükle
+        const companyResult = await getAllCompanies().unwrap();
+        const userResult = await getAllUsers().unwrap();
         
-        // Kısa bir gecikme ile sayfayı yenile
+        if (companyResult?.isSuccessful && userResult?.isSuccessful) {
+          const allCompanies = Array.isArray(companyResult.data) ? companyResult.data : [];
+          const userCompanies = Array.isArray(userResult.data) ? userResult.data : [];
+          
+          const currentUser = userCompanies.find(user => user.userName === "serefcanavlak");
+          
+          if (currentUser && currentUser.companyUsers && Array.isArray(currentUser.companyUsers)) {
+            const currentUserCompanyIds = currentUser.companyUsers.map(cu => cu.company.id);
+            const filteredCompanies = allCompanies.filter(company => 
+              currentUserCompanyIds.includes(company.id)
+            );
+            setCompanies(filteredCompanies);
+          }
+        }
+        
+        // Sayfayı yenile
         setTimeout(() => {
           window.location.reload();
         }, 1000);

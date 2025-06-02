@@ -36,9 +36,9 @@ function BankModal({ isOpen, onClose, createBank, bank, isEdit = false }) {
     const updatedFormData = {
       ...formData,
       id: isEdit ? bank.id : undefined,
-      currencyTypeValue: formData.currencyTypeValue === "TRY" ? 1 : 
+      currencyTypeValue: formData.currencyTypeValue === "TL" ? 1 : 
                         formData.currencyTypeValue === "USD" ? 2 : 
-                        formData.currencyTypeValue === "EUR" ? 3 : 
+                        formData.currencyTypeValue === "Euro" ? 3 : 
                         formData.currencyTypeValue,
     };
     createBank(updatedFormData);
@@ -107,9 +107,9 @@ function BankModal({ isOpen, onClose, createBank, bank, isEdit = false }) {
                 <option value="" disabled>
                   Döviz tipi seçiniz...
                 </option>
-                <option value="TRY">TRY - Türk Lirası</option>
+                <option value="TL">TL - Türk Lirası</option>
                 <option value="USD">USD - Amerikan Doları</option>
-                <option value="EUR">EUR - Euro</option>
+                <option value="Euro">EUR - Euro</option>
               </select>
               <ChevronDown
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
