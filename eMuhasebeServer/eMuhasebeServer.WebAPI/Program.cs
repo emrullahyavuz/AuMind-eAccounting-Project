@@ -2,7 +2,9 @@ using DefaultCorsPolicyNugetPackage;
 using eMuhasebeServer.Application;
 using eMuhasebeServer.Application.Hubs;
 using eMuhasebeServer.Application.Options;
+using eMuhasebeServer.Application.Services;
 using eMuhasebeServer.Infrastructure;
+using eMuhasebeServer.Infrastructure.Services;
 using eMuhasebeServer.WebAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
@@ -60,6 +62,8 @@ builder.Services.AddSwaggerGen(setup =>
 });
 
 builder.Services.AddHttpClient();
+
+builder.Services.AddScoped<IChatMemoryService, ChatMemoryService>();
 
 builder.Services.Configure<OpenAIOptions>(
     builder.Configuration.GetSection(OpenAIOptions.SectionName));
