@@ -1,5 +1,6 @@
 import { use, useEffect, useState } from "react"
 import { X, ChevronDown } from "lucide-react"
+import { cities } from "../../../constants/cities"
 
 const initialState = {
   name: "",
@@ -106,9 +107,11 @@ function CariModal({ isOpen,isEditMode,cari, onClose, onSubmit }) {
                   required
                 >
                   <option value="">Seçiniz...</option>
-                  <option value="İstanbul">İstanbul</option>
-                  <option value="Ankara">Ankara</option>
-                  <option value="İzmir">İzmir</option>
+                  {Object.keys(cities).map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
               </div>

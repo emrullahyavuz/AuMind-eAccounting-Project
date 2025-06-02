@@ -40,7 +40,8 @@ function Companies() {
   );
 
   // RTK Query hooks
-  const [getAllCompanies,{isLoading:isCompaniesLoading}] = useGetAllCompaniesMutation();
+  const [getAllCompanies, { isLoading: isCompaniesLoading }] =
+    useGetAllCompaniesMutation();
   const [createCompany] = useCreateCompanyMutation();
   const [updateCompany] = useUpdateCompanyMutation();
   const [deleteCompany] = useDeleteCompanyMutation();
@@ -64,33 +65,26 @@ function Companies() {
     { header: "Yönetici Adı", accessor: "database.adminName" },
   ];
 
-
+  const fetchData = async () => {
+    try {
+      const result = await getAllCompanies().unwrap();
+      console.log(result);
+      if (result?.isSuccessful) {
+        const formattedData = Array.isArray(result.data) ? result.data : [];
+        setCompanies(formattedData);
+        setFilteredCompanies(formattedData);
+      } else {
+        console.error("Error fetching users:", result?.errorMessages);
+      }
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
 
   // Şirketler için useEffect
   useEffect(() => {
-    
-    const fetchData = async () => {
-      try {
-       
-        const result = await getAllCompanies().unwrap();
-        console.log(result)
-        if (result?.isSuccessful) {
-          const formattedData = Array.isArray(result.data) ? result.data : [];
-          setCompanies(formattedData);
-          setFilteredCompanies(formattedData);
-        } else {
-          console.error("Error fetching users:", result?.errorMessages);
-        }
-      } catch (err) {
-        console.error("Error:", err);
-      }
-    };
-
     fetchData();
-   
   }, [getAllCompanies]);
-
- 
 
   // Sayfalama işlemleri
   const handlePageChange = (newPage) => {
@@ -144,10 +138,7 @@ function Companies() {
     console.log("Düzenlenecek şirket:", company);
     dispatch(openEditModal());
     setSelectedCompany(company); // Düzenlenecek şirket bilgilerini ayarla
-    
   };
-
-  
 
   // Şirket silme işlemi
   const handleDeleteCompany = (companyId) => {
@@ -174,14 +165,13 @@ function Companies() {
         }
 
         showToast("Şirketler başarıyla silindi", "success");
-        
+
         // Şirket listesini yenile
         const result = await getAllCompanies().unwrap();
-        
+
         if (result?.isSuccessful) {
-          
           const formattedData = Array.isArray(result.data) ? result.data : [];
-          console.log(formattedData)
+          console.log(formattedData);
           setCompanies(formattedData);
           setFilteredCompanies(formattedData);
         }
@@ -193,8 +183,7 @@ function Companies() {
       } catch (err) {
         console.error("Error deleting company:", err);
         showToast(
-          err.data?.errorMessages?.[0] ||
-            "Şirket silinirken bir hata oluştu",
+          err.data?.errorMessages?.[0] || "Şirket silinirken bir hata oluştu",
           "error"
         );
       }
@@ -203,7 +192,6 @@ function Companies() {
 
   const handleCompanySubmit = async (companyData) => {
     try {
-      debugger;
       await createCompany(companyData).unwrap();
       showToast("Şirket başarıyla oluşturuldu", "success");
       dispatch(closeAddModal());
@@ -218,7 +206,6 @@ function Companies() {
 
   const handleEditSubmit = async (companyData) => {
     try {
-      debugger;
       await updateCompany({ id: selectedCompany.id, ...companyData }).unwrap();
       showToast("Şirket başarıyla güncellendi", "success");
       dispatch(closeEditModal());
@@ -292,7 +279,6 @@ function Companies() {
         headerTextColor="white"
         selectedItems={selectedItems}
         onSelectedItemsChange={setSelectedItems}
-        
       />
       <CompanyModal
         isOpen={isAddModalOpen}
