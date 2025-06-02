@@ -16,7 +16,8 @@ const Header = () => {
   const navigate = useNavigate();
   
   // Get the isAuthenticated state and logout function from the useAuth hook
-  const { isAuthenticated, logout, currentCompany } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
+  
 
   const {showToast} = useToast()
 
@@ -47,12 +48,14 @@ const Header = () => {
         
         if (userResult?.isSuccessful) {
           const userCompanies = Array.isArray(userResult.data) ? userResult.data : [];
+          console.log("userCompanies", userCompanies);
           
-          // Find current user
-          const currentUser = userCompanies.find(user => user.userName === "serefcanavlak");
+          // Find current user using user info from useAuth
+          const currentUser = userCompanies.find(u => u.userName === user?.userName);
+          console.log("Current user from useAuth:", user);
+          console.log("Found current user:", currentUser);
           
           if (currentUser && currentUser.companyUsers && Array.isArray(currentUser.companyUsers)) {
-            // Doğrudan companyUsers array'inden şirketleri al
             const userCompanies = currentUser.companyUsers.map(cu => cu.company);
             setCompanies(userCompanies);
           } else {
@@ -64,10 +67,10 @@ const Header = () => {
       }
     };
 
-    if (isAuthenticated) {
+    if (isAuthenticated && user?.userName) {
       fetchCompanies();
     }
-  }, [isAuthenticated, getAllUsers]);
+  }, [isAuthenticated, user, getAllUsers]);
 
   // Handle the authentication action
   const handleAuthAction = () => {
@@ -87,16 +90,9 @@ const Header = () => {
   // Handle company change
   const handleCompanyChange = async (companyId) => {
     try {
-      const selectedCompany = companies.find(company => company.id === companyId);
       const result = await changeCompany(companyId);
       
-      if (result?.data?.isSuccessful && result?.data?.data?.token) {
-        // Yeni token'ları kaydet
-        localStorage.setItem('token', result.data.data.token);
-        localStorage.setItem('refreshToken', result.data.data.refreshToken);
-        localStorage.setItem('selectedCompanyId', companyId);
-        localStorage.setItem('selectedCompanyName', selectedCompany.name);
-        
+      if (result?.data?.isSuccessful) {
         setIsDropdownOpen(false);
         showToast("Şirket değiştirildi", "success");
         setIsLoading(true);
@@ -106,10 +102,12 @@ const Header = () => {
         
         if (userResult?.isSuccessful) {
           const userCompanies = Array.isArray(userResult.data) ? userResult.data : [];
-          const currentUser = userCompanies.find(user => user.userName === "serefcanavlak");
+          console.log("userCompanies", userCompanies);
+          const currentUser = userCompanies.find(u => u.userName === user?.userName);
+          console.log("Current user from useAuth:", user);
+          console.log("Found current user:", currentUser);
           
           if (currentUser && currentUser.companyUsers && Array.isArray(currentUser.companyUsers)) {
-            
             const userCompanies = currentUser.companyUsers.map(cu => cu.company);
             setCompanies(userCompanies);
           }
@@ -139,7 +137,7 @@ const Header = () => {
       <header className="bg-gray-800 text-white p-2 px-4 flex justify-between items-center">
         <div className="flex items-center border-l-[3px] ml-[-10px] border-yellow-400">
           <div className="ml-4 bg-white text-black rounded px-3 py-2 flex items-center relative">
-            <span className="mr-2">{currentCompany?.name || "Şirket Seçiniz"}</span>
+            <span className="mr-2">{"Şirket Seçiniz"}</span>
             {isAuthenticated && (
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -157,9 +155,7 @@ const Header = () => {
                     <button
                       key={company.id}
                       onClick={() => handleCompanyChange(company.id)}
-                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                        currentCompany?.id === company.id ? "bg-yellow-50" : ""
-                      }`}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100`}
                     >
                       {company.name}
                     </button>
