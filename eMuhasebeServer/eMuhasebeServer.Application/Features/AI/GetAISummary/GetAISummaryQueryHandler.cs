@@ -80,7 +80,7 @@ internal sealed class GetAISummaryQueryHandler(
         // Mesajları oluştur
         var messages = new List<object>
 {
-    new { role = "system", content = "Sen bir muhasebe uzmanısın. Muhasebe sisteminin ismi AuMind. Cevaplarını detaylı ve resmi ver. Cevabı Json formatında döndür \n json''' {message:string} '''" }
+    new { role = "system", content = "Sen bir muhasebe uzmanısın. Muhasebe sisteminin ismi AuMind. Cevaplarını detaylı ve resmi ver." }
 };
 
         // Önceki mesajları ekle

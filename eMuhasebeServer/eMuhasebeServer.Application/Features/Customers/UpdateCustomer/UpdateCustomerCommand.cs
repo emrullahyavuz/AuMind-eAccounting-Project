@@ -9,6 +9,6 @@ public sealed record UpdateCustomerCommand(
     int TypeValue,
     string City,
     string Town,
-    string FullAdress,
+    string FullAddress,
     string TaxDepartment,
     string TaxNumber) : IRequest<Result<string>>;
