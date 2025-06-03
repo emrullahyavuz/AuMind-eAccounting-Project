@@ -27,7 +27,6 @@ function Companies() {
   const [companies, setCompanies] = useState([]);
   const [filteredCompanies, setFilteredCompanies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [companyToDelete, setCompanyToDelete] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -191,32 +190,30 @@ function Companies() {
   };
 
   const handleCompanySubmit = async (companyData) => {
-    try {
-      await createCompany(companyData).unwrap();
-      showToast("Şirket başarıyla oluşturuldu", "success");
-      dispatch(closeAddModal());
-    } catch (err) {
-      console.error("Error creating company:", err);
-      showToast(
-        err.data?.errorMessages?.[0] || "Şirket oluşturulurken bir hata oluştu",
-        "error"
-      );
-    }
+    await createCompany(companyData)
+      .unwrap()
+      .then(() => {
+        showToast("Şirket başarıyla oluşturuldu", "success");
+        dispatch(closeAddModal());
+        fetchData();
+      })
+      .catch((err) => {
+        showToast(err.data?.errorMessages?.[0], "error");
+      });
   };
 
   const handleEditSubmit = async (companyData) => {
-    try {
-      await updateCompany({ id: selectedCompany.id, ...companyData }).unwrap();
-      showToast("Şirket başarıyla güncellendi", "success");
-      dispatch(closeEditModal());
-      setSelectedCompany(null);
-    } catch (err) {
-      console.error("Error updating company:", err);
-      showToast(
-        err.data?.errorMessages?.[0] || "Şirket güncellenirken bir hata oluştu",
-        "error"
-      );
-    }
+    await updateCompany({ id: selectedCompany.id, ...companyData })
+      .unwrap()
+      .then(() => {
+        showToast("Şirket başarıyla güncellendi", "success");
+        dispatch(closeEditModal());
+        setSelectedCompany(null);
+        fetchData();
+      })
+      .catch((err) => {
+        showToast(err.data?.errorMessages?.[0], "error");
+      });
   };
 
   // Geçerli sayfadaki şirketleri hesapla
