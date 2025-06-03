@@ -229,6 +229,13 @@ function InvoiceModal({
 
   const addItem = () => {
     if (newItem.productId && newItem.quantity && newItem.price) {
+      // Adet kontrolü ekle
+      const quantity = Number(newItem.quantity);
+      if (quantity <= 0) {
+        toast.error('Adet 0 veya negatif olamaz');
+        return;
+      }
+
       setFormData({
         ...formData,
         details: [...formData.details, { ...newItem }],
@@ -255,6 +262,17 @@ function InvoiceModal({
     try {
       setIsSubmitting(true);
       console.log('Submit işlemi başlatıldı');
+
+      // Adet kontrolü
+      const hasInvalidQuantity = formData.details.some(item => {
+        const quantity = Number(item.quantity);
+        return quantity <= 0;
+      });
+
+      if (hasInvalidQuantity) {
+        toast.error('Adet 0 veya negatif olamaz');
+        return;
+      }
 
       // Müşteri kontrolü
       const customer = customers?.data?.find(
@@ -636,6 +654,8 @@ function InvoiceModal({
                 name="quantity"
                 value={newItem.quantity}
                 onChange={handleItemChange}
+                min="0.01"
+                step="0.01"
                 className="w-full border border-gray-300 rounded-md p-2 bg-white"
               />
             </div>
